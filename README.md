@@ -73,10 +73,10 @@ Besides these configurations you can also create your own provider which extends
 getLocationManager().setLocationProvider(new YourOwnLocationProvider());
 ```
 
-Library has a lot of log implemented in it, so you can set your [LogType][7] to get how much information you need to. Suggested to use LogType.GENERAL in debug mode and LogType.NONE in release mode though. Manager has a static method to change logType configuration.
+Library has a lot of log implemented in it, so you can set your [LogType][7] to get how much information you need to. Suggested to use LogType.GENERAL in debug mode and LogType.NONE in release mode though. Manager has a static method to change logType configuration. As default it is set to LogType.IMPORTANT in order to display only important steps...
 
 ```java 
-LocationManager.setLogType(LogType.GENERAL);
+LocationManager.setLogType(LogType.IMPORTANT);
 ```
 
 ## AndroidManifest
