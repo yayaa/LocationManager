@@ -70,13 +70,13 @@ In [LocationConfiguration][4] class, all of these methods are explained as when 
 Besides these configurations you can also create your own provider which extends [LocationProvider][5] class and implement your own logic instead of using [DefaultLocationProvider][6]. When you call setLocationProvider method below on LocationManager it will pass the configuration you defined and the activity instance to your provider, so you can count on those values as well.
 
 ```java 
-        getLocationManager().setLocationProvider(new YourOwnLocationProvider());
+getLocationManager().setLocationProvider(new YourOwnLocationProvider());
 ```
 
 Library has a lot of log implemented in it, so you can set your [LogType][7] to get how much information you need to. Suggested to use LogType.GENERAL in debug mode and LogType.NONE in release mode though. Manager has a static method to change logType configuration.
 
 ```java 
-        LocationManager.setLogType(LogType.GENERAL);
+LocationManager.setLogType(LogType.GENERAL);
 ```
 
 ## AndroidManifest
