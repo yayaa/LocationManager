@@ -9,8 +9,8 @@ To get location on Android Devices, you need to
 <ul>
 <li>Check whether GPS Provider is enabled or not</li>
 <li>Ask user to enable it if not</li>
-<li><Check again whether user actually did enable it or not/li>
-<li><If it is enabled, start location update request/li>
+<li>Check again whether user actually did enable it or not</li>
+<li>If it is enabled, start location update request</li>
 <li>But switch to network if GPS is not retrieving location data</li>
 <li>Check whether Network Provider is enabled or not</li>
 <li>If it is, start location update request</li>
@@ -36,7 +36,7 @@ This library will provide you to handle all of these steps by creating a configu
 <li>Possible to change configuration on runtime,</li>
 <li>Provide your own location provider mechanism,</li>
 <li>Provide different configuration objects in different activities,</li>
-<ul>
+</ul>
  
 This library doesn't use singleton structure, so it will be specified to activity and it requires quite a lot lifecycle information to handle all the steps between onCreate - onResume - onPause - onDestroy - onActivityResult - onRequestPermissionsResult. You can use [LocationBaseActivity][2] or you can manually call those methods in your activity.
 
@@ -90,7 +90,7 @@ Add library dependency to your `build.gradle` file:
 
 ```groovy
 dependencies {    
-     compile 'com.yayandroid:LocationManager:1.0.2'
+     compile 'com.yayandroid:LocationManager:1.0.3'
 }
 ```
 
@@ -112,6 +112,6 @@ limitations under the License.
 ```
 
 [1]: https://developers.google.com/android/reference/com/google/android/gms/location/FusedLocationProviderApi
-[2]: LocationBaseActivity
-[3]: MainActivity
-[4]: LocationConfiguration
+[2]: https://github.com/yayaa/LocationManager/blob/master/Library/app/src/main/java/com/yayandroid/locationmanager/LocationBaseActivity.java
+[3]: https://github.com/yayaa/LocationManager/blob/master/Sample/app/src/main/java/com/yayandroid/locationmanager/sample/MainActivity.java
+[4]: https://github.com/yayaa/LocationManager/blob/master/Library/app/src/main/java/com/yayandroid/locationmanager/LocationConfiguration.java
