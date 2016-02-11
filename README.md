@@ -65,8 +65,19 @@ new LocationConfiguration()
                 .setGPSMessage("Would you mind to turn GPS on?")
                 .setRationalMessage("Gimme the permission!");
 ``` 
-
 In [LocationConfiguration][4] class, all of these methods are explained as when and why to use.
+
+Besides these configurations you can also create your own provider which extends [LocationProvider][5] class and implement your own logic instead of using [DefaultLocationProvider][6]. When you call setLocationProvider method below on LocationManager it will pass the configuration you defined and the activity instance to your provider, so you can count on those values as well.
+
+```java 
+        getLocationManager().setLocationProvider(new YourOwnLocationProvider());
+```
+
+Library has a lot of log implemented in it, so you can set your [LogType][7] to get how much information you need to. Suggested to use LogType.GENERAL in debug mode and LogType.NONE in release mode though. Manager has a static method to change logType configuration.
+
+```java 
+        LocationManager.setLogType(LogType.GENERAL);
+```
 
 ## AndroidManifest
 
@@ -115,3 +126,6 @@ limitations under the License.
 [2]: https://github.com/yayaa/LocationManager/blob/master/Library/app/src/main/java/com/yayandroid/locationmanager/LocationBaseActivity.java
 [3]: https://github.com/yayaa/LocationManager/blob/master/Sample/app/src/main/java/com/yayandroid/locationmanager/sample/MainActivity.java
 [4]: https://github.com/yayaa/LocationManager/blob/master/Library/app/src/main/java/com/yayandroid/locationmanager/LocationConfiguration.java
+[5]: https://github.com/yayaa/LocationManager/blob/master/Library/app/src/main/java/com/yayandroid/locationmanager/provider/LocationProvider.java
+[6]: https://github.com/yayaa/LocationManager/blob/master/Library/app/src/main/java/com/yayandroid/locationmanager/provider/DefaultLocationProvider.java
+[7]: https://github.com/yayaa/LocationManager/blob/master/Library/app/src/main/java/com/yayandroid/locationmanager/constants/LogType.java
