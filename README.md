@@ -49,9 +49,9 @@ Even though GPS Message and Rational Message are also optional, if you do not se
 
 ```java 
 new LocationConfiguration()
-                .askForGooglePlayServices(true)
-                .useOnlyGPServices(false)
                 .keepTracking(true)
+                .useOnlyGPServices(false)
+                .askForGooglePlayServices(true)
                 .failOnConnectionSuspended(true)
                 .doNotUseGooglePlayServices(false)
                 .askForEnableGPS(true)
