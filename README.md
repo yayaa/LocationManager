@@ -45,7 +45,7 @@ This library doesn't use singleton structure, so it will be specified to activit
 ## Configuration
 
 All those options below are optional. Use only those you really want to customize. 
-Even though GPS Message and Rational Message are also optional, if you do not set them user will see empty dialogs becayse those fields do not have default values.
+Even though GPS Message and Rational Message are also optional, if you do not set them user will see empty dialogs because those fields do not have default values.
 
 ```java 
 new LocationConfiguration()
