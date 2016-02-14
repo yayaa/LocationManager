@@ -1,6 +1,6 @@
 # LocationManager
 
-<a href="http://developer.android.com/index.html" target="_blank"><img src="https://img.shields.io/badge/platform-android-green.svg"/></a> <a href="https://android-arsenal.com/api?level=14" target="_blank"><img src="https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat"/></a> <a href="https://opensource.org/licenses/Apache-2.0" target="_blank"><img src="https://img.shields.io/hexpm/l/plug.svg"/></a> <a href="http://search.maven.org/#search%7Cga%7C1%7CLocationManager" target="_blank"><img src="https://img.shields.io/maven-central/v/com.yayandroid/LocationManager.svg"/></a>
+<a href="http://developer.android.com/index.html" target="_blank"><img src="https://img.shields.io/badge/platform-android-green.svg"/></a> <a href="https://android-arsenal.com/api?level=14" target="_blank"><img src="https://img.shields.io/badge/API-14%2B-green.svg?style=flat"/></a> <a href="https://opensource.org/licenses/Apache-2.0" target="_blank"><img src="https://img.shields.io/hexpm/l/plug.svg"/></a> <a href="http://search.maven.org/#search%7Cga%7C1%7CLocationManager" target="_blank"><img src="https://img.shields.io/maven-central/v/com.yayandroid/LocationManager.svg"/></a>
 
 <a href="http://www.methodscount.com/?lib=com.yayandroid%3ALocationManager%3A1.0.2" target="_blank"><img src="https://img.shields.io/badge/Methods count-283-e91e63.svg"></img></a> <a href="http://www.methodscount.com/?lib=com.yayandroid%3ALocationManager%3A1.0.2" target="_blank"><img src="https://img.shields.io/badge/Size-46 KB-e91e63.svg"></img></a>
 
