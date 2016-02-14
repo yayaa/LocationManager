@@ -4,7 +4,7 @@
 
 <a href="http://www.methodscount.com/?lib=com.yayandroid%3ALocationManager%3A1.0.2" target="_blank"><img src="https://img.shields.io/badge/Methods count-283-e91e63.svg"></img></a> <a href="http://www.methodscount.com/?lib=com.yayandroid%3ALocationManager%3A1.0.2" target="_blank"><img src="https://img.shields.io/badge/Size-46 KB-e91e63.svg"></img></a>
 
-<a href="http://android-arsenal.com/details/1/3148" target="_blank"><img src="https://img.shields.io/badge/Android%20Arsenal-LocationManager-yellow.svg?style=flat"/></a>
+<a href="http://android-arsenal.com/details/1/3148" target="_blank"><img src="https://img.shields.io/badge/Android%20Arsenal-LocationManager-brightgreen.svg?style=flat"/></a>
 
 To get location on Android Devices, you need to 
 <ul>
