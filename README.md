@@ -100,7 +100,7 @@ Add library dependency to your `build.gradle` file:
 
 ```groovy
 dependencies {    
-     compile 'com.yayandroid:LocationManager:1.0.3'
+     compile 'com.yayandroid:LocationManager:1.0.4'
 }
 ```
 
