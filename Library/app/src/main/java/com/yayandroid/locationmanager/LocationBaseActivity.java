@@ -15,7 +15,7 @@ public abstract class LocationBaseActivity extends AppCompatActivity implements 
 
     public abstract LocationConfiguration getLocationConfiguration();
 
-    public abstract void onLocationFailed();
+    public abstract void onLocationFailed(int failType);
 
     public abstract void onLocationChanged(Location location);
 
@@ -85,8 +85,8 @@ public abstract class LocationBaseActivity extends AppCompatActivity implements 
         }
 
         @Override
-        public void onLocationFailed() {
-            LocationBaseActivity.this.onLocationFailed();
+        public void onLocationFailed(int failType) {
+            LocationBaseActivity.this.onLocationFailed(failType);
         }
 
         @Override

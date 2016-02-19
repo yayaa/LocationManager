@@ -15,8 +15,10 @@ public abstract class LocationReceiver {
 
     /**
      * When it is not possible to receive location, such as no active provider or no permission etc.
+     * It will pass an integer value from {@link com.yayandroid.locationmanager.constants.LogType}
+     * which will help you to determine how did it fail to receive location
      */
-    public abstract void onLocationFailed();
+    public abstract void onLocationFailed(int type);
 
     /**
      * This method will be invoked if only you use android.location.LocationManager

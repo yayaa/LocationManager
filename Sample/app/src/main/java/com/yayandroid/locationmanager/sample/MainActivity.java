@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.yayandroid.locationmanager.LocationBaseActivity;
 import com.yayandroid.locationmanager.LocationConfiguration;
 import com.yayandroid.locationmanager.LocationManager;
+import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.LogType;
 import com.yayandroid.locationmanager.constants.ProviderType;
 
@@ -49,9 +50,28 @@ public class MainActivity extends LocationBaseActivity {
     }
 
     @Override
-    public void onLocationFailed() {
+    public void onLocationFailed(int failType) {
         dismissProgress();
-        locationText.setText("Couldn't get location!");
+
+        switch (failType) {
+            case FailType.PERMISSION_DENIED: {
+                locationText.setText("Couldn't get location, because user didn't give permission!");
+                break;
+            }
+            case FailType.GP_SERVICES_NOT_AVAILABLE:
+            case FailType.GP_SERVICES_CONNECTION_FAIL: {
+                locationText.setText("Couldn't get location, because Google Play Services not available!");
+                break;
+            }
+            case FailType.NETWORK_NOT_AVAILABLE: {
+                locationText.setText("Couldn't get location, because network is not accessible!");
+                break;
+            }
+            case FailType.TIMEOUT: {
+                locationText.setText("Couldn't get location, and timeout!");
+                break;
+            }
+        }
     }
 
     @Override

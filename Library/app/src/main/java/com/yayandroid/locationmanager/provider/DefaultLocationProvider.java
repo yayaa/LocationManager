@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 
+import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.LogType;
 import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.helper.ContinuousTask;
@@ -145,7 +146,7 @@ public class DefaultLocationProvider extends LocationProvider {
             askForLocation(LocationManager.NETWORK_PROVIDER);
         } else {
             LogUtils.logI("Network is not enabled, calling fail...", LogType.GENERAL);
-            onLocationFailed();
+            onLocationFailed(FailType.NETWORK_NOT_AVAILABLE);
         }
     }
 
@@ -192,9 +193,9 @@ public class DefaultLocationProvider extends LocationProvider {
         setWaiting(false);
     }
 
-    private void onLocationFailed() {
+    private void onLocationFailed(int type) {
         if (listener != null) {
-            listener.onLocationFailed();
+            listener.onLocationFailed(type);
         }
         setWaiting(false);
     }
@@ -276,7 +277,7 @@ public class DefaultLocationProvider extends LocationProvider {
                 getLocationByNetwork();
             } else {
                 LogUtils.logI("Network Provider is not provide location in required period, calling fail...", LogType.GENERAL);
-                onLocationFailed();
+                onLocationFailed(FailType.TIMEOUT);
             }
         }
 

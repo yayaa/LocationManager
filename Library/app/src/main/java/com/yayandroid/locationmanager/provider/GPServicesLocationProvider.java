@@ -7,6 +7,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
+import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.LogType;
 import com.yayandroid.locationmanager.helper.LocationUtils;
 import com.yayandroid.locationmanager.helper.LogUtils;
@@ -96,14 +97,14 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
             googleApiClient.connect();
         } else {
             LogUtils.logI("GoogleApiClient connection is suspended, calling fail...", LogType.GENERAL);
-            failed();
+            failed(FailType.GP_SERVICES_CONNECTION_FAIL);
         }
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         LogUtils.logI("GoogleApiClient connection is failed.", LogType.GENERAL);
-        failed();
+        failed(FailType.GP_SERVICES_CONNECTION_FAIL);
     }
 
     @Override
@@ -121,9 +122,9 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
         }
     }
 
-    private void failed() {
+    private void failed(int type) {
         if (listener != null) {
-            listener.onLocationFailed();
+            listener.onLocationFailed(type);
         }
         setWaiting(false);
     }

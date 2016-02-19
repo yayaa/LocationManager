@@ -7,6 +7,7 @@ import android.content.Intent;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.LogType;
 import com.yayandroid.locationmanager.constants.ProviderType;
 import com.yayandroid.locationmanager.constants.RequestCode;
@@ -215,7 +216,7 @@ public class LocationManager {
                                     RequestCode.GOOGLE_PLAY_SERVICES, new DialogInterface.OnCancelListener() {
                                         @Override
                                         public void onCancel(DialogInterface dialog) {
-                                            failed();
+                                            failed(FailType.GP_SERVICES_NOT_AVAILABLE);
                                         }
                                     });
 
@@ -241,7 +242,7 @@ public class LocationManager {
     private void continueWithDefaultProviders() {
         if (configuration.shouldUseOnlyGPServices()) {
             LogUtils.logI("Because the configuration, we can only use GooglePlayServices, so we abort.", LogType.GENERAL);
-            failed();
+            failed(FailType.GP_SERVICES_NOT_AVAILABLE);
         } else {
             LogUtils.logI("Attempting to get location from default providers...", LogType.GENERAL);
             askForPermission(ProviderType.DEFAULT_PROVIDERS);
@@ -285,9 +286,9 @@ public class LocationManager {
         return activeProvider;
     }
 
-    private void failed() {
+    private void failed(int type) {
         if (listener != null) {
-            listener.onLocationFailed();
+            listener.onLocationFailed(type);
         }
     }
 
@@ -316,20 +317,20 @@ public class LocationManager {
                 LogUtils.logI("User denied some of required permissions! "
                         + "Even though we have following permissions now, "
                         + "task will still be aborted.\n" + LocationUtils.getStringFromList(perms), LogType.GENERAL);
-                failed();
+                failed(FailType.PERMISSION_DENIED);
             }
         }
 
         @Override
         public void onPermissionsDenied(List<String> perms) {
             LogUtils.logI("User denied required permissions!\n" + LocationUtils.getStringFromList(perms), LogType.IMPORTANT);
-            failed();
+            failed(FailType.PERMISSION_DENIED);
         }
 
         @Override
         public void onPermissionRequestRejected() {
             LogUtils.logI("User didn't even let us to ask for permission!", LogType.IMPORTANT);
-            failed();
+            failed(FailType.PERMISSION_DENIED);
         }
 
     };
