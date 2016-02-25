@@ -36,6 +36,23 @@ public class DefaultLocationProvider extends LocationProvider {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        gpsDialog = null;
+
+        if (currentUpdateRequest != null) {
+            currentUpdateRequest.destroy();
+            currentUpdateRequest = null;
+        }
+
+        if (locationManager != null) {
+            locationManager.removeUpdates(locationChangeListener);
+            locationManager = null;
+        }
+    }
+
+    @Override
     public boolean requiresActivityResult() {
         return true;
     }
@@ -260,6 +277,11 @@ public class DefaultLocationProvider extends LocationProvider {
 
         public void release() {
             locationManager.removeUpdates(listener);
+        }
+
+        public void destroy() {
+            release();
+            this.listener = null;
         }
 
     }

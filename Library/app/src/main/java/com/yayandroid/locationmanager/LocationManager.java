@@ -125,7 +125,13 @@ public class LocationManager {
         if (activeProvider != null) {
             activeProvider.onDestroy();
         }
+
         gpServicesSwitchTask.stop();
+        gpServicesDialog = null;
+        listener = null;
+        activity = null;
+        activeProvider = null;
+        configuration = null;
     }
 
     /**

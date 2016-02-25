@@ -34,6 +34,24 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        // Clear in any possible way to prevent memory leaks
+        if (googleApiClient != null) {
+            googleApiClient.unregisterConnectionCallbacks(this);
+            googleApiClient.unregisterConnectionFailedListener(this);
+
+            if (googleApiClient.isConnected()) {
+                LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+            }
+
+            googleApiClient.disconnect();
+            googleApiClient = null;
+        }
+    }
+
+    @Override
     public boolean requiresActivityResult() {
         return false;
     }

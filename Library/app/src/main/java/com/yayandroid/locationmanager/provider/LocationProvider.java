@@ -84,6 +84,10 @@ public abstract class LocationProvider {
      * To remove location updates while getting from GPS or Network Provider
      */
     public void onDestroy() {
+        // Release instances not to cause leak
+        this.activity = null;
+        this.configuration = null;
+        this.listener = null;
     }
 
     public void onPause() {
