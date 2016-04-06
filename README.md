@@ -16,7 +16,7 @@ To get location on Android Devices, you need to
 <li>If none of these work, then fail</li>
 </ul>
 
-But wait, it didn't finish yet. Now we have Google Play Services optimised location provider [FusedLocationProviderApi][1] which provides a common location pool that any application use this api can retrieve location in which interval it requires. It reduces battary usage, and increases getting location period. But to implement this, you need to
+But wait, it didn't finish yet. Now we have Google Play Services optimised location provider [FusedLocationProviderApi][1] which provides a common location pool that any application use this api can retrieve location in which interval it requires. It reduces battery usage, and increases getting location period. But to implement this, you need to
 
 <ul>
 <li>Check whether Google Play Services is available on device</li>
