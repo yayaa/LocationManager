@@ -68,7 +68,7 @@ public abstract class LocationBaseActivity extends AppCompatActivity implements 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        locationManager.onActivityResult(requestCode, requestCode, data);
+        locationManager.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

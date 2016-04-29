@@ -10,5 +10,7 @@ public class FailType {
     public static final int GP_SERVICES_CONNECTION_FAIL = 3;
     public static final int NETWORK_NOT_AVAILABLE = 4;
     public static final int TIMEOUT = 5;
+    public static final int GP_SERVICES_SETTINGS_DIALOG = 6;
+    public static final int GP_SERVICES_SETTINGS_DENIED = 7;
 
 }

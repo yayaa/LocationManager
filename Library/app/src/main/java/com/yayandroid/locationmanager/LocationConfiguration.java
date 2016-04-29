@@ -14,9 +14,11 @@ public class LocationConfiguration {
     private boolean keepTracking = false;
     private boolean askForEnableGPS = true;
     private boolean askForGPServices = false;
+    private boolean askForSettingsApi = true;
     private boolean doNotUseGPServices = false;
     private boolean useOnlyGPServices = false;
     private boolean failOnConnectionSuspended = true;
+    private boolean failOnSettingsApiSuspended = false;
 
     private String rationalMessage = "";
     private String gpsMessage = "";
@@ -33,7 +35,7 @@ public class LocationConfiguration {
     /**
      * If you need to keep receiving location updates, then you need to set this as true.
      * Otherwise manager will be aborted after any location received.
-     * <p/>
+     * <p>
      * Default is False.
      */
     public LocationConfiguration keepTracking(boolean track) {
@@ -46,7 +48,7 @@ public class LocationConfiguration {
      * manager will check whether it is available or not.
      * Then if this flag is on it will ask user to turn it on,
      * if not it will switch directly to Network Provider.
-     * <p/>
+     * <p>
      * Default is True.
      */
     public LocationConfiguration askForEnableGPS(boolean askFor) {
@@ -58,7 +60,7 @@ public class LocationConfiguration {
      * Set true to ask user handle when there is some resolvable error
      * on connection GooglePlayServices, if you don't want to bother user
      * to configure Google Play Services to receive location then set this as false.
-     * <p/>
+     * <p>
      * Default is False.
      */
     public LocationConfiguration askForGooglePlayServices(boolean askForGPServices) {
@@ -67,9 +69,23 @@ public class LocationConfiguration {
     }
 
     /**
+     * While trying to get location via GooglePlayServices LocationApi,
+     * manager will check whether GPS, Wifi and Cell networks are available or not.
+     * Then if this flag is on it will ask user to turn them on, again, via GooglePlayServices
+     * by displaying a system dialog if not it will directly try to receive location
+     * -which probably not going to return no values.
+     * <p>
+     * Default is True.
+     */
+    public LocationConfiguration askForSettingsApi(boolean askForSettingsApi) {
+        this.askForSettingsApi = askForSettingsApi;
+        return this;
+    }
+
+    /**
      * While this is set true default location providers (GPS & Network)
      * will not be used to receive location, set false if you want them to be used.
-     * <p/>
+     * <p>
      * Default is False.
      */
     public LocationConfiguration useOnlyGPServices(boolean onlyGPServices) {
@@ -81,7 +97,7 @@ public class LocationConfiguration {
      * If you set this true, it will cause not to use Google Play Services at all
      * and manager will directly get location from
      * default location providers which are GPS or Network.
-     * <p/>
+     * <p>
      * Default is False.
      */
     public LocationConfiguration doNotUseGooglePlayServices(boolean use) {
@@ -93,13 +109,27 @@ public class LocationConfiguration {
      * As it is described in official documentation when Google Play Services is disconnected,
      * it will call ConnectionSuspended and after some time it will try to reconnect
      * you can determine to fail in this situation or you may want to wait.
-     * <p/>
+     * <p>
      * Default is True.
-     * <p/>
+     * <p>
      * https://developers.google.com/android/reference/com/google/android/gms/common/api/GoogleApiClient.ConnectionCallbacks#onConnectionSuspended(int)
      */
     public LocationConfiguration failOnConnectionSuspended(boolean shouldFail) {
         this.failOnConnectionSuspended = shouldFail;
+        return this;
+    }
+
+    /**
+     * This flag will be checked when it is not possible to display user a settingsApi dialog
+     * to switch necessary providers on, or when there is an error displaying the dialog.
+     * If the flag is on, then manager will notify listener as location failed,
+     * otherwise it will try to get location anyway -which probably not gonna happen.
+     * <p>
+     * Default is False. -Because after GooglePlayServices Provider it might switch
+     * to default providers, if we fail here then those provider will never trigger.
+     */
+    public LocationConfiguration failOnSettingsApiSuspended(boolean shouldFail) {
+        this.failOnSettingsApiSuspended = shouldFail;
         return this;
     }
 
@@ -133,7 +163,7 @@ public class LocationConfiguration {
 
     /**
      * LocationRequest object that you specified to use while getting location from Google Play Services
-     * <p/>
+     * <p>
      * Default is {@link LocationConfiguration#generateDefaultLocationRequest()}
      */
     public LocationConfiguration setLocationRequest(LocationRequest request) {
@@ -143,7 +173,7 @@ public class LocationConfiguration {
 
     /**
      * Minimum Accuracy that you seek location to be
-     * <p/>
+     * <p>
      * Default is {@link Default#MIN_ACCURACY}
      */
     public LocationConfiguration setMinAccuracy(float minAccuracy) {
@@ -154,7 +184,7 @@ public class LocationConfiguration {
     /**
      * Indicates time period that can be count as usable location,
      * this needs to be considered such as "last 5 minutes"
-     * <p/>
+     * <p>
      * Default is {@link Default#TIME_PERIOD}
      */
     public LocationConfiguration setWithinTimePeriod(long milliseconds) {
@@ -165,7 +195,7 @@ public class LocationConfiguration {
     /**
      * TimeInterval will be used while getting location from default location providers
      * It will define in which period updates need to be delivered
-     * <p/>
+     * <p>
      * Default is {@link Default#LOCATION_INTERVAL}
      */
     public LocationConfiguration setTimeInterval(long milliseconds) {
@@ -177,7 +207,7 @@ public class LocationConfiguration {
      * Indicates waiting time period before switching to next possible provider.
      * Possible to set provider wait periods separately by passing providerType as one of the
      * {@link com.yayandroid.locationmanager.constants.ProviderType.Source} values.
-     * <p/>
+     * <p>
      * Default values are {@link Default#WAIT_PERIOD}
      */
     public LocationConfiguration setWaitPeriod(@ProviderType.Source int providerType, long milliseconds) {
@@ -207,6 +237,10 @@ public class LocationConfiguration {
         return askForGPServices;
     }
 
+    public boolean shouldAskForSettingsApi() {
+        return askForSettingsApi;
+    }
+
     public boolean shouldNotUseGPServices() {
         return doNotUseGPServices;
     }
@@ -219,8 +253,12 @@ public class LocationConfiguration {
         return keepTracking;
     }
 
-    public boolean shouldFailWhenSuspended() {
+    public boolean shouldFailWhenConnectionSuspended() {
         return failOnConnectionSuspended;
+    }
+
+    public boolean shouldFailWhenSettingsApiSuspended() {
+        return failOnSettingsApiSuspended;
     }
 
     public boolean shouldAskForEnableGPS() {

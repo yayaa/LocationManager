@@ -51,7 +51,9 @@ new LocationConfiguration()
                 .keepTracking(true)
                 .useOnlyGPServices(false)
                 .askForGooglePlayServices(true)
+                .askForSettingsApi(true)
                 .failOnConnectionSuspended(true)
+                .failOnSettingsApiSuspended(false)
                 .doNotUseGooglePlayServices(false)
                 .askForEnableGPS(true)
                 .setMinAccuracy(200.0f)
@@ -100,7 +102,7 @@ Add library dependency to your `build.gradle` file:
 
 ```groovy
 dependencies {    
-     compile 'com.yayandroid:LocationManager:1.0.9'
+     compile 'com.yayandroid:LocationManager:1.1.1'
 }
 ```
 

@@ -54,7 +54,8 @@ public class DefaultLocationProvider extends LocationProvider {
 
     @Override
     public boolean requiresActivityResult() {
-        return true;
+        // If we need to ask for enabling GPS then we'll need to get onActivityResult callback
+        return configuration.shouldAskForEnableGPS();
     }
 
     @Override

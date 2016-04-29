@@ -71,6 +71,14 @@ public class MainActivity extends LocationBaseActivity {
                 locationText.setText("Couldn't get location, and timeout!");
                 break;
             }
+            case FailType.GP_SERVICES_SETTINGS_DENIED: {
+                locationText.setText("Couldn't get location, because user didn't activate providers via settingsApi!");
+                break;
+            }
+            case FailType.GP_SERVICES_SETTINGS_DIALOG: {
+                locationText.setText("Couldn't display settingsApi dialog!");
+                break;
+            }
         }
     }
 
