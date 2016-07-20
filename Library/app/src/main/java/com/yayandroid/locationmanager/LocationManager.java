@@ -259,7 +259,7 @@ public class LocationManager {
         this.locationFrom = locationFrom;
 
         if (PermissionManager.hasPermissions(activity, configuration.getRequiredPermissions())) {
-            locationPermissionGranted();
+            locationPermissionGranted(true);
         } else {
             LogUtils.logI("Asking for Runtime Permissions...", LogType.GENERAL);
             PermissionManager.requestPermissions(activity, permissionListener,
@@ -267,8 +267,13 @@ public class LocationManager {
         }
     }
 
-    private void locationPermissionGranted() {
+    private void locationPermissionGranted(boolean alreadyHadPermission) {
         LogUtils.logI("We got permission, getting location...", LogType.GENERAL);
+
+        if (listener != null) {
+            listener.onPermissionGranted(alreadyHadPermission);
+        }
+
         if (locationFrom == ProviderType.GOOGLE_PLAY_SERVICES) {
             setLocationProvider(new GPServicesLocationProvider());
             gpServicesSwitchTask.delayed(configuration.getGPServicesWaitPeriod());
@@ -318,7 +323,7 @@ public class LocationManager {
         public void onPermissionsGranted(List<String> perms) {
             if (perms.size() == configuration.getRequiredPermissions().length) {
                 LogUtils.logI("We have all required permission, moving on fetching location!", LogType.GENERAL);
-                locationPermissionGranted();
+                locationPermissionGranted(false);
             } else {
                 LogUtils.logI("User denied some of required permissions! "
                         + "Even though we have following permissions now, "

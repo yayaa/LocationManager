@@ -21,6 +21,15 @@ public abstract class LocationReceiver {
     public abstract void onLocationFailed(int type);
 
     /**
+     * This method will be invoked when user grants for location permissions,
+     * or when you ask for it but the application already had that granted.
+     * You can determine if permission is just granted or
+     * did the application already have it by checking boolean input of this method.
+     */
+    public void onPermissionGranted(boolean alreadyHadPermission) {
+    }
+
+    /**
      * This method will be invoked if only you use android.location.LocationManager
      * with GPS or Network Providers to receive location
      */
