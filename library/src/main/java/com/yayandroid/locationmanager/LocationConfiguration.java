@@ -206,7 +206,7 @@ public class LocationConfiguration {
     /**
      * Indicates waiting time period before switching to next possible provider.
      * Possible to set provider wait periods separately by passing providerType as one of the
-     * {@link com.yayandroid.locationmanager.constants.ProviderType.Source} values.
+     * {@link ProviderType.Source} values.
      * <p>
      * Default values are {@link Default#WAIT_PERIOD}
      */
