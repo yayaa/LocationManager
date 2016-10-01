@@ -34,7 +34,8 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
 
     @Override
     public void onResume() {
-        if (!settingsDialogIsOn && googleApiClient != null) {
+        if (!settingsDialogIsOn && googleApiClient != null &&
+                (isWaiting() || configuration.shouldKeepTracking())) {
             googleApiClient.connect();
         }
     }
@@ -49,19 +50,7 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        // Clear in any possible way to prevent memory leaks
-        if (googleApiClient != null) {
-            googleApiClient.unregisterConnectionCallbacks(this);
-            googleApiClient.unregisterConnectionFailedListener(this);
-
-            if (googleApiClient.isConnected()) {
-                LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-            }
-
-            googleApiClient.disconnect();
-            googleApiClient = null;
-        }
+        clearGoogleApiClient();
     }
 
     @Override
@@ -247,5 +236,20 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
             listener.onLocationFailed(type);
         }
         setWaiting(false);
+    }
+
+    private void clearGoogleApiClient() {
+        // Clear in any possible way to prevent memory leaks
+        if (googleApiClient != null) {
+            googleApiClient.unregisterConnectionCallbacks(this);
+            googleApiClient.unregisterConnectionFailedListener(this);
+
+            if (googleApiClient.isConnected()) {
+                LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+            }
+
+            googleApiClient.disconnect();
+            googleApiClient = null;
+        }
     }
 }
