@@ -3,6 +3,8 @@ package com.yayandroid.locationmanager;
 import android.location.Location;
 import android.os.Bundle;
 
+import com.yayandroid.locationmanager.constants.FailType;
+
 /**
  * Created by Yahya Bayramoglu on 09/02/16.
  */
@@ -15,7 +17,7 @@ public abstract class LocationReceiver {
 
     /**
      * When it is not possible to receive location, such as no active provider or no permission etc.
-     * It will pass an integer value from {@link com.yayandroid.locationmanager.constants.FailType}
+     * It will pass an integer value from {@linkplain FailType}
      * which will help you to determine how did it fail to receive location
      */
     public abstract void onLocationFailed(int type);

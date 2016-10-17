@@ -71,7 +71,7 @@ public class LocationManager {
     /**
      * Instead of using DefaultLocationProvider you can create your own,
      * and set it to manager so it will run your LocationProvider.
-     * Please refer to {@link DefaultLocationProvider}
+     * Please refer to {@linkplain DefaultLocationProvider}
      */
     public LocationManager setLocationProvider(LocationProvider provider) {
         if (provider != null) {

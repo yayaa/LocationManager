@@ -134,7 +134,7 @@ public class LocationConfiguration {
     }
 
     /**
-     * If you need to ask any other permissions beside {@link Default#LOCATION_PERMISSIONS}
+     * If you need to ask any other permissions beside {@linkplain Default#LOCATION_PERMISSIONS}
      * or you may not need both of those permissions, you can change permissions
      * by calling this method with new permissions' array.
      */
@@ -164,7 +164,7 @@ public class LocationConfiguration {
     /**
      * LocationRequest object that you specified to use while getting location from Google Play Services
      * <p>
-     * Default is {@link LocationConfiguration#generateDefaultLocationRequest()}
+     * Default is {@linkplain LocationConfiguration#generateDefaultLocationRequest()}
      */
     public LocationConfiguration setLocationRequest(LocationRequest request) {
         this.locationRequest = request;
@@ -174,7 +174,7 @@ public class LocationConfiguration {
     /**
      * Minimum Accuracy that you seek location to be
      * <p>
-     * Default is {@link Default#MIN_ACCURACY}
+     * Default is {@linkplain Default#MIN_ACCURACY}
      */
     public LocationConfiguration setMinAccuracy(float minAccuracy) {
         this.acceptableAccuracy = minAccuracy;
@@ -185,7 +185,7 @@ public class LocationConfiguration {
      * Indicates time period that can be count as usable location,
      * this needs to be considered such as "last 5 minutes"
      * <p>
-     * Default is {@link Default#TIME_PERIOD}
+     * Default is {@linkplain Default#TIME_PERIOD}
      */
     public LocationConfiguration setWithinTimePeriod(long milliseconds) {
         this.acceptableTimePeriod = milliseconds;
@@ -196,7 +196,7 @@ public class LocationConfiguration {
      * TimeInterval will be used while getting location from default location providers
      * It will define in which period updates need to be delivered
      * <p>
-     * Default is {@link Default#LOCATION_INTERVAL}
+     * Default is {@linkplain Default#LOCATION_INTERVAL}
      */
     public LocationConfiguration setTimeInterval(long milliseconds) {
         this.requiredTimeInterval = milliseconds;
@@ -206,9 +206,9 @@ public class LocationConfiguration {
     /**
      * Indicates waiting time period before switching to next possible provider.
      * Possible to set provider wait periods separately by passing providerType as one of the
-     * {@link ProviderType.Source} values.
+     * {@linkplain ProviderType.Source} values.
      * <p>
-     * Default values are {@link Default#WAIT_PERIOD}
+     * Default values are {@linkplain Default#WAIT_PERIOD}
      */
     public LocationConfiguration setWaitPeriod(@ProviderType.Source int providerType, long milliseconds) {
         switch (providerType) {
