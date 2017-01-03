@@ -34,8 +34,7 @@ public class MainActivity extends LocationBaseActivity {
     public LocationConfiguration getLocationConfiguration() {
         return new LocationConfiguration()
                 .keepTracking(true)
-                .doNotUseGooglePlayServices(true)
-                .askForSettingsApi(false)
+                .askForGooglePlayServices(true)
                 .setMinAccuracy(200.0f)
                 .setWaitPeriod(ProviderType.GOOGLE_PLAY_SERVICES, 5 * 1000)
                 .setWaitPeriod(ProviderType.GPS, 10 * 1000)
