@@ -26,6 +26,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 
 import com.yayandroid.locationmanager.constants.RequestCode;
 
@@ -63,7 +64,8 @@ public class PermissionManager {
         requestPermissions(object, listener, rationale, android.R.string.ok, android.R.string.cancel, perms);
     }
 
-    public static void requestPermissions(final Object object, final PermissionListener listener, String rationale, @StringRes int positiveButton,
+    public static void requestPermissions(final Object object, final PermissionListener listener, String rationale,
+          @StringRes int positiveButton,
                                           @StringRes int negativeButton, final String... perms) {
 
         checkCallingObjectSuitability(object);
@@ -73,7 +75,7 @@ public class PermissionManager {
             shouldShowRationale = shouldShowRationale || shouldShowRequestPermissionRationale(object, perm);
         }
 
-        if (shouldShowRationale) {
+        if (shouldShowRationale && !TextUtils.isEmpty(rationale)) {
             AlertDialog dialog = new AlertDialog.Builder(getActivity(object))
                     .setMessage(rationale)
                     .setCancelable(false)

@@ -9,6 +9,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 
 import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.LogType;
@@ -68,7 +69,7 @@ public class DefaultLocationProvider extends LocationProvider {
         setWaiting(true);
 
         // First check for GPS
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        if (isGPSProviderEnabled()) {
             LogUtils.logI("GPS is already enabled, getting location...", LogType.GENERAL);
             askForLocation(LocationManager.GPS_PROVIDER);
         } else {
@@ -97,7 +98,7 @@ public class DefaultLocationProvider extends LocationProvider {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RequestCode.GPS_ENABLE) {
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            if (isGPSProviderEnabled()) {
                 LogUtils.logI("User activated GPS, listen for location", LogType.GENERAL);
                 askForLocation(LocationManager.GPS_PROVIDER);
             } else {
@@ -132,6 +133,9 @@ public class DefaultLocationProvider extends LocationProvider {
     }
 
     private void askForEnableGPS() {
+        if (TextUtils.isEmpty(configuration.getGPSMessage()))
+            throw new IllegalArgumentException("You need to set a gpsMessage in order to display to user");
+
         gpsDialog = new AlertDialog.Builder(activity)
                 .setMessage(configuration.getGPSMessage())
                 .setCancelable(false)
@@ -158,8 +162,7 @@ public class DefaultLocationProvider extends LocationProvider {
     }
 
     private void getLocationByNetwork() {
-        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-                && LocationUtils.isNetworkAvailable(activity)) {
+        if (isNetworkProviderEnabled() && LocationUtils.isNetworkAvailable(activity)) {
             LogUtils.logI("Network is enabled, getting location...", LogType.GENERAL);
             askForLocation(LocationManager.NETWORK_PROVIDER);
         } else {
@@ -202,6 +205,14 @@ public class DefaultLocationProvider extends LocationProvider {
 
     private long getWaitPeriod() {
         return provider.equals(LocationManager.GPS_PROVIDER) ? configuration.getGPSWaitPeriod() : configuration.getNetworkWaitPeriod();
+    }
+
+    private boolean isNetworkProviderEnabled() {
+        return locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    private boolean isGPSProviderEnabled() {
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
     private void onLocationReceived(Location location) {
