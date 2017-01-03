@@ -130,6 +130,13 @@ public class DefaultLocationProvider extends LocationProvider {
         if (isWaiting()) {
             cancelTask.resume();
         }
+
+        if (isDialogShowing() && isGPSProviderEnabled()){
+            // User activated GPS by going settings manually
+            gpsDialog.dismiss();
+            LogUtils.logI("User activated GPS, listen for location", LogType.GENERAL);
+            askForLocation(LocationManager.GPS_PROVIDER);
+        }
     }
 
     private void askForEnableGPS() {
