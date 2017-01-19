@@ -213,6 +213,9 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
 
     @SuppressWarnings("ResourceType")
     private void requestLocationUpdate() {
+        if (listener != null) {
+            listener.onLocationUpdateStarted();
+        }
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, configuration.getLocationRequest(), this);
     }
 

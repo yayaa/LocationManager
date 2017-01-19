@@ -52,4 +52,10 @@ public abstract class LocationReceiver {
     public void onProviderDisabled(String provider) {
     }
 
+    /**
+     * This method will be invoked when requesting location updates
+     * with GPS or Network Providers
+     */
+    public void onLocationUpdateStarted() {
+    }
 }
