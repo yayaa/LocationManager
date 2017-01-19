@@ -206,6 +206,10 @@ public class DefaultLocationProvider extends LocationProvider {
             cancelTask.delayed(getWaitPeriod());
         }
 
+        if (listener != null) {
+            listener.onLocationUpdateStarted();
+        }
+
         currentUpdateRequest = new UpdateRequest(provider, timeInterval, 0, locationChangeListener);
         currentUpdateRequest.run();
     }

@@ -41,6 +41,9 @@ public abstract class LocationBaseActivity extends AppCompatActivity implements 
     public void onProviderDisabled(String provider) {
     }
 
+    public void onLocationUpdateStarted(){
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +105,11 @@ public abstract class LocationBaseActivity extends AppCompatActivity implements 
         @Override
         public void onProviderDisabled(String provider) {
             LocationBaseActivity.this.onProviderDisabled(provider);
+        }
+
+        @Override
+        public void onLocationUpdateStarted() {
+            LocationBaseActivity.this.onLocationUpdateStarted();
         }
     };
 
