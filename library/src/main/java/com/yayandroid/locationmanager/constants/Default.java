@@ -21,6 +21,12 @@ public class Default {
 
     public static final float MIN_ACCURACY = 5.0f;
 
+    public static final boolean KEEP_TRACKING = false;
+    public static final boolean ASK_FOR_GP_SERVICES = false;
+    public static final boolean ASK_FOR_SETTINGS_API = true;
+    public static final boolean FAIL_ON_CONNECTION_SUSPENDED = true;
+    public static final boolean FAIL_ON_SETTINGS_API_SUSPENDED = false;
+
     public static final String[] LOCATION_PERMISSIONS = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION

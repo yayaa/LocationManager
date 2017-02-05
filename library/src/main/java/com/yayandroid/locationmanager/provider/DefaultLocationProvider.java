@@ -9,7 +9,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
 
 import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.LogType;
@@ -140,9 +139,6 @@ public class DefaultLocationProvider extends LocationProvider {
     }
 
     private void askForEnableGPS() {
-        if (TextUtils.isEmpty(configuration.getGPSMessage()))
-            throw new IllegalArgumentException("You need to set a gpsMessage in order to display to user");
-
         gpsDialog = new AlertDialog.Builder(activity)
                 .setMessage(configuration.getGPSMessage())
                 .setCancelable(false)
