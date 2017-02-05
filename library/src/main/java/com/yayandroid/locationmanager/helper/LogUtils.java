@@ -7,9 +7,13 @@ import com.yayandroid.locationmanager.constants.LogType;
 /**
  * Created by Yahya Bayramoglu on 09/02/16.
  */
-public class LogUtils {
+public final class LogUtils {
 
     private static int logType = LogType.IMPORTANT;
+
+    private LogUtils() {
+        // No instance
+    }
 
     public static void setLogType(@LogType.Level int logType) {
         LogUtils.logType = logType;
@@ -49,8 +53,7 @@ public class LogUtils {
         StackTraceElement[] trace = Thread.currentThread().getStackTrace();
         StackTraceElement relevantTrace = trace[4];
         String className = relevantTrace.getClassName();
-        int lastIndex = className.lastIndexOf(".");
+        int lastIndex = className.lastIndexOf('.');
         return className.substring(lastIndex + 1);
     }
-
 }

@@ -13,6 +13,7 @@ import com.yayandroid.locationmanager.constants.LogType;
 import com.yayandroid.locationmanager.constants.ProviderType;
 import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.helper.ContinuousTask;
+import com.yayandroid.locationmanager.helper.ContinuousTask.ContinuousTaskRunner;
 import com.yayandroid.locationmanager.helper.LocationUtils;
 import com.yayandroid.locationmanager.helper.LogUtils;
 import com.yayandroid.locationmanager.helper.PermissionManager;
@@ -23,7 +24,10 @@ import com.yayandroid.locationmanager.view.ContextProcessor;
 
 import java.util.List;
 
-public class LocationManager {
+public class LocationManager implements ContinuousTaskRunner {
+
+    private static final String GOOGLE_PLAY_SERVICE_SWITCH_TASK = "googlePlayServiceSwitchTask";
+    private final ContinuousTask gpServicesSwitchTask = new ContinuousTask(GOOGLE_PLAY_SERVICE_SWITCH_TASK, this);
 
     private int locationFrom = ProviderType.NONE;
 
@@ -50,7 +54,7 @@ public class LocationManager {
     }
 
     /**
-     * This specifies on which activity this manager will run,
+     * This specifies on which activity this manager will runScheduledTask,
      * this also needs to be set before you attempt to get location
      */
     public LocationManager on(Context context) {
@@ -69,7 +73,7 @@ public class LocationManager {
 
     /**
      * Instead of using DefaultLocationProvider you can create your own,
-     * and set it to manager so it will run your LocationProvider.
+     * and set it to manager so it will runScheduledTask your LocationProvider.
      * Please refer to {@linkplain DefaultLocationProvider}
      */
     public LocationManager setLocationProvider(LocationProvider provider) {
@@ -192,7 +196,7 @@ public class LocationManager {
 
     private void get(boolean askForGPServices) {
         if (contextProcessor == null)
-            throw new RuntimeException("You must set a context to run LocationManager on!");
+            throw new RuntimeException("You must set a context to runScheduledTask LocationManager on!");
 
         if (configuration.gpServicesConfiguration() == null) {
             LogUtils.logI("Configuration requires not to use Google Play Services, " +
@@ -260,8 +264,9 @@ public class LocationManager {
 
     private void askForPermission(@ProviderType.Source int locationFrom) {
         this.locationFrom = locationFrom;
-        if (contextProcessor.isContextExist() && PermissionManager.hasPermissions(contextProcessor.getContext(), configuration
-              .requiredPermissions())) {
+        if (contextProcessor.isContextExist() && PermissionManager
+              .hasPermissions(contextProcessor.getContext(), configuration
+                    .requiredPermissions())) {
             locationPermissionGranted(true);
         } else {
             if (contextProcessor.isActivityExist()) {
@@ -312,20 +317,6 @@ public class LocationManager {
         }
     }
 
-    private final ContinuousTask gpServicesSwitchTask = new ContinuousTask() {
-
-        @Override
-        public void run() {
-            if (activeProvider instanceof GPServicesLocationProvider && activeProvider.isWaiting()) {
-                LogUtils.logI("We couldn't receive location from GooglePlayServices, "
-                        + "so switching default providers...", LogType.IMPORTANT);
-                cancel();
-                continueWithDefaultProviders();
-            }
-        }
-
-    };
-
     private final PermissionManager.PermissionListener permissionListener = new PermissionManager.PermissionListener() {
 
         @Override
@@ -352,7 +343,17 @@ public class LocationManager {
             LogUtils.logI("User didn't even let us to ask for permission!", LogType.IMPORTANT);
             failed(FailType.PERMISSION_DENIED);
         }
-
     };
 
+    @Override
+    public void runScheduledTask(String taskId) {
+        if (taskId.equals(GOOGLE_PLAY_SERVICE_SWITCH_TASK)) {
+            if (activeProvider instanceof GPServicesLocationProvider && activeProvider.isWaiting()) {
+                LogUtils.logI("We couldn't receive location from GooglePlayServices, "
+                      + "so switching default providers...", LogType.IMPORTANT);
+                cancel();
+                continueWithDefaultProviders();
+            }
+        }
+    }
 }

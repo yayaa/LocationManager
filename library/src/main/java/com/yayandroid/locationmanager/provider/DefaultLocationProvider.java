@@ -14,6 +14,7 @@ import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.LogType;
 import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.helper.ContinuousTask;
+import com.yayandroid.locationmanager.helper.ContinuousTask.ContinuousTaskRunner;
 import com.yayandroid.locationmanager.helper.LocationUtils;
 import com.yayandroid.locationmanager.helper.LogUtils;
 
@@ -21,7 +22,10 @@ import com.yayandroid.locationmanager.helper.LogUtils;
  * Created by Yahya Bayramoglu on 09/02/16.
  */
 @SuppressWarnings("ResourceType")
-public class DefaultLocationProvider extends LocationProvider {
+public class DefaultLocationProvider extends LocationProvider implements ContinuousTaskRunner {
+
+    private static final String PROVIDER_SWITCH_TASK = "providerSwitchTask";
+    private final ContinuousTask cancelTask = new ContinuousTask(PROVIDER_SWITCH_TASK, this);
 
     private String provider;
     private LocationManager locationManager;
@@ -33,8 +37,7 @@ public class DefaultLocationProvider extends LocationProvider {
         super.onCreate();
 
         if (contextProcessor.isContextExist()) {
-            this.locationManager = (LocationManager) contextProcessor.getContext()
-                  .getSystemService(Context.LOCATION_SERVICE);
+            locationManager = (LocationManager) contextProcessor.getContext().getSystemService(Context.LOCATION_SERVICE);
         } else {
             onLocationFailed(FailType.VIEW_DETACHED);
         }
@@ -65,7 +68,7 @@ public class DefaultLocationProvider extends LocationProvider {
 
     @Override
     public boolean isDialogShowing() {
-        return (gpsDialog != null && gpsDialog.isShowing());
+        return gpsDialog != null && gpsDialog.isShowing();
     }
 
     @Override
@@ -90,10 +93,7 @@ public class DefaultLocationProvider extends LocationProvider {
 
     @Override
     public void cancel() {
-        if (currentUpdateRequest != null) {
-            currentUpdateRequest.release();
-        }
-
+        if (currentUpdateRequest != null) currentUpdateRequest.release();
         cancelTask.stop();
     }
 
@@ -103,8 +103,7 @@ public class DefaultLocationProvider extends LocationProvider {
 
         if (requestCode == RequestCode.GPS_ENABLE) {
             if (isGPSProviderEnabled()) {
-                LogUtils.logI("User activated GPS, listen for location", LogType.GENERAL);
-                askForLocation(LocationManager.GPS_PROVIDER);
+                onGPSActivated();
             } else {
                 LogUtils.logI("User didn't activate GPS, so continue with Network Provider", LogType.IMPORTANT);
                 getLocationByNetwork();
@@ -138,8 +137,7 @@ public class DefaultLocationProvider extends LocationProvider {
         if (isDialogShowing() && isGPSProviderEnabled()) {
             // User activated GPS by going settings manually
             gpsDialog.dismiss();
-            LogUtils.logI("User activated GPS, listen for location", LogType.GENERAL);
-            askForLocation(LocationManager.GPS_PROVIDER);
+            onGPSActivated();
         }
     }
 
@@ -168,6 +166,11 @@ public class DefaultLocationProvider extends LocationProvider {
               .create();
 
         gpsDialog.show();
+    }
+
+    private void onGPSActivated() {
+        LogUtils.logI("User activated GPS, listen for location", LogType.GENERAL);
+        askForLocation(LocationManager.GPS_PROVIDER);
     }
 
     private void getLocationByNetwork() {
@@ -283,11 +286,29 @@ public class DefaultLocationProvider extends LocationProvider {
         }
     };
 
+    @Override
+    public void runScheduledTask(String taskId) {
+        if (taskId.equals(PROVIDER_SWITCH_TASK)) {
+            if (currentUpdateRequest != null) {
+                currentUpdateRequest.release();
+            }
+
+            if (provider.equals(LocationManager.GPS_PROVIDER)) {
+                LogUtils.logI("We waited enough for GPS, switching to Network provider...", LogType.IMPORTANT);
+                getLocationByNetwork();
+            } else {
+                LogUtils.logI("Network Provider is not provide location in required period, calling fail...",
+                      LogType.GENERAL);
+                onLocationFailed(FailType.TIMEOUT);
+            }
+        }
+    }
+
     private class UpdateRequest {
 
-        private String provider;
-        private long minTime;
-        private float minDistance;
+        private final String provider;
+        private final long minTime;
+        private final float minDistance;
         private LocationListener listener;
 
         public UpdateRequest(String provider, long minTime, float minDistance, LocationListener listener) {
@@ -307,26 +328,7 @@ public class DefaultLocationProvider extends LocationProvider {
 
         public void destroy() {
             release();
-            this.listener = null;
+            listener = null;
         }
     }
-
-    private final ContinuousTask cancelTask = new ContinuousTask() {
-
-        @Override
-        public void run() {
-            if (currentUpdateRequest != null) {
-                currentUpdateRequest.release();
-            }
-
-            if (provider.equals(LocationManager.GPS_PROVIDER)) {
-                LogUtils.logI("We waited enough for GPS, switching to Network provider...", LogType.IMPORTANT);
-                getLocationByNetwork();
-            } else {
-                LogUtils.logI("Network Provider is not provide location in required period, calling fail...",
-                      LogType.GENERAL);
-                onLocationFailed(FailType.TIMEOUT);
-            }
-        }
-    };
 }

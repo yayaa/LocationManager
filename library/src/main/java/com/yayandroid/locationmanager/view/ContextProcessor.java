@@ -11,7 +11,7 @@ public class ContextProcessor {
     private WeakReference<Context> weakContext;
 
     public ContextProcessor(Context context) {
-        this.weakContext = new WeakReference<>(context);
+        weakContext = new WeakReference<>(context);
     }
 
     public @Nullable Activity getActivity() {

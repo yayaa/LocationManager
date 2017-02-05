@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -37,30 +38,41 @@ import java.util.List;
  * Edited by Yahya Bayramoglu on 09/02/16.
  * Original Source: https://github.com/googlesamples/easypermissions
  */
-public class PermissionManager {
+public final class PermissionManager {
+
+    private PermissionManager() {
+        // No instance
+    }
 
     public interface PermissionListener {
 
+        /**
+         * Given permissions are granted by User
+         */
         void onPermissionsGranted(List<String> perms);
 
+        /**
+         * Given permissions are denied by User
+         */
         void onPermissionsDenied(List<String> perms);
 
+        /**
+         * When User don't want to give permissions, rejected by rationalMessage dialog
+         */
         void onPermissionRequestRejected();
 
     }
 
     public static boolean hasPermissions(Context context, String... perms) {
-        for (String perm : perms) {
-            boolean hasPerm = (ContextCompat.checkSelfPermission(context, perm) == PackageManager.PERMISSION_GRANTED);
-            if (!hasPerm) {
+        for (int i = 0, size = perms.length; i < size; i++) {
+            if (ContextCompat.checkSelfPermission(context, perms[i]) != PackageManager.PERMISSION_GRANTED) {
                 return false;
             }
         }
-
         return true;
     }
 
-    public static void requestPermissions(Object object, PermissionListener listener, String rationale, final String... perms) {
+    public static void requestPermissions(Object object, PermissionListener listener, String rationale, String... perms) {
         requestPermissions(object, listener, rationale, android.R.string.ok, android.R.string.cancel, perms);
     }
 
@@ -70,12 +82,13 @@ public class PermissionManager {
         checkCallingObjectSuitability(object);
 
         boolean shouldShowRationale = false;
-        for (String perm : perms) {
-            shouldShowRationale = shouldShowRationale || shouldShowRequestPermissionRationale(object, perm);
+        for (int i = 0, size = perms.length; i < size; i++) {
+            shouldShowRationale = shouldShowRationale || shouldShowRequestPermissionRationale(object, perms[i]);
         }
 
-        if (shouldShowRationale && !TextUtils.isEmpty(rationale)) {
-            AlertDialog dialog = new AlertDialog.Builder(getActivity(object))
+        Activity activity = getActivity(object);
+        if (shouldShowRationale && !TextUtils.isEmpty(rationale) && activity != null) {
+            AlertDialog dialog = new AlertDialog.Builder(activity)
                     .setMessage(rationale)
                     .setCancelable(false)
                     .setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {
@@ -97,32 +110,27 @@ public class PermissionManager {
         }
     }
 
-    public static void onRequestPermissionsResult(PermissionListener callbacks, int requestCode, String[] permissions,
-                                                  int[] grantResults) {
+    public static void onRequestPermissionsResult(PermissionListener callbacks, int requestCode,
+          String[] permissions, int[] grantResults) {
 
         if (requestCode == RequestCode.RUNTIME_PERMISSION) {
             // Make a collection of granted and denied permissions from the request.
-            ArrayList<String> granted = new ArrayList<>();
-            ArrayList<String> denied = new ArrayList<>();
-            for (int i = 0; i < permissions.length; i++) {
-                String perm = permissions[i];
+            ArrayList<String> granted = new ArrayList<>(10); // Default capacity
+            ArrayList<String> denied = new ArrayList<>(10); // Default capacity
+
+            for (int i = 0, size = permissions.length; i < size; i++) {
                 if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    granted.add(perm);
+                    granted.add(permissions[i]);
                 } else {
-                    denied.add(perm);
+                    denied.add(permissions[i]);
                 }
             }
 
             // Report granted permissions, if any.
-            if (!granted.isEmpty()) {
-                // Notify callbacks
-                callbacks.onPermissionsGranted(granted);
-            }
+            if (!granted.isEmpty()) callbacks.onPermissionsGranted(granted);
 
             // Report denied permissions, if any.
-            if (!denied.isEmpty()) {
-                callbacks.onPermissionsDenied(denied);
-            }
+            if (!denied.isEmpty()) callbacks.onPermissionsDenied(denied);
         }
     }
 
@@ -146,6 +154,7 @@ public class PermissionManager {
         }
     }
 
+    @Nullable
     private static Activity getActivity(Object object) {
         if (object instanceof Activity) {
             return ((Activity) object);

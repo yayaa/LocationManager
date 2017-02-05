@@ -15,18 +15,23 @@ import com.yayandroid.locationmanager.configuration.LocationConfiguration;
 import java.util.Date;
 import java.util.List;
 
-public class LocationUtils {
+public final class LocationUtils {
+
+    private LocationUtils() {
+        // No instance
+    }
 
     public static int isGooglePlayServicesAvailable(Context context) {
         if (context == null) return -1;
         return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
     }
 
-    public static @Nullable Dialog getGooglePlayServicesErrorDialog(Context context, int gpServicesAvailability,
+    @Nullable
+    public static Dialog getGooglePlayServicesErrorDialog(Context context, int gpServicesAvailability,
           int requestCode, OnCancelListener onCancelListener) {
-        if (context == null || !(context instanceof Activity)) return null;
-        return GoogleApiAvailability.getInstance().getErrorDialog((Activity) context, gpServicesAvailability,
-              requestCode, onCancelListener);
+        if (!(context instanceof Activity)) return null;
+        return GoogleApiAvailability.getInstance()
+              .getErrorDialog((Activity) context, gpServicesAvailability, requestCode, onCancelListener);
     }
 
     public static boolean isNetworkAvailable(Context context) {
@@ -37,31 +42,23 @@ public class LocationUtils {
     }
 
     public static boolean isUsable(LocationConfiguration configuration, Location location) {
-        if (location != null) {
-            float givenAccuracy = location.getAccuracy();
-            long givenTime = location.getTime();
-            long minAcceptableTime = new Date().getTime() - configuration.defaultProviderConfiguration()
-                  .acceptableTimePeriod();
+        if (location == null) return false;
 
-            if (minAcceptableTime <= givenTime
-                    && configuration.defaultProviderConfiguration().acceptableAccuracy() >= givenAccuracy) {
-                return true;
-            }
-        }
-        return false;
+        float givenAccuracy = location.getAccuracy();
+        long givenTime = location.getTime();
+        long minAcceptableTime = new Date().getTime() - configuration.defaultProviderConfiguration().acceptableTimePeriod();
+
+        return minAcceptableTime <= givenTime
+              && configuration.defaultProviderConfiguration().acceptableAccuracy() >= givenAccuracy;
     }
 
     public static String getStringFromList(List<String> list) {
-        String result = "[ ";
-        int size = list.size();
-        for (int i = 0; i < size; i++) {
-            result += list.get(i);
-            if (i == size - 1) {
-                result += " ]";
-            } else {
-                result += ", ";
-            }
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("[ ");
+        for (int i = 0, size = list.size(); i < size; i++) {
+            stringBuilder.append(list.get(i));
+            stringBuilder.append((i == size - 1) ? " ]" : ", ");
         }
-        return result;
+        return stringBuilder.toString();
     }
 }

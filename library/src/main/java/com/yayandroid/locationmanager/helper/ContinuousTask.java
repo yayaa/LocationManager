@@ -2,19 +2,41 @@ package com.yayandroid.locationmanager.helper;
 
 import android.os.Handler;
 
-/**
- * Created by Yahya Bayramoglu on 11/02/16.
- */
-public abstract class ContinuousTask extends Handler implements Runnable {
+import com.yayandroid.locationmanager.constants.LogType;
+
+import java.lang.ref.WeakReference;
+
+public class ContinuousTask extends Handler implements Runnable {
+
+    private final static long NONE = Long.MIN_VALUE;
+
+    private final String taskId;
+    private final WeakReference<ContinuousTaskRunner> weekContinuousTaskRunner;
+
+    private long requiredDelay = NONE;
+    private long initialTime = NONE;
+    private long remainingTime = NONE;
 
     private boolean isSet = false;
-    private long NONE = Long.MIN_VALUE;
-    private long requiredDelay = NONE, initialTime = NONE, remainingTime = NONE;
+
+    public interface ContinuousTaskRunner {
+        /**
+         * Callback to take action when scheduled time is arrived.
+         * Called with given taskId in order to distinguish which task should be run,
+         * in case of same {@linkplain ContinuousTaskRunner} passed to multiple Tasks
+         */
+        void runScheduledTask(String taskId);
+    }
+
+    public ContinuousTask(String taskId, ContinuousTaskRunner continuousTaskRunner) {
+        this.taskId = taskId;
+        weekContinuousTaskRunner = new WeakReference<>(continuousTaskRunner);
+    }
 
     public void delayed(long delay) {
-        this.requiredDelay = delay;
-        this.remainingTime = requiredDelay;
-        this.initialTime = System.currentTimeMillis();
+        requiredDelay = delay;
+        remainingTime = requiredDelay;
+        initialTime = System.currentTimeMillis();
 
         set(delay);
     }
@@ -22,7 +44,7 @@ public abstract class ContinuousTask extends Handler implements Runnable {
     public void pause() {
         if (requiredDelay != NONE) {
             release();
-            this.remainingTime = requiredDelay - (System.currentTimeMillis() - initialTime);
+            remainingTime = requiredDelay - (System.currentTimeMillis() - initialTime);
         }
     }
 
@@ -35,12 +57,19 @@ public abstract class ContinuousTask extends Handler implements Runnable {
     public void stop() {
         release();
 
-        this.requiredDelay = NONE;
-        this.initialTime = NONE;
-        this.remainingTime = NONE;
+        requiredDelay = NONE;
+        initialTime = NONE;
+        remainingTime = NONE;
     }
 
-    public abstract void run();
+    @Override
+    public void run() {
+        if (weekContinuousTaskRunner.get() != null) {
+            weekContinuousTaskRunner.get().runScheduledTask(taskId);
+        } else {
+            LogUtils.logE("Something went wrong and task failed.", LogType.IMPORTANT);
+        }
+    }
 
     private void set(long delay) {
         if (!isSet) {
@@ -53,5 +82,4 @@ public abstract class ContinuousTask extends Handler implements Runnable {
         removeCallbacks(this);
         isSet = false;
     }
-
 }
