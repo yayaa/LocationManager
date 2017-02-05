@@ -1,23 +1,18 @@
-package com.yayandroid.locationmanager.helper;
+package com.yayandroid.locationmanager.helper.continuoustask;
 
 import android.os.Handler;
+import android.support.annotation.NonNull;
 
 import com.yayandroid.locationmanager.constants.LogType;
+import com.yayandroid.locationmanager.helper.LogUtils;
 
 import java.lang.ref.WeakReference;
 
 public class ContinuousTask extends Handler implements Runnable {
 
-    private final static long NONE = Long.MIN_VALUE;
-
     private final String taskId;
     private final WeakReference<ContinuousTaskRunner> weekContinuousTaskRunner;
-
-    private long requiredDelay = NONE;
-    private long initialTime = NONE;
-    private long remainingTime = NONE;
-
-    private boolean isSet = false;
+    private final ContinuousTaskScheduler continuousTaskScheduler;
 
     public interface ContinuousTaskRunner {
         /**
@@ -25,41 +20,29 @@ public class ContinuousTask extends Handler implements Runnable {
          * Called with given taskId in order to distinguish which task should be run,
          * in case of same {@linkplain ContinuousTaskRunner} passed to multiple Tasks
          */
-        void runScheduledTask(String taskId);
+        void runScheduledTask(@NonNull String taskId);
     }
 
-    public ContinuousTask(String taskId, ContinuousTaskRunner continuousTaskRunner) {
+    public ContinuousTask(@NonNull String taskId, @NonNull ContinuousTaskRunner continuousTaskRunner) {
         this.taskId = taskId;
+        continuousTaskScheduler = new ContinuousTaskScheduler(this);
         weekContinuousTaskRunner = new WeakReference<>(continuousTaskRunner);
     }
 
     public void delayed(long delay) {
-        requiredDelay = delay;
-        remainingTime = requiredDelay;
-        initialTime = System.currentTimeMillis();
-
-        set(delay);
+        continuousTaskScheduler.delayed(delay);
     }
 
     public void pause() {
-        if (requiredDelay != NONE) {
-            release();
-            remainingTime = requiredDelay - (System.currentTimeMillis() - initialTime);
-        }
+        continuousTaskScheduler.onPause();
     }
 
     public void resume() {
-        if (remainingTime != NONE) {
-            set(remainingTime);
-        }
+        continuousTaskScheduler.onResume();
     }
 
     public void stop() {
-        release();
-
-        requiredDelay = NONE;
-        initialTime = NONE;
-        remainingTime = NONE;
+        continuousTaskScheduler.onStop();
     }
 
     @Override
@@ -69,17 +52,18 @@ public class ContinuousTask extends Handler implements Runnable {
         } else {
             LogUtils.logE("Something went wrong and task failed.", LogType.IMPORTANT);
         }
+        continuousTaskScheduler.clean();
     }
 
-    private void set(long delay) {
-        if (!isSet) {
-            postDelayed(this, delay);
-            isSet = true;
-        }
+    void schedule(long delay) {
+        postDelayed(this, delay);
     }
 
-    private void release() {
+    void unregister() {
         removeCallbacks(this);
-        isSet = false;
+    }
+
+    long getCurrentTime() {
+        return System.currentTimeMillis();
     }
 }

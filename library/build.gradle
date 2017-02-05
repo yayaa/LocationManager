@@ -23,6 +23,10 @@ dependencies {
 
     compile libraries.appCompat
     compile libraries.googlePlayServices
+
+    testCompile libraries.junit
+    testCompile libraries.assertJ
+    testCompile libraries.mockito
 }
 
 apply from: 'maven_push.gradle'

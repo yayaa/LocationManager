@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -12,8 +13,8 @@ import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.LogType;
 import com.yayandroid.locationmanager.constants.ProviderType;
 import com.yayandroid.locationmanager.constants.RequestCode;
-import com.yayandroid.locationmanager.helper.ContinuousTask;
-import com.yayandroid.locationmanager.helper.ContinuousTask.ContinuousTaskRunner;
+import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask;
+import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask.ContinuousTaskRunner;
 import com.yayandroid.locationmanager.helper.LocationUtils;
 import com.yayandroid.locationmanager.helper.LogUtils;
 import com.yayandroid.locationmanager.helper.PermissionManager;
@@ -346,7 +347,7 @@ public class LocationManager implements ContinuousTaskRunner {
     };
 
     @Override
-    public void runScheduledTask(String taskId) {
+    public void runScheduledTask(@NonNull String taskId) {
         if (taskId.equals(GOOGLE_PLAY_SERVICE_SWITCH_TASK)) {
             if (activeProvider instanceof GPServicesLocationProvider && activeProvider.isWaiting()) {
                 LogUtils.logI("We couldn't receive location from GooglePlayServices, "

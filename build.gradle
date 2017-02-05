@@ -32,7 +32,11 @@ allprojects {
 
         libraries = [
               appCompat         : 'com.android.support:appcompat-v7:24.2.1',
-              googlePlayServices: 'com.google.android.gms:play-services-location:9.6.1'
+              googlePlayServices: 'com.google.android.gms:play-services-location:9.6.1',
+
+              junit             : 'junit:junit:4.12',
+              assertJ           : 'com.squareup.assertj:assertj-android:1.1.1',
+              mockito           : 'org.mockito:mockito-core:2.7.2'
         ]
     }
 }

@@ -8,13 +8,14 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 
 import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.LogType;
 import com.yayandroid.locationmanager.constants.RequestCode;
-import com.yayandroid.locationmanager.helper.ContinuousTask;
-import com.yayandroid.locationmanager.helper.ContinuousTask.ContinuousTaskRunner;
+import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask;
+import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask.ContinuousTaskRunner;
 import com.yayandroid.locationmanager.helper.LocationUtils;
 import com.yayandroid.locationmanager.helper.LogUtils;
 
@@ -287,7 +288,7 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
     };
 
     @Override
-    public void runScheduledTask(String taskId) {
+    public void runScheduledTask(@NonNull String taskId) {
         if (taskId.equals(PROVIDER_SWITCH_TASK)) {
             if (currentUpdateRequest != null) {
                 currentUpdateRequest.release();
