@@ -1,8 +1,5 @@
 package com.yayandroid.locationmanager.configuration;
 
-import android.text.TextUtils;
-
-import com.yayandroid.locationmanager.constants.Default;
 import com.yayandroid.locationmanager.constants.ProviderType;
 
 public final class DefaultProviderConfiguration {
@@ -50,16 +47,16 @@ public final class DefaultProviderConfiguration {
 
     public static class Builder {
 
-        private float acceptableAccuracy = ConfigurationDefaults.MIN_ACCURACY;
-        private long acceptableTimePeriod = ConfigurationDefaults.TIME_PERIOD;
-        private long gpsWaitPeriod = ConfigurationDefaults.WAIT_PERIOD;
-        private long networkWaitPeriod = ConfigurationDefaults.WAIT_PERIOD;
-        private String gpsMessage = ConfigurationDefaults.EMPTY_STRING;
+        private float acceptableAccuracy = Defaults.MIN_ACCURACY;
+        private long acceptableTimePeriod = Defaults.TIME_PERIOD;
+        private long gpsWaitPeriod = Defaults.WAIT_PERIOD;
+        private long networkWaitPeriod = Defaults.WAIT_PERIOD;
+        private String gpsMessage = Defaults.EMPTY_STRING;
 
         /**
          * Minimum Accuracy that you seek location to be
          * <p>
-         * Default is {@linkplain Default#MIN_ACCURACY}
+         * Default is {@linkplain Defaults#MIN_ACCURACY}
          */
         public Builder acceptableAccuracy(float acceptableAccuracy) {
             this.acceptableAccuracy = acceptableAccuracy;
@@ -70,7 +67,7 @@ public final class DefaultProviderConfiguration {
          * Indicates time period that can be count as usable location,
          * this needs to be considered such as "last 5 minutes"
          * <p>
-         * Default is {@linkplain Default#TIME_PERIOD}
+         * Default is {@linkplain Defaults#TIME_PERIOD}
          */
         public Builder acceptableTimePeriod(long acceptableTimePeriod) {
             if (acceptableTimePeriod < 0)
@@ -94,7 +91,7 @@ public final class DefaultProviderConfiguration {
          * Possible to set provider wait periods separately by passing providerType as one of the
          * {@linkplain ProviderType.Source} values.
          * <p>
-         * Default values are {@linkplain Default#WAIT_PERIOD}
+         * Default values are {@linkplain Defaults#WAIT_PERIOD}
          */
         public Builder setWaitPeriod(@ProviderType.Source int providerType, long milliseconds) {
             if (milliseconds < 0)

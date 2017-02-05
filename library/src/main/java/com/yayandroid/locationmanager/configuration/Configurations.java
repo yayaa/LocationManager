@@ -4,7 +4,14 @@ import android.support.annotation.NonNull;
 
 import com.yayandroid.locationmanager.LocationReceiver;
 
-public class Configurations {
+/**
+ * Pre-Defined Configurations
+ */
+public final class Configurations {
+
+    private Configurations() {
+        // No instance
+    }
 
     /**
      * Returns a LocationConfiguration that keeps tracking,

@@ -3,7 +3,6 @@ package com.yayandroid.locationmanager.configuration;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.location.LocationRequest;
-import com.yayandroid.locationmanager.constants.Default;
 
 public final class GPServicesConfiguration {
 
@@ -52,20 +51,20 @@ public final class GPServicesConfiguration {
     public static class Builder {
 
         private LocationRequest locationRequest = generateDefaultLocationRequest();
-        private boolean askForGPServices = ConfigurationDefaults.ASK_FOR_GP_SERVICES;
-        private boolean askForSettingsApi = ConfigurationDefaults.ASK_FOR_SETTINGS_API;
-        private boolean failOnConnectionSuspended = ConfigurationDefaults.FAIL_ON_CONNECTION_SUSPENDED;
-        private boolean failOnSettingsApiSuspended = ConfigurationDefaults.FAIL_ON_SETTINGS_API_SUSPENDED;
-        private long gpServicesWaitPeriod = ConfigurationDefaults.WAIT_PERIOD;
+        private boolean askForGPServices = Defaults.ASK_FOR_GP_SERVICES;
+        private boolean askForSettingsApi = Defaults.ASK_FOR_SETTINGS_API;
+        private boolean failOnConnectionSuspended = Defaults.FAIL_ON_CONNECTION_SUSPENDED;
+        private boolean failOnSettingsApiSuspended = Defaults.FAIL_ON_SETTINGS_API_SUSPENDED;
+        private long gpServicesWaitPeriod = Defaults.WAIT_PERIOD;
 
         /**
          * https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest
          */
         private LocationRequest generateDefaultLocationRequest() {
             return LocationRequest.create()
-                  .setPriority(ConfigurationDefaults.LOCATION_PRIORITY)
-                  .setInterval(ConfigurationDefaults.LOCATION_INTERVAL)
-                  .setFastestInterval(ConfigurationDefaults.LOCATION_FASTEST_INTERVAL);
+                  .setPriority(Defaults.LOCATION_PRIORITY)
+                  .setInterval(Defaults.LOCATION_INTERVAL)
+                  .setFastestInterval(Defaults.LOCATION_FASTEST_INTERVAL);
         }
 
         /**
@@ -136,7 +135,7 @@ public final class GPServicesConfiguration {
         /**
          * Indicates waiting time period for GooglePlayServices before switching to next possible provider.
          * <p>
-         * Default values are {@linkplain Default#WAIT_PERIOD}
+         * Default values are {@linkplain Defaults#WAIT_PERIOD}
          */
         public Builder setWaitPeriod(long milliseconds) {
             if (milliseconds < 0)

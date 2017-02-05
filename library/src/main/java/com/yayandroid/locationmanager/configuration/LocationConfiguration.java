@@ -1,7 +1,5 @@
 package com.yayandroid.locationmanager.configuration;
 
-import com.yayandroid.locationmanager.constants.Default;
-
 public final class LocationConfiguration {
 
     private final String rationalMessage;
@@ -48,10 +46,10 @@ public final class LocationConfiguration {
 
     public static class Builder {
 
-        private String rationalMessage = ConfigurationDefaults.EMPTY_STRING;
-        private String[] requiredPermissions = ConfigurationDefaults.LOCATION_PERMISSIONS;
-        private long requiredTimeInterval = ConfigurationDefaults.LOCATION_INTERVAL;
-        private boolean keepTracking = ConfigurationDefaults.KEEP_TRACKING;
+        private String rationalMessage = Defaults.EMPTY_STRING;
+        private String[] requiredPermissions = Defaults.LOCATION_PERMISSIONS;
+        private long requiredTimeInterval = Defaults.LOCATION_INTERVAL;
+        private boolean keepTracking = Defaults.KEEP_TRACKING;
         private GPServicesConfiguration gpServicesConfiguration;
         private DefaultProviderConfiguration defaultProviderConfiguration;
 
@@ -76,7 +74,7 @@ public final class LocationConfiguration {
         }
 
         /**
-         * If you need to ask any other permissions beside {@linkplain Default#LOCATION_PERMISSIONS}
+         * If you need to ask any other permissions beside {@linkplain Defaults#LOCATION_PERMISSIONS}
          * or you may not need both of those permissions, you can change permissions
          * by calling this method with new permissions' array.
          */
@@ -89,7 +87,7 @@ public final class LocationConfiguration {
          * TimeInterval will be used while getting location from default location providers
          * It will define in which period updates need to be delivered
          * <p>
-         * Default is {@linkplain Default#LOCATION_INTERVAL}
+         * Default is {@linkplain Defaults#LOCATION_INTERVAL}
          */
         public Builder requiredTimeInterval(long requiredTimeInterval) {
             if (requiredTimeInterval < 0)

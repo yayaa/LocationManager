@@ -4,7 +4,7 @@ import android.Manifest;
 
 import com.google.android.gms.location.LocationRequest;
 
-class ConfigurationDefaults {
+class Defaults {
 
     private static final int SECOND = 1000;
     private static final int MINUTE = 60 * SECOND;
