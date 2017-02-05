@@ -5,7 +5,7 @@ import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.yayandroid.locationmanager.LocationConfiguration;
+import com.yayandroid.locationmanager.configuration.LocationConfiguration;
 
 import java.util.Date;
 import java.util.List;
@@ -25,10 +25,11 @@ public class LocationUtils {
         if (location != null) {
             float givenAccuracy = location.getAccuracy();
             long givenTime = location.getTime();
-            long minAcceptableTime = new Date().getTime() - configuration.getAcceptableTimePeriod();
+            long minAcceptableTime = new Date().getTime() - configuration.defaultProviderConfiguration()
+                  .acceptableTimePeriod();
 
             if (minAcceptableTime <= givenTime
-                    && configuration.getAcceptableAccuracy() >= givenAccuracy) {
+                    && configuration.defaultProviderConfiguration().acceptableAccuracy() >= givenAccuracy) {
                 return true;
             }
         }

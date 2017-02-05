@@ -6,6 +6,8 @@ import android.location.LocationListener;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.yayandroid.locationmanager.configuration.LocationConfiguration;
+
 /**
  * Created by Yahya Bayramoglu on 10/02/16.
  */

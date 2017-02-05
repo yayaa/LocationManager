@@ -55,7 +55,7 @@ public class DefaultLocationProvider extends LocationProvider {
     @Override
     public boolean requiresActivityResult() {
         // If we need to ask for enabling GPS then we'll need to get onActivityResult callback
-        return configuration.shouldAskForEnableGPS();
+        return configuration.defaultProviderConfiguration().askForGPSEnable();
     }
 
     @Override
@@ -73,7 +73,7 @@ public class DefaultLocationProvider extends LocationProvider {
             askForLocation(LocationManager.GPS_PROVIDER);
         } else {
             // GPS is not enabled,
-            if (configuration.shouldAskForEnableGPS()) {
+            if (configuration.defaultProviderConfiguration().askForGPSEnable()) {
                 LogUtils.logI("GPS is not enabled, asking user to enable it...", LogType.GENERAL);
                 askForEnableGPS();
             } else {
@@ -140,7 +140,7 @@ public class DefaultLocationProvider extends LocationProvider {
 
     private void askForEnableGPS() {
         gpsDialog = new AlertDialog.Builder(activity)
-                .setMessage(configuration.getGPSMessage())
+                .setMessage(configuration.defaultProviderConfiguration().gpsMessage())
                 .setCancelable(false)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
@@ -189,7 +189,7 @@ public class DefaultLocationProvider extends LocationProvider {
             LogUtils.logI("LastKnowLocation is not usable.", LogType.GENERAL);
         }
 
-        if (configuration.shouldKeepTracking() || !locationIsAlreadyAvailable) {
+        if (configuration.keepTracking() || !locationIsAlreadyAvailable) {
             LogUtils.logI("Ask for location update...", LogType.IMPORTANT);
             requestUpdateLocation(0, !locationIsAlreadyAvailable); // Ask for immediately
         } else {
@@ -207,7 +207,9 @@ public class DefaultLocationProvider extends LocationProvider {
     }
 
     private long getWaitPeriod() {
-        return provider.equals(LocationManager.GPS_PROVIDER) ? configuration.getGPSWaitPeriod() : configuration.getNetworkWaitPeriod();
+        return provider.equals(LocationManager.GPS_PROVIDER)
+              ? configuration.defaultProviderConfiguration().gpsWaitPeriod()
+              : configuration.defaultProviderConfiguration().networkWaitPeriod();
     }
 
     private boolean isNetworkProviderEnabled() {
@@ -242,8 +244,8 @@ public class DefaultLocationProvider extends LocationProvider {
             // no need to switch or call fail
             cancelTask.stop();
 
-            if (configuration.shouldKeepTracking()) {
-                requestUpdateLocation(configuration.getRequiredTimeInterval(), false);
+            if (configuration.keepTracking()) {
+                requestUpdateLocation(configuration.requiredTimeInterval(), false);
             } else {
                 locationManager.removeUpdates(locationChangeListener);
             }

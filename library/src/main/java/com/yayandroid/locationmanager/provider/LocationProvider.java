@@ -3,7 +3,7 @@ package com.yayandroid.locationmanager.provider;
 import android.app.Activity;
 import android.content.Intent;
 
-import com.yayandroid.locationmanager.LocationConfiguration;
+import com.yayandroid.locationmanager.configuration.LocationConfiguration;
 import com.yayandroid.locationmanager.LocationReceiver;
 
 /**

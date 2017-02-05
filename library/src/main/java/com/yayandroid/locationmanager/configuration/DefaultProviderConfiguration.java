@@ -1,5 +1,7 @@
 package com.yayandroid.locationmanager.configuration;
 
+import android.text.TextUtils;
+
 import com.yayandroid.locationmanager.constants.Default;
 import com.yayandroid.locationmanager.constants.ProviderType;
 
@@ -26,6 +28,10 @@ public final class DefaultProviderConfiguration {
 
     public long acceptableTimePeriod() {
         return acceptableTimePeriod;
+    }
+
+    public boolean askForGPSEnable() {
+        return gpsMessage != null && gpsMessage.length() > 0;
     }
 
     public String gpsMessage() {

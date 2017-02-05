@@ -8,7 +8,7 @@ import android.view.Window;
 import android.widget.TextView;
 
 import com.yayandroid.locationmanager.LocationBaseActivity;
-import com.yayandroid.locationmanager.LocationConfiguration;
+import com.yayandroid.locationmanager.configuration.LocationConfiguration;
 import com.yayandroid.locationmanager.LocationManager;
 import com.yayandroid.locationmanager.configuration.DefaultProviderConfiguration;
 import com.yayandroid.locationmanager.configuration.GPServicesConfiguration;
@@ -34,8 +34,7 @@ public class MainActivity extends LocationBaseActivity {
 
     @Override
     public LocationConfiguration getLocationConfiguration() {
-
-        new com.yayandroid.locationmanager.configuration.LocationConfiguration.Builder()
+        return new LocationConfiguration.Builder()
               .keepTracking(true)
               .rationalMessage("Gimme the permission!")
               .useDefaultProviders(new DefaultProviderConfiguration.Builder()
@@ -49,16 +48,6 @@ public class MainActivity extends LocationBaseActivity {
                     .setWaitPeriod(5 * 1000)
                     .build())
               .build();
-
-        return new LocationConfiguration()
-                .keepTracking(true)
-                .askForGooglePlayServices(true)
-                .setMinAccuracy(200.0f)
-                .setWaitPeriod(ProviderType.GOOGLE_PLAY_SERVICES, 5 * 1000)
-                .setWaitPeriod(ProviderType.GPS, 10 * 1000)
-                .setWaitPeriod(ProviderType.NETWORK, 5 * 1000)
-                .setGPSMessage("Would you mind to turn GPS on?")
-                .setRationalMessage("Gimme the permission!");
     }
 
     @Override
