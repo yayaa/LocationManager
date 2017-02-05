@@ -1,6 +1,7 @@
 package com.yayandroid.locationmanager;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 
@@ -52,8 +53,8 @@ public class LocationManager {
      * This specifies on which activity this manager will run,
      * this also needs to be set before you attempt to get location
      */
-    public LocationManager on(LocationView locationView) {
-        this.locationView = locationView;
+    public LocationManager on(Context context) {
+        this.locationView = new LocationView(context);
         return this;
     }
 

@@ -33,7 +33,7 @@ public abstract class LocationBaseActivity extends AppCompatActivity implements 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         locationManager = new LocationManager(getLocationConfiguration())
-              .on(new LocationView(this))
+              .on(this)
               .notify(locationReceiver);
     }
 
