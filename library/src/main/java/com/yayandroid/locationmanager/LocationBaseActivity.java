@@ -7,10 +7,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.yayandroid.locationmanager.configuration.LocationConfiguration;
+import com.yayandroid.locationmanager.view.LocationView;
 
-/**
- * Created by Yahya Bayramoglu on 10/02/16.
- */
 public abstract class LocationBaseActivity extends AppCompatActivity implements LocationListener {
 
     private LocationManager locationManager;
@@ -21,7 +19,7 @@ public abstract class LocationBaseActivity extends AppCompatActivity implements 
 
     public abstract void onLocationChanged(Location location);
 
-    public LocationManager getLocationManager() {
+    protected LocationManager getLocationManager() {
         return locationManager;
     }
 
@@ -32,21 +30,11 @@ public abstract class LocationBaseActivity extends AppCompatActivity implements 
     }
 
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        locationManager = new LocationManager(getLocationConfiguration()).on(this).notify(locationReceiver);
+        locationManager = new LocationManager(getLocationConfiguration())
+              .on(new LocationView(this))
+              .notify(locationReceiver);
     }
 
     @Override
@@ -77,6 +65,18 @@ public abstract class LocationBaseActivity extends AppCompatActivity implements 
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         locationManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
     }
 
     private final LocationReceiver locationReceiver = new LocationReceiver() {

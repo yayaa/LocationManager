@@ -65,8 +65,7 @@ public class PermissionManager {
     }
 
     public static void requestPermissions(final Object object, final PermissionListener listener, String rationale,
-          @StringRes int positiveButton,
-                                          @StringRes int negativeButton, final String... perms) {
+          @StringRes int positiveButton, @StringRes int negativeButton, final String... perms) {
 
         checkCallingObjectSuitability(object);
 
@@ -98,12 +97,10 @@ public class PermissionManager {
         }
     }
 
-    public static void onRequestPermissionsResult(Object object, PermissionListener callbacks, int requestCode, String[] permissions,
+    public static void onRequestPermissionsResult(PermissionListener callbacks, int requestCode, String[] permissions,
                                                   int[] grantResults) {
 
         if (requestCode == RequestCode.RUNTIME_PERMISSION) {
-            checkCallingObjectSuitability(object);
-
             // Make a collection of granted and denied permissions from the request.
             ArrayList<String> granted = new ArrayList<>();
             ArrayList<String> denied = new ArrayList<>();

@@ -32,7 +32,12 @@ public class DefaultLocationProvider extends LocationProvider {
     public void onCreate() {
         super.onCreate();
 
-        this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+        if (locationView.isContextExist()) {
+            this.locationManager = (LocationManager) locationView.getContext()
+                  .getSystemService(Context.LOCATION_SERVICE);
+        } else {
+            onLocationFailed(FailType.VIEW_DETACHED);
+        }
     }
 
     @Override
@@ -73,7 +78,7 @@ public class DefaultLocationProvider extends LocationProvider {
             askForLocation(LocationManager.GPS_PROVIDER);
         } else {
             // GPS is not enabled,
-            if (configuration.defaultProviderConfiguration().askForGPSEnable()) {
+            if (configuration.defaultProviderConfiguration().askForGPSEnable() && locationView.isActivityExist()) {
                 LogUtils.logI("GPS is not enabled, asking user to enable it...", LogType.GENERAL);
                 askForEnableGPS();
             } else {
@@ -130,7 +135,7 @@ public class DefaultLocationProvider extends LocationProvider {
             cancelTask.resume();
         }
 
-        if (isDialogShowing() && isGPSProviderEnabled()){
+        if (isDialogShowing() && isGPSProviderEnabled()) {
             // User activated GPS by going settings manually
             gpsDialog.dismiss();
             LogUtils.logI("User activated GPS, listen for location", LogType.GENERAL);
@@ -139,33 +144,34 @@ public class DefaultLocationProvider extends LocationProvider {
     }
 
     private void askForEnableGPS() {
-        gpsDialog = new AlertDialog.Builder(activity)
-                .setMessage(configuration.defaultProviderConfiguration().gpsMessage())
-                .setCancelable(false)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        activity.startActivityForResult(
-                                new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),
-                                RequestCode.GPS_ENABLE);
-                    }
-                })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        LogUtils.logI("User didn't want to enable GPS, so continue with Network Provider", LogType.IMPORTANT);
-                        getLocationByNetwork();
-                    }
-                })
-                .create();
+        gpsDialog = new AlertDialog.Builder(locationView.getActivity())
+              .setMessage(configuration.defaultProviderConfiguration().gpsMessage())
+              .setCancelable(false)
+              .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                      if (locationView.isActivityExist()) {
+                          locationView.getActivity()
+                                .startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),
+                                      RequestCode.GPS_ENABLE);
+                      }
+                  }
+              })
+              .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                      LogUtils.logI("User didn't want to enable GPS, so continue with Network Provider",
+                            LogType.IMPORTANT);
+                      getLocationByNetwork();
+                  }
+              })
+              .create();
 
-        if (!activity.isFinishing()) {
-            gpsDialog.show();
-        }
+        gpsDialog.show();
     }
 
     private void getLocationByNetwork() {
-        if (isNetworkProviderEnabled() && LocationUtils.isNetworkAvailable(activity)) {
+        if (isNetworkProviderEnabled() && isNetworkAvailable()) {
             LogUtils.logI("Network is enabled, getting location...", LogType.GENERAL);
             askForLocation(LocationManager.NETWORK_PROVIDER);
         } else {
@@ -210,6 +216,10 @@ public class DefaultLocationProvider extends LocationProvider {
         return provider.equals(LocationManager.GPS_PROVIDER)
               ? configuration.defaultProviderConfiguration().gpsWaitPeriod()
               : configuration.defaultProviderConfiguration().networkWaitPeriod();
+    }
+
+    private boolean isNetworkAvailable() {
+        return LocationUtils.isNetworkAvailable(locationView.getContext());
     }
 
     private boolean isNetworkProviderEnabled() {
@@ -271,7 +281,6 @@ public class DefaultLocationProvider extends LocationProvider {
                 listener.onProviderDisabled(provider);
             }
         }
-
     };
 
     private class UpdateRequest {
@@ -300,7 +309,6 @@ public class DefaultLocationProvider extends LocationProvider {
             release();
             this.listener = null;
         }
-
     }
 
     private final ContinuousTask cancelTask = new ContinuousTask() {
@@ -315,11 +323,10 @@ public class DefaultLocationProvider extends LocationProvider {
                 LogUtils.logI("We waited enough for GPS, switching to Network provider...", LogType.IMPORTANT);
                 getLocationByNetwork();
             } else {
-                LogUtils.logI("Network Provider is not provide location in required period, calling fail...", LogType.GENERAL);
+                LogUtils.logI("Network Provider is not provide location in required period, calling fail...",
+                      LogType.GENERAL);
                 onLocationFailed(FailType.TIMEOUT);
             }
         }
-
     };
-
 }

@@ -1,23 +1,20 @@
 package com.yayandroid.locationmanager.provider;
 
-import android.app.Activity;
 import android.content.Intent;
 
-import com.yayandroid.locationmanager.configuration.LocationConfiguration;
 import com.yayandroid.locationmanager.LocationReceiver;
+import com.yayandroid.locationmanager.configuration.LocationConfiguration;
+import com.yayandroid.locationmanager.view.LocationView;
 
-/**
- * Created by Yahya Bayramoglu on 09/02/16.
- */
 public abstract class LocationProvider {
 
     private boolean isWaiting = false;
-    protected Activity activity;
     protected LocationConfiguration configuration;
+    protected LocationView locationView;
     protected LocationReceiver listener;
 
-    public void configure(Activity activity, LocationConfiguration configuration) {
-        this.activity = activity;
+    public void configure(LocationView locationView, LocationConfiguration configuration) {
+        this.locationView = locationView;
         this.configuration = configuration;
         onCreate();
     }
@@ -85,7 +82,6 @@ public abstract class LocationProvider {
      */
     public void onDestroy() {
         // Release instances not to cause leak
-        this.activity = null;
         this.configuration = null;
         this.listener = null;
     }

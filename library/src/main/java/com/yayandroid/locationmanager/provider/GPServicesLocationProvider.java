@@ -68,12 +68,16 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
     public void get() {
         setWaiting(true);
 
-        googleApiClient = new GoogleApiClient.Builder(activity)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-        googleApiClient.connect();
+        if (locationView.isContextExist()) {
+            googleApiClient = new GoogleApiClient.Builder(locationView.getContext())
+                  .addApi(LocationServices.API)
+                  .addConnectionCallbacks(this)
+                  .addOnConnectionFailedListener(this)
+                  .build();
+            googleApiClient.connect();
+        } else {
+            failed(FailType.VIEW_DETACHED);
+        }
     }
 
     @Override
@@ -187,7 +191,11 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
                     // and check the result in onActivityResult().
                     LogUtils.logI("We need settingsApi to display dialog to switch required settings on, displaying the dialog...", LogType.GENERAL);
                     settingsDialogIsOn = true;
-                    status.startResolutionForResult(activity, RequestCode.SETTINGS_API);
+                    if (locationView.isActivityExist()) {
+                        status.startResolutionForResult(locationView.getActivity(), RequestCode.SETTINGS_API);
+                    } else {
+                        settingsApiFail(FailType.VIEW_DETACHED);
+                    }
                 } catch (IntentSender.SendIntentException e) {
                     LogUtils.logE("Error on displaying SettingsApi dialog, GP_SettingsApi failing...", LogType.IMPORTANT);
                     settingsApiFail(FailType.GP_SERVICES_SETTINGS_DIALOG);
@@ -207,7 +215,8 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
                 .addLocationRequest(configuration.gpServicesConfiguration().locationRequest())
                 .build();
 
-        PendingResult<LocationSettingsResult> settingsResult = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, settingsRequest);
+        PendingResult<LocationSettingsResult> settingsResult = LocationServices.SettingsApi
+              .checkLocationSettings(googleApiClient, settingsRequest);
         settingsResult.setResultCallback(this);
     }
 
