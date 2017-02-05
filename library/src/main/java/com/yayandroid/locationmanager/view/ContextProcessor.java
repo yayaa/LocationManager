@@ -6,11 +6,11 @@ import android.support.annotation.Nullable;
 
 import java.lang.ref.WeakReference;
 
-public class LocationView {
+public class ContextProcessor {
 
     private WeakReference<Context> weakContext;
 
-    public LocationView(Context context) {
+    public ContextProcessor(Context context) {
         this.weakContext = new WeakReference<>(context);
     }
 

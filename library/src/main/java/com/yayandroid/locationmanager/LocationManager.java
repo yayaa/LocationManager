@@ -19,7 +19,7 @@ import com.yayandroid.locationmanager.helper.PermissionManager;
 import com.yayandroid.locationmanager.provider.DefaultLocationProvider;
 import com.yayandroid.locationmanager.provider.GPServicesLocationProvider;
 import com.yayandroid.locationmanager.provider.LocationProvider;
-import com.yayandroid.locationmanager.view.LocationView;
+import com.yayandroid.locationmanager.view.ContextProcessor;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class LocationManager {
 
     private int locationFrom = ProviderType.NONE;
 
-    private LocationView locationView;
+    private ContextProcessor contextProcessor;
     private Dialog gpServicesDialog;
     private LocationReceiver listener;
     private LocationConfiguration configuration;
@@ -54,7 +54,7 @@ public class LocationManager {
      * this also needs to be set before you attempt to get location
      */
     public LocationManager on(Context context) {
-        this.locationView = new LocationView(context);
+        this.contextProcessor = new ContextProcessor(context);
         return this;
     }
 
@@ -74,7 +74,7 @@ public class LocationManager {
      */
     public LocationManager setLocationProvider(LocationProvider provider) {
         if (provider != null) {
-            provider.configure(locationView, configuration);
+            provider.configure(contextProcessor, configuration);
         }
 
         this.activeProvider = provider;
@@ -128,7 +128,7 @@ public class LocationManager {
         gpServicesSwitchTask.stop();
         gpServicesDialog = null;
         listener = null;
-        locationView = null;
+        contextProcessor = null;
         activeProvider = null;
         configuration = null;
     }
@@ -191,8 +191,8 @@ public class LocationManager {
     }
 
     private void get(boolean askForGPServices) {
-        if (locationView == null)
-            throw new RuntimeException("You must set a locationView!");
+        if (contextProcessor == null)
+            throw new RuntimeException("You must set a context to run LocationManager on!");
 
         if (configuration.gpServicesConfiguration() == null) {
             LogUtils.logI("Configuration requires not to use Google Play Services, " +
@@ -201,7 +201,7 @@ public class LocationManager {
             return;
         }
 
-        int gpServicesAvailability = LocationUtils.isGooglePlayServicesAvailable(locationView.getContext());
+        int gpServicesAvailability = LocationUtils.isGooglePlayServicesAvailable(contextProcessor.getContext());
 
         if (gpServicesAvailability == ConnectionResult.SUCCESS) {
             LogUtils.logI("GooglePlayServices is available on device.", LogType.GENERAL);
@@ -215,7 +215,7 @@ public class LocationManager {
                                 .isUserResolvableError(gpServicesAvailability)) {
 
                     LogUtils.logI("Asking user to handle GooglePlayServices error...", LogType.GENERAL);
-                    gpServicesDialog = LocationUtils.getGooglePlayServicesErrorDialog(locationView.getContext(),
+                    gpServicesDialog = LocationUtils.getGooglePlayServicesErrorDialog(contextProcessor.getContext(),
                           gpServicesAvailability, RequestCode.GOOGLE_PLAY_SERVICES, new DialogInterface.OnCancelListener() {
                               @Override
                               public void onCancel(DialogInterface dialog) {
@@ -260,16 +260,16 @@ public class LocationManager {
 
     private void askForPermission(@ProviderType.Source int locationFrom) {
         this.locationFrom = locationFrom;
-        if (locationView.isContextExist() && PermissionManager.hasPermissions(locationView.getContext(), configuration
+        if (contextProcessor.isContextExist() && PermissionManager.hasPermissions(contextProcessor.getContext(), configuration
               .requiredPermissions())) {
             locationPermissionGranted(true);
         } else {
-            if (locationView.isActivityExist()) {
+            if (contextProcessor.isActivityExist()) {
                 LogUtils.logI("Asking for Runtime Permissions...", LogType.GENERAL);
-                PermissionManager.requestPermissions(locationView.getActivity(), permissionListener,
+                PermissionManager.requestPermissions(contextProcessor.getActivity(), permissionListener,
                       configuration.rationalMessage(), configuration.requiredPermissions());
             } else {
-                LogUtils.logI("We don't have permissions and since LocationView is not an activity, cannot ask user to "
+                LogUtils.logI("We don't have permissions and since ContextProcessor is not an activity, cannot ask user to "
                       + "give permission. Aborting.", LogType.GENERAL);
                 failed(FailType.PERMISSION_DENIED);
             }

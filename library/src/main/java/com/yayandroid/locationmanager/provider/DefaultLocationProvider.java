@@ -32,8 +32,8 @@ public class DefaultLocationProvider extends LocationProvider {
     public void onCreate() {
         super.onCreate();
 
-        if (locationView.isContextExist()) {
-            this.locationManager = (LocationManager) locationView.getContext()
+        if (contextProcessor.isContextExist()) {
+            this.locationManager = (LocationManager) contextProcessor.getContext()
                   .getSystemService(Context.LOCATION_SERVICE);
         } else {
             onLocationFailed(FailType.VIEW_DETACHED);
@@ -78,7 +78,7 @@ public class DefaultLocationProvider extends LocationProvider {
             askForLocation(LocationManager.GPS_PROVIDER);
         } else {
             // GPS is not enabled,
-            if (configuration.defaultProviderConfiguration().askForGPSEnable() && locationView.isActivityExist()) {
+            if (configuration.defaultProviderConfiguration().askForGPSEnable() && contextProcessor.isActivityExist()) {
                 LogUtils.logI("GPS is not enabled, asking user to enable it...", LogType.GENERAL);
                 askForEnableGPS();
             } else {
@@ -144,14 +144,14 @@ public class DefaultLocationProvider extends LocationProvider {
     }
 
     private void askForEnableGPS() {
-        gpsDialog = new AlertDialog.Builder(locationView.getActivity())
+        gpsDialog = new AlertDialog.Builder(contextProcessor.getActivity())
               .setMessage(configuration.defaultProviderConfiguration().gpsMessage())
               .setCancelable(false)
               .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                   @Override
                   public void onClick(DialogInterface dialog, int which) {
-                      if (locationView.isActivityExist()) {
-                          locationView.getActivity()
+                      if (contextProcessor.isActivityExist()) {
+                          contextProcessor.getActivity()
                                 .startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),
                                       RequestCode.GPS_ENABLE);
                       }
@@ -219,7 +219,7 @@ public class DefaultLocationProvider extends LocationProvider {
     }
 
     private boolean isNetworkAvailable() {
-        return LocationUtils.isNetworkAvailable(locationView.getContext());
+        return LocationUtils.isNetworkAvailable(contextProcessor.getContext());
     }
 
     private boolean isNetworkProviderEnabled() {

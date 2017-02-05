@@ -4,17 +4,17 @@ import android.content.Intent;
 
 import com.yayandroid.locationmanager.LocationReceiver;
 import com.yayandroid.locationmanager.configuration.LocationConfiguration;
-import com.yayandroid.locationmanager.view.LocationView;
+import com.yayandroid.locationmanager.view.ContextProcessor;
 
 public abstract class LocationProvider {
 
     private boolean isWaiting = false;
     protected LocationConfiguration configuration;
-    protected LocationView locationView;
+    protected ContextProcessor contextProcessor;
     protected LocationReceiver listener;
 
-    public void configure(LocationView locationView, LocationConfiguration configuration) {
-        this.locationView = locationView;
+    public void configure(ContextProcessor contextProcessor, LocationConfiguration configuration) {
+        this.contextProcessor = contextProcessor;
         this.configuration = configuration;
         onCreate();
     }

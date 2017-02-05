@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.yayandroid.locationmanager.configuration.LocationConfiguration;
-import com.yayandroid.locationmanager.view.LocationView;
 
 public abstract class LocationBaseActivity extends AppCompatActivity implements LocationListener {
 
