@@ -24,8 +24,7 @@ public class Configurations {
     public static LocationConfiguration silence(boolean keepTracking) {
         return new LocationConfiguration.Builder()
               .keepTracking(keepTracking)
-              .useGooglePlayServices(new GPServicesConfiguration.Builder()
-                    .askForSettingsApi(false).build())
+              .useGooglePlayServices(new GPServicesConfiguration.Builder().askForSettingsApi(false).build())
               .useDefaultProviders(new DefaultProviderConfiguration.Builder().build())
               .build();
     }
