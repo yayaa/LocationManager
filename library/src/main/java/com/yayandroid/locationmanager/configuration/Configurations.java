@@ -2,7 +2,7 @@ package com.yayandroid.locationmanager.configuration;
 
 import android.support.annotation.NonNull;
 
-import com.yayandroid.locationmanager.LocationReceiver;
+import com.yayandroid.locationmanager.listener.LocationListener;
 
 /**
  * Pre-Defined Configurations
@@ -24,7 +24,7 @@ public final class Configurations {
     /**
      * Returns a LocationConfiguration that will never ask user anything and will try to use whatever possible options
      * that application has to obtain location. If there is no sufficient permission, provider, etc... then
-     * LocationManager will call {@linkplain LocationReceiver#onLocationFailed(int)} silently
+     * LocationManager will call {@linkplain LocationListener#onLocationFailed(int)} silently
      *
      * # Best use case of this configuration is within Service implementations
      */

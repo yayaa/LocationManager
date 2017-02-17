@@ -2,7 +2,7 @@ package com.yayandroid.locationmanager.provider;
 
 import android.content.Intent;
 
-import com.yayandroid.locationmanager.LocationReceiver;
+import com.yayandroid.locationmanager.listener.LocationListener;
 import com.yayandroid.locationmanager.configuration.LocationConfiguration;
 import com.yayandroid.locationmanager.view.ContextProcessor;
 
@@ -11,7 +11,7 @@ public abstract class LocationProvider {
     private boolean isWaiting = false;
     protected LocationConfiguration configuration;
     protected ContextProcessor contextProcessor;
-    protected LocationReceiver listener;
+    protected LocationListener listener;
 
     public void configure(ContextProcessor contextProcessor, LocationConfiguration configuration) {
         this.contextProcessor = contextProcessor;
@@ -60,7 +60,7 @@ public abstract class LocationProvider {
      * While you are providing location by yourself,
      * then you have to invoke methods
      */
-    public void notifyTo(LocationReceiver listener) {
+    public void notifyTo(LocationListener listener) {
         this.listener = listener;
     }
 

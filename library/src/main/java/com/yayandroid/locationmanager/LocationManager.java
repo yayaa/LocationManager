@@ -18,6 +18,7 @@ import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask.Conti
 import com.yayandroid.locationmanager.helper.LocationUtils;
 import com.yayandroid.locationmanager.helper.LogUtils;
 import com.yayandroid.locationmanager.helper.PermissionManager;
+import com.yayandroid.locationmanager.listener.LocationListener;
 import com.yayandroid.locationmanager.provider.DefaultLocationProvider;
 import com.yayandroid.locationmanager.provider.GPServicesLocationProvider;
 import com.yayandroid.locationmanager.provider.LocationProvider;
@@ -34,7 +35,7 @@ public class LocationManager implements ContinuousTaskRunner {
 
     private ContextProcessor contextProcessor;
     private Dialog gpServicesDialog;
-    private LocationReceiver listener;
+    private LocationListener listener;
     private LocationConfiguration configuration;
     private LocationProvider activeProvider;
 
@@ -64,10 +65,10 @@ public class LocationManager implements ContinuousTaskRunner {
     }
 
     /**
-     * Specify a LocationReceiver to receive location when it is available,
+     * Specify a LocationListener to receive location when it is available,
      * or get knowledge of any other steps in process
      */
-    public LocationManager notify(LocationReceiver listener) {
+    public LocationManager notify(LocationListener listener) {
         this.listener = listener;
         return this;
     }

@@ -2,11 +2,11 @@ package com.yayandroid.locationmanager;
 
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.yayandroid.locationmanager.configuration.LocationConfiguration;
+import com.yayandroid.locationmanager.listener.LocationListener;
 
 public abstract class LocationBaseActivity extends AppCompatActivity implements LocationListener {
 
@@ -25,6 +25,9 @@ public abstract class LocationBaseActivity extends AppCompatActivity implements 
     public void getLocation() {
         if (locationManager != null) {
             locationManager.get();
+        } else {
+            throw new IllegalStateException("locationManager is null. "
+                  + "Make sure you call super.onCreate before attempting to getLocation");
         }
     }
 
@@ -33,7 +36,7 @@ public abstract class LocationBaseActivity extends AppCompatActivity implements 
         super.onCreate(savedInstanceState);
         locationManager = new LocationManager(getLocationConfiguration())
               .on(this)
-              .notify(locationReceiver);
+              .notify(this);
     }
 
     @Override
@@ -67,43 +70,22 @@ public abstract class LocationBaseActivity extends AppCompatActivity implements 
     }
 
     @Override
+    public void onPermissionGranted(boolean alreadyHadPermission) {
+        // override if needed
+    }
+
+    @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
+        // override if needed
     }
 
     @Override
     public void onProviderEnabled(String provider) {
+        // override if needed
     }
 
     @Override
     public void onProviderDisabled(String provider) {
+        // override if needed
     }
-
-    private final LocationReceiver locationReceiver = new LocationReceiver() {
-
-        @Override
-        public void onLocationChanged(Location location) {
-            LocationBaseActivity.this.onLocationChanged(location);
-        }
-
-        @Override
-        public void onLocationFailed(int failType) {
-            LocationBaseActivity.this.onLocationFailed(failType);
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            LocationBaseActivity.this.onStatusChanged(provider, status, extras);
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-            LocationBaseActivity.this.onProviderEnabled(provider);
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-            LocationBaseActivity.this.onProviderDisabled(provider);
-        }
-    };
-
 }
