@@ -21,7 +21,7 @@ public class DefaultPermissionProvider extends PermissionProvider implements Per
 
     @Override
     public boolean hasPermission() {
-        if (!contextProcessor.isContextExist()) {
+        if (contextProcessor.getContext() == null) {
             LogUtils.logE("Couldn't check whether permissions are granted or not "
                   + "because of contextProcessor doesn't contain any context.", LogType.IMPORTANT);
             return false;
@@ -32,7 +32,7 @@ public class DefaultPermissionProvider extends PermissionProvider implements Per
 
     @Override
     public boolean requestPermissions(@Nullable RationaleDialogProvider rationaleDialogProvider) {
-        if (!contextProcessor.isActivityExist()) {
+        if (contextProcessor.getActivity() == null) {
             LogUtils.logI("Cannot ask for location, because contextProcessor doesn't contain an Activity instance.",
                   LogType.GENERAL);
             return false;
@@ -44,7 +44,9 @@ public class DefaultPermissionProvider extends PermissionProvider implements Per
             rationaleDialogProvider = new RationaleDialogProvider(rationalMessage);
         }
 
-        PermissionManager.requestPermissions(contextProcessor.getActivity(), this, rationaleDialogProvider, requiredPermissions);
+        PermissionManager.requestPermissions(
+              contextProcessor.getFragment() != null ? contextProcessor.getFragment() : contextProcessor.getActivity(),
+              this, rationaleDialogProvider, requiredPermissions);
         return true;
     }
 

@@ -68,7 +68,7 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
     public void get() {
         setWaiting(true);
 
-        if (contextProcessor.isContextExist()) {
+        if (contextProcessor.getContext() != null) {
             googleApiClient = new GoogleApiClient.Builder(contextProcessor.getContext())
                   .addApi(LocationServices.API)
                   .addConnectionCallbacks(this)
@@ -191,7 +191,7 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
                     // and check the result in onActivityResult().
                     LogUtils.logI("We need settingsApi to display dialog to switch required settings on, displaying the dialog...", LogType.GENERAL);
                     settingsDialogIsOn = true;
-                    if (contextProcessor.isActivityExist()) {
+                    if (contextProcessor.getActivity() != null) {
                         status.startResolutionForResult(contextProcessor.getActivity(), RequestCode.SETTINGS_API);
                     } else {
                         settingsApiFail(FailType.VIEW_DETACHED);

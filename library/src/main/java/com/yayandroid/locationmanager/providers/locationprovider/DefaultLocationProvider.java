@@ -37,7 +37,7 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
     public void onCreate() {
         super.onCreate();
 
-        if (contextProcessor.isContextExist()) {
+        if (contextProcessor.getContext() != null) {
             locationManager = (LocationManager) contextProcessor.getContext().getSystemService(Context.LOCATION_SERVICE);
         } else {
             onLocationFailed(FailType.VIEW_DETACHED);
@@ -82,7 +82,7 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
             askForLocation(LocationManager.GPS_PROVIDER);
         } else {
             // GPS is not enabled,
-            if (configuration.defaultProviderConfiguration().askForGPSEnable() && contextProcessor.isActivityExist()) {
+            if (configuration.defaultProviderConfiguration().askForGPSEnable() && contextProcessor.getActivity() != null) {
                 LogUtils.logI("GPS is not enabled, asking user to enable it...", LogType.GENERAL);
                 askForEnableGPS();
             } else {
@@ -149,7 +149,7 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
               .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                   @Override
                   public void onClick(DialogInterface dialog, int which) {
-                      if (contextProcessor.isActivityExist()) {
+                      if (contextProcessor.getActivity() != null) {
                           contextProcessor.getActivity()
                                 .startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),
                                       RequestCode.GPS_ENABLE);
