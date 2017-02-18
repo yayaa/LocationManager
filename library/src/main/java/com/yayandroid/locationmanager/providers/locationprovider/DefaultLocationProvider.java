@@ -1,4 +1,4 @@
-package com.yayandroid.locationmanager.provider;
+package com.yayandroid.locationmanager.providers.locationprovider;
 
 import android.content.Context;
 import android.content.DialogInterface;

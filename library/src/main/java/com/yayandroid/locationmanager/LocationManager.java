@@ -13,20 +13,20 @@ import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.LogType;
 import com.yayandroid.locationmanager.constants.ProviderType;
 import com.yayandroid.locationmanager.constants.RequestCode;
-import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask;
-import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask.ContinuousTaskRunner;
 import com.yayandroid.locationmanager.helper.LocationUtils;
 import com.yayandroid.locationmanager.helper.LogUtils;
-import com.yayandroid.locationmanager.helper.PermissionManager;
+import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask;
+import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask.ContinuousTaskRunner;
 import com.yayandroid.locationmanager.listener.LocationListener;
-import com.yayandroid.locationmanager.provider.DefaultLocationProvider;
-import com.yayandroid.locationmanager.provider.GPServicesLocationProvider;
-import com.yayandroid.locationmanager.provider.LocationProvider;
+import com.yayandroid.locationmanager.listener.PermissionListener;
+import com.yayandroid.locationmanager.providers.locationprovider.DefaultLocationProvider;
+import com.yayandroid.locationmanager.providers.locationprovider.GPServicesLocationProvider;
+import com.yayandroid.locationmanager.providers.locationprovider.LocationProvider;
+import com.yayandroid.locationmanager.providers.permissionprovider.DefaultPermissionProvider;
+import com.yayandroid.locationmanager.providers.permissionprovider.PermissionProvider;
 import com.yayandroid.locationmanager.view.ContextProcessor;
 
-import java.util.List;
-
-public class LocationManager implements ContinuousTaskRunner {
+public class LocationManager implements ContinuousTaskRunner, PermissionListener {
 
     private static final String GOOGLE_PLAY_SERVICE_SWITCH_TASK = "googlePlayServiceSwitchTask";
     private final ContinuousTask gpServicesSwitchTask = new ContinuousTask(GOOGLE_PLAY_SERVICE_SWITCH_TASK, this);
@@ -38,6 +38,7 @@ public class LocationManager implements ContinuousTaskRunner {
     private LocationListener listener;
     private LocationConfiguration configuration;
     private LocationProvider activeProvider;
+    private PermissionProvider permissionProvider;
 
     /**
      * This library contains a lot of log to make tracing steps easier,
@@ -74,9 +75,8 @@ public class LocationManager implements ContinuousTaskRunner {
     }
 
     /**
-     * Instead of using DefaultLocationProvider you can create your own,
-     * and set it to manager so it will runScheduledTask your LocationProvider.
-     * Please refer to {@linkplain DefaultLocationProvider}
+     * Instead of using {@linkplain DefaultLocationProvider} you can create your own,
+     * and set it to manager so it will run your LocationProvider.
      */
     public LocationManager setLocationProvider(LocationProvider provider) {
         if (provider != null) {
@@ -84,6 +84,15 @@ public class LocationManager implements ContinuousTaskRunner {
         }
 
         this.activeProvider = provider;
+        return this;
+    }
+
+    /**
+     * Instead of using {@linkplain DefaultPermissionProvider} you can implement your own,
+     * and set it to manager it will use your PermissionProvider.
+     */
+    public LocationManager setPermissionProvider(PermissionProvider permissionProvider) {
+        this.permissionProvider = permissionProvider;
         return this;
     }
 
@@ -157,7 +166,7 @@ public class LocationManager implements ContinuousTaskRunner {
      * Provide requestPermissionResult to manager so the it can handle RuntimePermission
      */
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        PermissionManager.onRequestPermissionsResult(permissionListener, requestCode, permissions, grantResults);
+        getPermissionProvider().onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     /**
@@ -266,18 +275,13 @@ public class LocationManager implements ContinuousTaskRunner {
 
     private void askForPermission(@ProviderType.Source int locationFrom) {
         this.locationFrom = locationFrom;
-        if (contextProcessor.isContextExist() && PermissionManager
-              .hasPermissions(contextProcessor.getContext(), configuration
-                    .requiredPermissions())) {
+        if (getPermissionProvider().hasPermission()) {
             locationPermissionGranted(true);
         } else {
-            if (contextProcessor.isActivityExist()) {
-                LogUtils.logI("Asking for Runtime Permissions...", LogType.GENERAL);
-                PermissionManager.requestPermissions(contextProcessor.getActivity(), permissionListener,
-                      configuration.rationalMessage(), configuration.requiredPermissions());
+            if (getPermissionProvider().requestPermissions()) {
+                LogUtils.logI("Waiting until we receive any callback from PermissionProvider...", LogType.GENERAL);
             } else {
-                LogUtils.logI("We don't have permissions and since ContextProcessor is not an activity, cannot ask user to "
-                      + "give permission. Aborting.", LogType.GENERAL);
+                LogUtils.logI("We don't have permissions and cannot ask for it. Aborting...", LogType.GENERAL);
                 failed(FailType.PERMISSION_DENIED);
             }
         }
@@ -313,39 +317,19 @@ public class LocationManager implements ContinuousTaskRunner {
         return activeProvider;
     }
 
+    private PermissionProvider getPermissionProvider() {
+        if (permissionProvider == null) {
+            permissionProvider = new DefaultPermissionProvider(contextProcessor, this,
+                  getConfiguration().requiredPermissions(), getConfiguration().rationalMessage());
+        }
+        return permissionProvider;
+    }
+
     private void failed(int type) {
         if (listener != null) {
             listener.onLocationFailed(type);
         }
     }
-
-    private final PermissionManager.PermissionListener permissionListener = new PermissionManager.PermissionListener() {
-
-        @Override
-        public void onPermissionsGranted(List<String> perms) {
-            if (perms.size() == configuration.requiredPermissions().length) {
-                LogUtils.logI("We have all required permission, moving on fetching location!", LogType.GENERAL);
-                locationPermissionGranted(false);
-            } else {
-                LogUtils.logI("User denied some of required permissions! "
-                        + "Even though we have following permissions now, "
-                        + "task will still be aborted.\n" + LocationUtils.getStringFromList(perms), LogType.GENERAL);
-                failed(FailType.PERMISSION_DENIED);
-            }
-        }
-
-        @Override
-        public void onPermissionsDenied(List<String> perms) {
-            LogUtils.logI("User denied required permissions!\n" + LocationUtils.getStringFromList(perms), LogType.IMPORTANT);
-            failed(FailType.PERMISSION_DENIED);
-        }
-
-        @Override
-        public void onPermissionRequestRejected() {
-            LogUtils.logI("User didn't even let us to ask for permission!", LogType.IMPORTANT);
-            failed(FailType.PERMISSION_DENIED);
-        }
-    };
 
     @Override
     public void runScheduledTask(@NonNull String taskId) {
@@ -357,5 +341,15 @@ public class LocationManager implements ContinuousTaskRunner {
                 continueWithDefaultProviders();
             }
         }
+    }
+
+    @Override
+    public void onPermissionsGranted() {
+        locationPermissionGranted(false);
+    }
+
+    @Override
+    public void onPermissionsDenied() {
+        failed(FailType.PERMISSION_DENIED);
     }
 }

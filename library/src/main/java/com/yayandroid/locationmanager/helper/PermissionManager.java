@@ -63,9 +63,9 @@ public final class PermissionManager {
 
     }
 
-    public static boolean hasPermissions(Context context, String... perms) {
-        for (int i = 0, size = perms.length; i < size; i++) {
-            if (ContextCompat.checkSelfPermission(context, perms[i]) != PackageManager.PERMISSION_GRANTED) {
+    public static boolean hasPermissions(Context context, String... requiredPermissions) {
+        for (String permission : requiredPermissions) {
+            if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
                 return false;
             }
         }
