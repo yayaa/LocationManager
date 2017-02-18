@@ -34,17 +34,6 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
     private AlertDialog gpsDialog;
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-
-        if (contextProcessor.getContext() != null) {
-            locationManager = (LocationManager) contextProcessor.getContext().getSystemService(Context.LOCATION_SERVICE);
-        } else {
-            onLocationFailed(FailType.VIEW_DETACHED);
-        }
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
 
@@ -75,6 +64,13 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
     @Override
     public void get() {
         setWaiting(true);
+
+        if (contextProcessor.getContext() != null) {
+            locationManager = (LocationManager) contextProcessor.getContext().getSystemService(Context.LOCATION_SERVICE);
+        } else {
+            onLocationFailed(FailType.VIEW_DETACHED);
+            return;
+        }
 
         // First check for GPS
         if (isGPSProviderEnabled()) {

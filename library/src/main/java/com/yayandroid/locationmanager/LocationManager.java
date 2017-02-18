@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -60,11 +61,22 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
     }
 
     /**
-     * This specifies on which activity this manager will runScheduledTask,
+     * This specifies on which context this manager will run,
      * this also needs to be set before you attempt to get location
      */
     public LocationManager on(Context context) {
+        if (contextProcessor != null) throw new IllegalStateException("on method can be called only once.");
         this.contextProcessor = new ContextProcessor(context);
+        return this;
+    }
+
+    /**
+     * This specifies on which context this manager will run,
+     * this also needs to be set before you attempt to get location
+     */
+    public LocationManager on(Fragment fragment) {
+        if (contextProcessor != null) throw new IllegalStateException("on method can be called only once.");
+        this.contextProcessor = new ContextProcessor(fragment);
         return this;
     }
 

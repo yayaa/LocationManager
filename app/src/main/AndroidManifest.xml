@@ -1,5 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.yayandroid.locationmanager.sample">
+<manifest package="com.yayandroid.locationmanager.sample"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Required to check whether user has network connection or not -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -10,10 +10,12 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
+        android:name=".SampleApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,6 +23,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".activity.SampleActivity" />
+        <activity android:name=".fragment.SampleFragmentActivity" />
+        <activity android:name=".service.SampleServiceActivity" />
+
+        <service android:name=".service.SampleService" />
+
     </application>
 
 </manifest>

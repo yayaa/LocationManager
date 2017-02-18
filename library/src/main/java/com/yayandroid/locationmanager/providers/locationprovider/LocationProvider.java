@@ -1,6 +1,7 @@
 package com.yayandroid.locationmanager.providers.locationprovider;
 
 import android.content.Intent;
+import android.support.annotation.CallSuper;
 
 import com.yayandroid.locationmanager.listener.LocationListener;
 import com.yayandroid.locationmanager.configuration.LocationConfiguration;
@@ -13,10 +14,10 @@ public abstract class LocationProvider {
     protected ContextProcessor contextProcessor;
     protected LocationListener listener;
 
+    @CallSuper
     public void configure(ContextProcessor contextProcessor, LocationConfiguration configuration) {
         this.contextProcessor = contextProcessor;
         this.configuration = configuration;
-        onCreate();
     }
 
     /**
@@ -71,13 +72,6 @@ public abstract class LocationProvider {
     }
 
     /**
-     * Now you have both activity and configuration available,
-     * do whatever you need to do before getting location.
-     */
-    public void onCreate() {
-    }
-
-    /**
      * To remove location updates while getting from GPS or Network Provider
      */
     public void onDestroy() {
@@ -91,5 +85,4 @@ public abstract class LocationProvider {
 
     public void onResume() {
     }
-
 }

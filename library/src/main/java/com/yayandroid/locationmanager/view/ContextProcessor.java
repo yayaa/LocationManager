@@ -29,13 +29,15 @@ public class ContextProcessor {
     }
 
     @Nullable
-    public Context getContext() {
-        return weakContext.get();
+    public Fragment getFragment() {
+        return weakFragment.get();
     }
 
     @Nullable
-    public Fragment getFragment() {
-        return weakFragment.get();
+    public Context getContext() {
+        if (weakContext.get() != null) return weakContext.get();
+        if (weakFragment.get() != null && weakFragment.get().getContext() != null) return weakFragment.get().getContext();
+        return null;
     }
 
     @Nullable

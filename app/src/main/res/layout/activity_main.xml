@@ -1,15 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/padding">
+    android:weightSum="3"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/locationText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <Button
+        style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:onClick="inActivityClick"
+        android:layout_weight="1"
+        android:textSize="20sp"
         android:textColor="@android:color/black"
-        android:text=""
-        android:textSize="20sp" />
+        android:text="Sample In Activity" />
 
-</ScrollView>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
+
+    <Button
+        style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:onClick="inFragmentClick"
+        android:textSize="20sp"
+        android:textColor="@android:color/black"
+        android:text="Sample In Fragment" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
+
+    <Button
+        style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:onClick="inServiceClick"
+        android:textSize="20sp"
+        android:textColor="@android:color/black"
+        android:text="Sample In Service" />
+
+</LinearLayout>
