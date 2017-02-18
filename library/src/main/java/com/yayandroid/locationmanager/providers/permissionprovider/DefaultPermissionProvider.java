@@ -7,6 +7,7 @@ import com.yayandroid.locationmanager.helper.LocationUtils;
 import com.yayandroid.locationmanager.helper.LogUtils;
 import com.yayandroid.locationmanager.helper.PermissionManager;
 import com.yayandroid.locationmanager.listener.PermissionListener;
+import com.yayandroid.locationmanager.providers.dialogprovider.RationaleDialogProvider;
 import com.yayandroid.locationmanager.view.ContextProcessor;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class DefaultPermissionProvider extends PermissionProvider implements Per
     }
 
     @Override
-    public boolean requestPermissions() {
+    public boolean requestPermissions(@Nullable RationaleDialogProvider rationaleDialogProvider) {
         if (!contextProcessor.isActivityExist()) {
             LogUtils.logI("Cannot ask for location, because contextProcessor doesn't contain an Activity instance.",
                   LogType.GENERAL);
@@ -38,7 +39,12 @@ public class DefaultPermissionProvider extends PermissionProvider implements Per
         }
 
         LogUtils.logI("Asking for Runtime Permissions...", LogType.GENERAL);
-        PermissionManager.requestPermissions(contextProcessor.getActivity(), this, rationalMessage, requiredPermissions);
+
+        if (rationaleDialogProvider == null) {
+            rationaleDialogProvider = new RationaleDialogProvider(rationalMessage);
+        }
+
+        PermissionManager.requestPermissions(contextProcessor.getActivity(), this, rationaleDialogProvider, requiredPermissions);
         return true;
     }
 

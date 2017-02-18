@@ -19,17 +19,16 @@ package com.yayandroid.locationmanager.helper;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
 
 import com.yayandroid.locationmanager.constants.RequestCode;
+import com.yayandroid.locationmanager.listener.DialogListener;
+import com.yayandroid.locationmanager.providers.dialogprovider.RationaleDialogProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,41 +71,32 @@ public final class PermissionManager {
         return true;
     }
 
-    public static void requestPermissions(Object object, PermissionListener listener, String rationale, String... perms) {
-        requestPermissions(object, listener, rationale, android.R.string.ok, android.R.string.cancel, perms);
-    }
-
-    public static void requestPermissions(final Object object, final PermissionListener listener, String rationale,
-          @StringRes int positiveButton, @StringRes int negativeButton, final String... perms) {
+    public static void requestPermissions(final Object object, final PermissionListener listener,
+          @NonNull RationaleDialogProvider rationaleDialogProvider, final String... requiredPermissions) {
 
         checkCallingObjectSuitability(object);
 
         boolean shouldShowRationale = false;
-        for (int i = 0, size = perms.length; i < size; i++) {
-            shouldShowRationale = shouldShowRationale || shouldShowRequestPermissionRationale(object, perms[i]);
+        for (String permission : requiredPermissions) {
+            shouldShowRationale = shouldShowRationale || shouldShowRequestPermissionRationale(object, permission);
         }
 
         Activity activity = getActivity(object);
-        if (shouldShowRationale && !TextUtils.isEmpty(rationale) && activity != null) {
-            AlertDialog dialog = new AlertDialog.Builder(activity)
-                    .setMessage(rationale)
-                    .setCancelable(false)
-                    .setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            executePermissionsRequest(object, perms, RequestCode.RUNTIME_PERMISSION);
-                        }
-                    })
-                    .setNegativeButton(negativeButton, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Do nothing, user does not want to request
-                            listener.onPermissionRequestRejected();
-                        }
-                    }).create();
-            dialog.show();
+        if (shouldShowRationale && activity != null && rationaleDialogProvider.shouldShown()) {
+            rationaleDialogProvider.setDialogListener(new DialogListener() {
+                @Override
+                public void onPositiveButtonClick() {
+                    executePermissionsRequest(object, requiredPermissions, RequestCode.RUNTIME_PERMISSION);
+                }
+
+                @Override
+                public void onNegativeButtonClick() {
+                    listener.onPermissionRequestRejected();
+                }
+            });
+            rationaleDialogProvider.getDialog(activity).show();
         } else {
-            executePermissionsRequest(object, perms, RequestCode.RUNTIME_PERMISSION);
+            executePermissionsRequest(object, requiredPermissions, RequestCode.RUNTIME_PERMISSION);
         }
     }
 

@@ -3,6 +3,7 @@ package com.yayandroid.locationmanager.providers.permissionprovider;
 import android.support.annotation.Nullable;
 
 import com.yayandroid.locationmanager.listener.PermissionListener;
+import com.yayandroid.locationmanager.providers.dialogprovider.RationaleDialogProvider;
 import com.yayandroid.locationmanager.view.ContextProcessor;
 
 public abstract class PermissionProvider {
@@ -35,7 +36,7 @@ public abstract class PermissionProvider {
     /**
      * Return true if it is possible to ask permission, false otherwise
      */
-    public abstract boolean requestPermissions();
+    public abstract boolean requestPermissions(@Nullable RationaleDialogProvider rationaleDialogProvider);
 
     public abstract void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults);
 

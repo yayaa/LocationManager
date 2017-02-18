@@ -111,7 +111,7 @@ public final class GPServicesConfiguration {
         /**
          * This flag will be checked when it is not possible to display user a settingsApi dialog
          * to switch necessary providers on, or when there is an error displaying the dialog.
-         * If the flag is on, then manager will notify listener as location failed,
+         * If the flag is on, then manager will setDialogListener listener as location failed,
          * otherwise it will try to get location anyway -which probably not gonna happen.
          * <p>
          * Default is False. -Because after GooglePlayServices Provider it might switch

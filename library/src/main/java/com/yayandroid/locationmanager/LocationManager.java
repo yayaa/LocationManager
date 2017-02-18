@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -19,6 +20,7 @@ import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask;
 import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask.ContinuousTaskRunner;
 import com.yayandroid.locationmanager.listener.LocationListener;
 import com.yayandroid.locationmanager.listener.PermissionListener;
+import com.yayandroid.locationmanager.providers.dialogprovider.RationaleDialogProvider;
 import com.yayandroid.locationmanager.providers.locationprovider.DefaultLocationProvider;
 import com.yayandroid.locationmanager.providers.locationprovider.GPServicesLocationProvider;
 import com.yayandroid.locationmanager.providers.locationprovider.LocationProvider;
@@ -39,6 +41,7 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
     private LocationConfiguration configuration;
     private LocationProvider activeProvider;
     private PermissionProvider permissionProvider;
+    @Nullable private RationaleDialogProvider rationaleDialogProvider;
 
     /**
      * This library contains a lot of log to make tracing steps easier,
@@ -76,7 +79,7 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
 
     /**
      * Instead of using {@linkplain DefaultLocationProvider} you can create your own,
-     * and set it to manager so it will run your LocationProvider.
+     * and set it to manager so it will use given one.
      */
     public LocationManager setLocationProvider(LocationProvider provider) {
         if (provider != null) {
@@ -89,10 +92,19 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
 
     /**
      * Instead of using {@linkplain DefaultPermissionProvider} you can implement your own,
-     * and set it to manager it will use your PermissionProvider.
+     * and set it to manager so it will use given one.
      */
     public LocationManager setPermissionProvider(PermissionProvider permissionProvider) {
         this.permissionProvider = permissionProvider;
+        return this;
+    }
+
+    /**
+     * Instead of using {@linkplain RationaleDialogProvider} you can extend that and override the implementation,
+     * and set it to manager so it will use given one.
+     */
+    public LocationManager setRationaleDialogProvider(RationaleDialogProvider rationaleDialogProvider) {
+        this.rationaleDialogProvider = rationaleDialogProvider;
         return this;
     }
 
@@ -278,7 +290,7 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
         if (getPermissionProvider().hasPermission()) {
             locationPermissionGranted(true);
         } else {
-            if (getPermissionProvider().requestPermissions()) {
+            if (getPermissionProvider().requestPermissions(rationaleDialogProvider)) {
                 LogUtils.logI("Waiting until we receive any callback from PermissionProvider...", LogType.GENERAL);
             } else {
                 LogUtils.logI("We don't have permissions and cannot ask for it. Aborting...", LogType.GENERAL);
@@ -323,6 +335,10 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
                   getConfiguration().requiredPermissions(), getConfiguration().rationalMessage());
         }
         return permissionProvider;
+    }
+
+    @Nullable private RationaleDialogProvider getRationaleDialogProvider() {
+        return rationaleDialogProvider;
     }
 
     private void failed(int type) {
