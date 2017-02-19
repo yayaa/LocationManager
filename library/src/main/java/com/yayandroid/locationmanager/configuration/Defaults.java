@@ -4,7 +4,7 @@ import android.Manifest;
 
 import com.google.android.gms.location.LocationRequest;
 
-class Defaults {
+public final class Defaults {
 
     private static final int SECOND = 1000;
     private static final int MINUTE = 60 * SECOND;
@@ -25,9 +25,13 @@ class Defaults {
     static final boolean FAIL_ON_SETTINGS_API_SUSPENDED = false;
 
     static final String EMPTY_STRING = "";
-    static final String[] LOCATION_PERMISSIONS = new String[]{
+    public static final String[] LOCATION_PERMISSIONS = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
+
+    private Defaults() {
+        // No instance
+    }
 
 }

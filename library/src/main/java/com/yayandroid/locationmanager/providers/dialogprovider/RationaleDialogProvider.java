@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
 
 public class RationaleDialogProvider extends DialogProvider implements DialogInterface.OnClickListener {
 
@@ -23,11 +22,6 @@ public class RationaleDialogProvider extends DialogProvider implements DialogInt
               .setPositiveButton(android.R.string.ok, this)
               .setNegativeButton(android.R.string.cancel, this)
               .create();
-    }
-
-    @Override
-    public boolean shouldShown() {
-        return !TextUtils.isEmpty(rationale);
     }
 
     @Override

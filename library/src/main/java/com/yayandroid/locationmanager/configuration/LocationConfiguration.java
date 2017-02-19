@@ -1,24 +1,28 @@
 package com.yayandroid.locationmanager.configuration;
 
+import com.yayandroid.locationmanager.providers.permissionprovider.StubPermissionProvider;
+
 public final class LocationConfiguration {
 
-    private final String rationalMessage;
-    private final String[] requiredPermissions;
     private final long requiredTimeInterval;
     private final boolean keepTracking;
+    private final PermissionConfiguration permissionConfiguration;
     private final GPServicesConfiguration gpServicesConfiguration;
     private final DefaultProviderConfiguration defaultProviderConfiguration;
 
     private LocationConfiguration(Builder builder) {
-        this.rationalMessage = builder.rationalMessage;
-        this.requiredPermissions = builder.requiredPermissions;
         this.keepTracking = builder.keepTracking;
         this.requiredTimeInterval = builder.requiredTimeInterval;
+        this.permissionConfiguration = builder.permissionConfiguration;
         this.gpServicesConfiguration = builder.gpServicesConfiguration;
         this.defaultProviderConfiguration = builder.defaultProviderConfiguration;
     }
 
     // region Getters
+    public PermissionConfiguration permissionConfiguration() {
+        return permissionConfiguration;
+    }
+
     public GPServicesConfiguration gpServicesConfiguration() {
         return gpServicesConfiguration;
     }
@@ -31,14 +35,6 @@ public final class LocationConfiguration {
         return keepTracking;
     }
 
-    public String rationalMessage() {
-        return rationalMessage;
-    }
-
-    public String[] requiredPermissions() {
-        return requiredPermissions;
-    }
-
     public long requiredTimeInterval() {
         return requiredTimeInterval;
     }
@@ -46,10 +42,9 @@ public final class LocationConfiguration {
 
     public static class Builder {
 
-        private String rationalMessage = Defaults.EMPTY_STRING;
-        private String[] requiredPermissions = Defaults.LOCATION_PERMISSIONS;
         private long requiredTimeInterval = Defaults.LOCATION_INTERVAL;
         private boolean keepTracking = Defaults.KEEP_TRACKING;
+        private PermissionConfiguration permissionConfiguration;
         private GPServicesConfiguration gpServicesConfiguration;
         private DefaultProviderConfiguration defaultProviderConfiguration;
 
@@ -61,25 +56,6 @@ public final class LocationConfiguration {
          */
         public Builder keepTracking(boolean keepTracking) {
             this.keepTracking = keepTracking;
-            return this;
-        }
-
-        /**
-         * Indicates what to display when user needs to see a rational dialog for RuntimePermission.
-         * There is no default value, so if you do not set this it will create an empty dialog.
-         */
-        public Builder rationalMessage(String rationalMessage) {
-            this.rationalMessage = rationalMessage;
-            return this;
-        }
-
-        /**
-         * If you need to ask any other permissions beside {@linkplain Defaults#LOCATION_PERMISSIONS}
-         * or you may not need both of those permissions, you can change permissions
-         * by calling this method with new permissions' array.
-         */
-        public Builder requiredPermissions(String[] permissions) {
-            this.requiredPermissions = permissions;
             return this;
         }
 
@@ -98,7 +74,19 @@ public final class LocationConfiguration {
         }
 
         /**
-         * In order to configure GooglePlayServices Api, if this is not set, then GooglePlayServices will not be used.
+         * This configuration is required in order to configure Permission Request process.
+         * If this is not set, then no permission will be requested from user and
+         * if {@linkplain Defaults#LOCATION_PERMISSIONS} permissions are not granted already,
+         * then getting location will fail silently.
+         */
+        public Builder askForPermission(PermissionConfiguration permissionConfiguration) {
+            this.permissionConfiguration = permissionConfiguration;
+            return this;
+        }
+
+        /**
+         * This configuration is required in order to configure GooglePlayServices Api.
+         * If this is not set, then GooglePlayServices will not be used.
          */
         public Builder useGooglePlayServices(GPServicesConfiguration gpServicesConfiguration) {
             this.gpServicesConfiguration = gpServicesConfiguration;
@@ -106,7 +94,8 @@ public final class LocationConfiguration {
         }
 
         /**
-         * In order to configure Default Location Providers, if this is not set, then they will not be used.
+         * This configuration is required in order to configure Default Location Providers.
+         * If this is not set, then they will not be used.
          */
         public Builder useDefaultProviders(DefaultProviderConfiguration defaultProviderConfiguration) {
             this.defaultProviderConfiguration = defaultProviderConfiguration;
@@ -119,10 +108,10 @@ public final class LocationConfiguration {
                       + " Please see GPServicesConfiguration and DefaultProviderConfiguration");
             }
 
-            if (requiredPermissions == null || requiredPermissions.length == 0) {
-                throw new IllegalStateException("Required Permissions cannot be empty."
-                      + " If you don't set anything special library will ask for"
-                      + " ACCESS_FINE_LOCATION and ACCESS_COARSE_LOCATION");
+            if (permissionConfiguration == null) {
+                permissionConfiguration = new PermissionConfiguration.Builder()
+                      .permissionProvider(new StubPermissionProvider())
+                      .build();
             }
 
             return new LocationConfiguration(this);

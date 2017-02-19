@@ -48,7 +48,7 @@ public class SampleFragment extends LocationBaseFragment implements SampleView {
 
     @Override
     public LocationConfiguration getLocationConfiguration() {
-        return Configurations.forActivity("Gimme the permission!", "Would you mind to turn GPS on?");
+        return Configurations.defaultConfiguration("Gimme the permission!", "Would you mind to turn GPS on?");
     }
 
     @Override

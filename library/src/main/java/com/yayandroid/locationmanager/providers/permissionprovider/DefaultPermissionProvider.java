@@ -6,17 +6,14 @@ import com.yayandroid.locationmanager.constants.LogType;
 import com.yayandroid.locationmanager.helper.LocationUtils;
 import com.yayandroid.locationmanager.helper.LogUtils;
 import com.yayandroid.locationmanager.helper.PermissionManager;
-import com.yayandroid.locationmanager.listener.PermissionListener;
-import com.yayandroid.locationmanager.providers.dialogprovider.RationaleDialogProvider;
-import com.yayandroid.locationmanager.view.ContextProcessor;
+import com.yayandroid.locationmanager.providers.dialogprovider.DialogProvider;
 
 import java.util.List;
 
 public class DefaultPermissionProvider extends PermissionProvider implements PermissionManager.PermissionListener {
 
-    public DefaultPermissionProvider(ContextProcessor contextProcessor, PermissionListener permissionListener,
-          String[] requiredPermissions, @Nullable String rationalMessage) {
-        super(contextProcessor, permissionListener, requiredPermissions, rationalMessage);
+    public DefaultPermissionProvider(String[] requiredPermissions, @Nullable DialogProvider dialogProvider) {
+        super(requiredPermissions, dialogProvider);
     }
 
     @Override
@@ -31,7 +28,7 @@ public class DefaultPermissionProvider extends PermissionProvider implements Per
     }
 
     @Override
-    public boolean requestPermissions(@Nullable RationaleDialogProvider rationaleDialogProvider) {
+    public boolean requestPermissions() {
         if (contextProcessor.getActivity() == null) {
             LogUtils.logI("Cannot ask for location, because contextProcessor doesn't contain an Activity instance.",
                   LogType.GENERAL);
@@ -40,13 +37,9 @@ public class DefaultPermissionProvider extends PermissionProvider implements Per
 
         LogUtils.logI("Asking for Runtime Permissions...", LogType.GENERAL);
 
-        if (rationaleDialogProvider == null) {
-            rationaleDialogProvider = new RationaleDialogProvider(rationalMessage);
-        }
-
         PermissionManager.requestPermissions(
               contextProcessor.getFragment() != null ? contextProcessor.getFragment() : contextProcessor.getActivity(),
-              this, rationaleDialogProvider, requiredPermissions);
+              this, rationalDialogProvider, requiredPermissions);
         return true;
     }
 

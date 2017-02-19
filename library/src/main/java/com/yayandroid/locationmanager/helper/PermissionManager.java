@@ -20,7 +20,6 @@ package com.yayandroid.locationmanager.helper;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -28,7 +27,7 @@ import android.support.v4.content.ContextCompat;
 
 import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.listener.DialogListener;
-import com.yayandroid.locationmanager.providers.dialogprovider.RationaleDialogProvider;
+import com.yayandroid.locationmanager.providers.dialogprovider.DialogProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +71,7 @@ public final class PermissionManager {
     }
 
     public static void requestPermissions(final Object object, final PermissionListener listener,
-          @NonNull RationaleDialogProvider rationaleDialogProvider, final String... requiredPermissions) {
+          @Nullable DialogProvider rationaleDialogProvider, final String... requiredPermissions) {
 
         checkCallingObjectSuitability(object);
 
@@ -82,7 +81,7 @@ public final class PermissionManager {
         }
 
         Activity activity = getActivity(object);
-        if (shouldShowRationale && activity != null && rationaleDialogProvider.shouldShown()) {
+        if (shouldShowRationale && activity != null && rationaleDialogProvider != null) {
             rationaleDialogProvider.setDialogListener(new DialogListener() {
                 @Override
                 public void onPositiveButtonClick() {

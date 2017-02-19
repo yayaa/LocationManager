@@ -27,7 +27,7 @@ public class SampleService extends LocationBaseService {
 
     @Override
     public LocationConfiguration getLocationConfiguration() {
-        return Configurations.silence(false);
+        return Configurations.silenceConfiguration(false);
     }
 
     @Override

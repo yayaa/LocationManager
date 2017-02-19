@@ -15,10 +15,10 @@ public final class Configurations {
 
     /**
      * Returns a LocationConfiguration that keeps tracking,
-     * see also {@linkplain Configurations#silence(boolean)}
+     * see also {@linkplain Configurations#silenceConfiguration(boolean)}
      */
-    public static LocationConfiguration silence() {
-        return silence(true);
+    public static LocationConfiguration silenceConfiguration() {
+        return silenceConfiguration(true);
     }
 
     /**
@@ -28,7 +28,7 @@ public final class Configurations {
      *
      * # Best use case of this configuration is within Service implementations
      */
-    public static LocationConfiguration silence(boolean keepTracking) {
+    public static LocationConfiguration silenceConfiguration(boolean keepTracking) {
         return new LocationConfiguration.Builder()
               .keepTracking(keepTracking)
               .useGooglePlayServices(new GPServicesConfiguration.Builder().askForSettingsApi(false).build())
@@ -40,9 +40,9 @@ public final class Configurations {
      * Returns a LocationConfiguration which tights to default definitions with given messages. Since this method is
      * basically created in order to be used in Activities, User needs to be asked for permission and enabling gps.
      */
-    public static LocationConfiguration forActivity(@NonNull String rationalMessage, @NonNull String gpsMessage) {
+    public static LocationConfiguration defaultConfiguration(@NonNull String rationalMessage, @NonNull String gpsMessage) {
         return new LocationConfiguration.Builder()
-              .rationalMessage(rationalMessage)
+              .askForPermission(new PermissionConfiguration.Builder().rationalMessage(rationalMessage).build())
               .useGooglePlayServices(new GPServicesConfiguration.Builder().build())
               .useDefaultProviders(new DefaultProviderConfiguration.Builder().gpsMessage(gpsMessage).build())
               .build();
