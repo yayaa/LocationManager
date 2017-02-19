@@ -19,9 +19,6 @@ import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask.Conti
 import com.yayandroid.locationmanager.helper.LocationUtils;
 import com.yayandroid.locationmanager.helper.LogUtils;
 
-/**
- * Created by Yahya Bayramoglu on 09/02/16.
- */
 @SuppressWarnings("ResourceType")
 public class DefaultLocationProvider extends LocationProvider implements ContinuousTaskRunner {
 
@@ -197,18 +194,19 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
 
         if (configuration.keepTracking() || !locationIsAlreadyAvailable) {
             LogUtils.logI("Ask for location update...", LogType.IMPORTANT);
-            requestUpdateLocation(0, !locationIsAlreadyAvailable); // Ask for immediately
+            // Ask for immediate location update
+            requestUpdateLocation(0, 0, !locationIsAlreadyAvailable);
         } else {
             LogUtils.logI("We got location, no need to ask for location updates.", LogType.GENERAL);
         }
     }
 
-    private void requestUpdateLocation(long timeInterval, boolean setCancelTask) {
+    private void requestUpdateLocation(long timeInterval, long distanceInterval, boolean setCancelTask) {
         if (setCancelTask) {
             cancelTask.delayed(getWaitPeriod());
         }
 
-        currentUpdateRequest = new UpdateRequest(provider, timeInterval, 0, locationChangeListener);
+        currentUpdateRequest = new UpdateRequest(provider, timeInterval, distanceInterval, locationChangeListener);
         currentUpdateRequest.run();
     }
 
@@ -255,7 +253,8 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
             cancelTask.stop();
 
             if (configuration.keepTracking()) {
-                requestUpdateLocation(configuration.requiredTimeInterval(), false);
+                requestUpdateLocation(configuration.defaultProviderConfiguration().requiredTimeInterval(),
+                      configuration.defaultProviderConfiguration().requiredDistanceInterval(), false);
             } else {
                 locationManager.removeUpdates(locationChangeListener);
             }

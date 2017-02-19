@@ -58,6 +58,10 @@ public class PermissionConfiguration {
          * by calling this method with new permissions' array.
          */
         public Builder requiredPermissions(String[] permissions) {
+            if (permissions == null || permissions.length == 0) {
+                throw new IllegalStateException("Required Permissions cannot be empty.");
+            }
+
             this.requiredPermissions = permissions;
             return this;
         }
@@ -91,12 +95,6 @@ public class PermissionConfiguration {
         }
 
         public PermissionConfiguration build() {
-            if (requiredPermissions == null || requiredPermissions.length == 0) {
-                throw new IllegalStateException("Required Permissions cannot be empty."
-                      + " If you don't set anything special library will ask for"
-                      + " ACCESS_FINE_LOCATION and ACCESS_COARSE_LOCATION");
-            }
-
             if (rationaleDialogProvider == null && !TextUtils.isEmpty(rationalMessage)) {
                 rationaleDialogProvider = new RationaleDialogProvider(rationalMessage);
             }

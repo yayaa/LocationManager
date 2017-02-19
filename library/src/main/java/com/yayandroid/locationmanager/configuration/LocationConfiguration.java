@@ -4,7 +4,6 @@ import com.yayandroid.locationmanager.providers.permissionprovider.StubPermissio
 
 public final class LocationConfiguration {
 
-    private final long requiredTimeInterval;
     private final boolean keepTracking;
     private final PermissionConfiguration permissionConfiguration;
     private final GPServicesConfiguration gpServicesConfiguration;
@@ -12,13 +11,16 @@ public final class LocationConfiguration {
 
     private LocationConfiguration(Builder builder) {
         this.keepTracking = builder.keepTracking;
-        this.requiredTimeInterval = builder.requiredTimeInterval;
         this.permissionConfiguration = builder.permissionConfiguration;
         this.gpServicesConfiguration = builder.gpServicesConfiguration;
         this.defaultProviderConfiguration = builder.defaultProviderConfiguration;
     }
 
     // region Getters
+    public boolean keepTracking() {
+        return keepTracking;
+    }
+
     public PermissionConfiguration permissionConfiguration() {
         return permissionConfiguration;
     }
@@ -30,19 +32,10 @@ public final class LocationConfiguration {
     public DefaultProviderConfiguration defaultProviderConfiguration() {
         return defaultProviderConfiguration;
     }
-
-    public boolean keepTracking() {
-        return keepTracking;
-    }
-
-    public long requiredTimeInterval() {
-        return requiredTimeInterval;
-    }
     // endregion
 
     public static class Builder {
 
-        private long requiredTimeInterval = Defaults.LOCATION_INTERVAL;
         private boolean keepTracking = Defaults.KEEP_TRACKING;
         private PermissionConfiguration permissionConfiguration;
         private GPServicesConfiguration gpServicesConfiguration;
@@ -51,25 +44,10 @@ public final class LocationConfiguration {
         /**
          * If you need to keep receiving location updates, then you need to set this as true.
          * Otherwise manager will be aborted after any location received.
-         * <p>
          * Default is False.
          */
         public Builder keepTracking(boolean keepTracking) {
             this.keepTracking = keepTracking;
-            return this;
-        }
-
-        /**
-         * TimeInterval will be used while getting location from default location providers
-         * It will define in which period updates need to be delivered
-         * <p>
-         * Default is {@linkplain Defaults#LOCATION_INTERVAL}
-         */
-        public Builder requiredTimeInterval(long requiredTimeInterval) {
-            if (requiredTimeInterval < 0)
-                throw new IllegalArgumentException("Required time interval cannot be set to minus values.");
-
-            this.requiredTimeInterval = requiredTimeInterval;
             return this;
         }
 

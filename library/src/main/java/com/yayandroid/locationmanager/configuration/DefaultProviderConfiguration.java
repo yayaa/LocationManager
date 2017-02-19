@@ -4,6 +4,8 @@ import com.yayandroid.locationmanager.constants.ProviderType;
 
 public final class DefaultProviderConfiguration {
 
+    private final long requiredTimeInterval;
+    private final long requiredDistanceInterval;
     private final float acceptableAccuracy;
     private final long acceptableTimePeriod;
     private final long gpsWaitPeriod;
@@ -11,6 +13,8 @@ public final class DefaultProviderConfiguration {
     private final String gpsMessage;
 
     private DefaultProviderConfiguration(Builder builder) {
+        this.requiredTimeInterval = builder.requiredTimeInterval;
+        this.requiredDistanceInterval = builder.requiredDistanceInterval;
         this.acceptableAccuracy = builder.acceptableAccuracy;
         this.acceptableTimePeriod = builder.acceptableTimePeriod;
         this.gpsWaitPeriod = builder.gpsWaitPeriod;
@@ -19,6 +23,14 @@ public final class DefaultProviderConfiguration {
     }
 
     // region Getters
+    public long requiredTimeInterval() {
+        return requiredTimeInterval;
+    }
+
+    public long requiredDistanceInterval() {
+        return requiredDistanceInterval;
+    }
+
     public float acceptableAccuracy() {
         return acceptableAccuracy;
     }
@@ -47,6 +59,8 @@ public final class DefaultProviderConfiguration {
 
     public static class Builder {
 
+        private long requiredTimeInterval = Defaults.LOCATION_INTERVAL;
+        private long requiredDistanceInterval = Defaults.LOCATION_DISTANCE_INTERVAL;
         private float acceptableAccuracy = Defaults.MIN_ACCURACY;
         private long acceptableTimePeriod = Defaults.TIME_PERIOD;
         private long gpsWaitPeriod = Defaults.WAIT_PERIOD;
@@ -54,11 +68,41 @@ public final class DefaultProviderConfiguration {
         private String gpsMessage = Defaults.EMPTY_STRING;
 
         /**
+         * TimeInterval will be used while getting location from default location providers
+         * It will define in which period updates need to be delivered and will be used only when
+         * {@linkplain LocationConfiguration#keepTracking} is set to true.
+         * Default is {@linkplain Defaults#LOCATION_INTERVAL}
+         */
+        public Builder requiredTimeInterval(long requiredTimeInterval) {
+            if (requiredTimeInterval < 0)
+                throw new IllegalArgumentException("Required time interval cannot be set to negative value.");
+
+            this.requiredTimeInterval = requiredTimeInterval;
+            return this;
+        }
+
+        /**
+         * DistanceInterval will be used while getting location from default location providers
+         * It will define in which distance changes that we should receive an update and will be used only when
+         * {@linkplain LocationConfiguration#keepTracking} is set to true.
+         * Default is {@linkplain Defaults#LOCATION_DISTANCE_INTERVAL}
+         */
+        public Builder requiredDistanceInterval(long requiredDistanceInterval) {
+            if (requiredDistanceInterval < 0)
+                throw new IllegalArgumentException("Required distance interval cannot be set to negative value.");
+
+            this.requiredDistanceInterval = requiredDistanceInterval;
+            return this;
+        }
+
+        /**
          * Minimum Accuracy that you seek location to be
-         * <p>
          * Default is {@linkplain Defaults#MIN_ACCURACY}
          */
         public Builder acceptableAccuracy(float acceptableAccuracy) {
+            if (acceptableAccuracy < 0)
+                throw new IllegalArgumentException("Acceptable accuracy cannot be set to negative value.");
+
             this.acceptableAccuracy = acceptableAccuracy;
             return this;
         }
@@ -66,12 +110,11 @@ public final class DefaultProviderConfiguration {
         /**
          * Indicates time period that can be count as usable location,
          * this needs to be considered such as "last 5 minutes"
-         * <p>
          * Default is {@linkplain Defaults#TIME_PERIOD}
          */
         public Builder acceptableTimePeriod(long acceptableTimePeriod) {
             if (acceptableTimePeriod < 0)
-                throw new IllegalArgumentException("Acceptable time period cannot be set to minus values.");
+                throw new IllegalArgumentException("Acceptable time period cannot be set to negative value.");
 
             this.acceptableTimePeriod = acceptableTimePeriod;
             return this;
@@ -90,12 +133,11 @@ public final class DefaultProviderConfiguration {
          * Indicates waiting time period before switching to next possible provider.
          * Possible to set provider wait periods separately by passing providerType as one of the
          * {@linkplain ProviderType.Source} values.
-         * <p>
          * Default values are {@linkplain Defaults#WAIT_PERIOD}
          */
         public Builder setWaitPeriod(@ProviderType.Source int providerType, long milliseconds) {
             if (milliseconds < 0)
-                throw new IllegalArgumentException("Wait period cannot be set to minus values.");
+                throw new IllegalArgumentException("Wait period cannot be set to negative value.");
 
             switch (providerType) {
                 case ProviderType.GOOGLE_PLAY_SERVICES: {

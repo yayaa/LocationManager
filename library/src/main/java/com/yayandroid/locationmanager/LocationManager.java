@@ -227,7 +227,7 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
             LogUtils.logI("GooglePlayServices is NOT available on device.", LogType.IMPORTANT);
 
             if (askForGPServices) {
-                if (configuration.gpServicesConfiguration().askForGPServices() &&
+                if (configuration.gpServicesConfiguration().askForGooglePlayServices() &&
                         GoogleApiAvailability.getInstance()
                                 .isUserResolvableError(gpServicesAvailability)) {
 
@@ -298,7 +298,7 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
 
         if (locationFrom == ProviderType.GOOGLE_PLAY_SERVICES) {
             setLocationProvider(new GPServicesLocationProvider());
-            gpServicesSwitchTask.delayed(configuration.gpServicesConfiguration().gpServicesWaitPeriod());
+            gpServicesSwitchTask.delayed(configuration.gpServicesConfiguration().googlePlayServicesWaitPeriod());
         } else {
             // To ensure not to use same provider again!
             setLocationProvider(null);

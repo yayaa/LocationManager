@@ -7,19 +7,19 @@ import com.google.android.gms.location.LocationRequest;
 public final class GPServicesConfiguration {
 
     private final LocationRequest locationRequest;
-    private final boolean askForGPServices;
+    private final boolean askForGooglePlayServices;
     private final boolean askForSettingsApi;
     private final boolean failOnConnectionSuspended;
     private final boolean failOnSettingsApiSuspended;
-    private final long gpServicesWaitPeriod;
+    private final long googlePlayServicesWaitPeriod;
 
     private GPServicesConfiguration(Builder builder) {
         this.locationRequest = builder.locationRequest;
-        this.askForGPServices = builder.askForGPServices;
+        this.askForGooglePlayServices = builder.askForGooglePlayServices;
         this.askForSettingsApi = builder.askForSettingsApi;
         this.failOnConnectionSuspended = builder.failOnConnectionSuspended;
         this.failOnSettingsApiSuspended = builder.failOnSettingsApiSuspended;
-        this.gpServicesWaitPeriod = builder.gpServicesWaitPeriod;
+        this.googlePlayServicesWaitPeriod = builder.googlePlayServicesWaitPeriod;
     }
 
     // region Getters
@@ -27,8 +27,8 @@ public final class GPServicesConfiguration {
         return locationRequest;
     }
 
-    public boolean askForGPServices() {
-        return askForGPServices;
+    public boolean askForGooglePlayServices() {
+        return askForGooglePlayServices;
     }
 
     public boolean askForSettingsApi() {
@@ -43,39 +43,29 @@ public final class GPServicesConfiguration {
         return failOnSettingsApiSuspended;
     }
 
-    public long gpServicesWaitPeriod() {
-        return gpServicesWaitPeriod;
+    public long googlePlayServicesWaitPeriod() {
+        return googlePlayServicesWaitPeriod;
     }
     // endregion
 
     public static class Builder {
 
-        private LocationRequest locationRequest = generateDefaultLocationRequest();
-        private boolean askForGPServices = Defaults.ASK_FOR_GP_SERVICES;
+        private LocationRequest locationRequest = Defaults.createDefaultLocationRequest();
+        private boolean askForGooglePlayServices = Defaults.ASK_FOR_GP_SERVICES;
         private boolean askForSettingsApi = Defaults.ASK_FOR_SETTINGS_API;
         private boolean failOnConnectionSuspended = Defaults.FAIL_ON_CONNECTION_SUSPENDED;
         private boolean failOnSettingsApiSuspended = Defaults.FAIL_ON_SETTINGS_API_SUSPENDED;
-        private long gpServicesWaitPeriod = Defaults.WAIT_PERIOD;
-
-        /**
-         * https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest
-         */
-        private LocationRequest generateDefaultLocationRequest() {
-            return LocationRequest.create()
-                  .setPriority(Defaults.LOCATION_PRIORITY)
-                  .setInterval(Defaults.LOCATION_INTERVAL)
-                  .setFastestInterval(Defaults.LOCATION_FASTEST_INTERVAL);
-        }
+        private long googlePlayServicesWaitPeriod = Defaults.WAIT_PERIOD;
 
         /**
          * Set true to ask user handle when there is some resolvable error
          * on connection GooglePlayServices, if you don't want to bother user
          * to configure Google Play Services to receive location then set this as false.
-         * <p>
+         *
          * Default is False.
          */
-        public Builder askForGPServices(boolean askForGPServices) {
-            this.askForGPServices = askForGPServices;
+        public Builder askForGooglePlayServices(boolean askForGooglePlayServices) {
+            this.askForGooglePlayServices = askForGooglePlayServices;
             return this;
         }
 
@@ -85,7 +75,7 @@ public final class GPServicesConfiguration {
          * Then if this flag is on it will ask user to turn them on, again, via GooglePlayServices
          * by displaying a system dialog if not it will directly try to receive location
          * -which probably not going to return no values.
-         * <p>
+         *
          * Default is True.
          */
         public Builder askForSettingsApi(boolean askForSettingsApi) {
@@ -97,9 +87,9 @@ public final class GPServicesConfiguration {
          * As it is described in official documentation when Google Play Services is disconnected,
          * it will call ConnectionSuspended and after some time it will try to reconnect
          * you can determine to fail in this situation or you may want to wait.
-         * <p>
+         *
          * Default is True.
-         * <p>
+         *
          * https://developers.google.com/android/reference/com/google/android/gms/common/api/GoogleApiClient
          * .ConnectionCallbacks#onConnectionSuspended(int)
          */
@@ -113,7 +103,7 @@ public final class GPServicesConfiguration {
          * to switch necessary providers on, or when there is an error displaying the dialog.
          * If the flag is on, then manager will setDialogListener listener as location failed,
          * otherwise it will try to get location anyway -which probably not gonna happen.
-         * <p>
+         *
          * Default is False. -Because after GooglePlayServices Provider it might switch
          * to default providers, if we fail here then those provider will never trigger.
          */
@@ -124,8 +114,7 @@ public final class GPServicesConfiguration {
 
         /**
          * LocationRequest object that you specified to use while getting location from Google Play Services
-         * <p>
-         * Default is {@linkplain Builder#generateDefaultLocationRequest()}
+         * Default is {@linkplain Defaults#createDefaultLocationRequest()}
          */
         public Builder locationRequest(@NonNull LocationRequest locationRequest) {
             this.locationRequest = locationRequest;
@@ -134,21 +123,17 @@ public final class GPServicesConfiguration {
 
         /**
          * Indicates waiting time period for GooglePlayServices before switching to next possible provider.
-         * <p>
+         *
          * Default values are {@linkplain Defaults#WAIT_PERIOD}
          */
         public Builder setWaitPeriod(long milliseconds) {
-            if (milliseconds < 0)
-                throw new IllegalArgumentException("Wait period cannot be set to minus values.");
+            if (milliseconds < 0) { throw new IllegalArgumentException("Wait period cannot be set to negative value."); }
 
-            this.gpServicesWaitPeriod = milliseconds;
+            this.googlePlayServicesWaitPeriod = milliseconds;
             return this;
         }
 
         public GPServicesConfiguration build() {
-            if (locationRequest == null)
-                throw new IllegalStateException("LocationRequest cannot be null.");
-
             return new GPServicesConfiguration(this);
         }
     }

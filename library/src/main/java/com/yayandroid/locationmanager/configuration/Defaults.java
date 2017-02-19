@@ -12,9 +12,8 @@ public final class Defaults {
     static final int WAIT_PERIOD = 20 * SECOND;
     static final int TIME_PERIOD = 5 * MINUTE;
 
+    static final int LOCATION_DISTANCE_INTERVAL = 0;
     static final int LOCATION_INTERVAL = 5 * MINUTE;
-    static final int LOCATION_FASTEST_INTERVAL = MINUTE;
-    static final int LOCATION_PRIORITY = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
 
     static final float MIN_ACCURACY = 5.0f;
 
@@ -29,6 +28,19 @@ public final class Defaults {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
+
+    private static final int LOCATION_PRIORITY = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
+    private static final int LOCATION_FASTEST_INTERVAL = MINUTE;
+
+    /**
+     * https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest
+     */
+    public static LocationRequest createDefaultLocationRequest() {
+        return LocationRequest.create()
+              .setPriority(Defaults.LOCATION_PRIORITY)
+              .setInterval(Defaults.LOCATION_INTERVAL)
+              .setFastestInterval(Defaults.LOCATION_FASTEST_INTERVAL);
+    }
 
     private Defaults() {
         // No instance
