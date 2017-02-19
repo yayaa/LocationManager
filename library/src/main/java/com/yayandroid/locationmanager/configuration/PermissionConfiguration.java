@@ -3,7 +3,7 @@ package com.yayandroid.locationmanager.configuration;
 import android.text.TextUtils;
 
 import com.yayandroid.locationmanager.providers.dialogprovider.DialogProvider;
-import com.yayandroid.locationmanager.providers.dialogprovider.RationaleDialogProvider;
+import com.yayandroid.locationmanager.providers.dialogprovider.SimpleMessageDialogProvider;
 import com.yayandroid.locationmanager.providers.permissionprovider.DefaultPermissionProvider;
 import com.yayandroid.locationmanager.providers.permissionprovider.PermissionProvider;
 
@@ -67,13 +67,13 @@ public class PermissionConfiguration {
         }
 
         /**
-         * If you need to display a custom dialog to display rationale dialog to user, you can provide your own
+         * If you need to display a custom dialog to display rationale to user, you can provide your own
          * implementation of {@linkplain DialogProvider} and manager will use that implementation to display the dialog.
          * Important, if you set your own implementation, please make sure to handle rationaleMessage as well.
-         * Because {@linkplain PermissionConfiguration#rationalMessage} will be ignored in that case.
+         * Because {@linkplain PermissionConfiguration.Builder#rationalMessage} will be ignored in that case.
          *
-         * If you don't specify any dialogProvider implementation {@linkplain RationaleDialogProvider} will be used with
-         * given {@linkplain PermissionConfiguration#rationalMessage}
+         * If you don't specify any dialogProvider implementation {@linkplain SimpleMessageDialogProvider} will be used with
+         * given {@linkplain PermissionConfiguration.Builder#rationalMessage}
          */
         public Builder rationaleDialogProvider(DialogProvider dialogProvider) {
             this.rationaleDialogProvider = dialogProvider;
@@ -96,7 +96,7 @@ public class PermissionConfiguration {
 
         public PermissionConfiguration build() {
             if (rationaleDialogProvider == null && !TextUtils.isEmpty(rationalMessage)) {
-                rationaleDialogProvider = new RationaleDialogProvider(rationalMessage);
+                rationaleDialogProvider = new SimpleMessageDialogProvider(rationalMessage);
             }
 
             if (permissionProvider == null) {

@@ -1,6 +1,10 @@
 package com.yayandroid.locationmanager.configuration;
 
+import android.text.TextUtils;
+
 import com.yayandroid.locationmanager.constants.ProviderType;
+import com.yayandroid.locationmanager.providers.dialogprovider.DialogProvider;
+import com.yayandroid.locationmanager.providers.dialogprovider.SimpleMessageDialogProvider;
 
 public final class DefaultProviderConfiguration {
 
@@ -10,7 +14,7 @@ public final class DefaultProviderConfiguration {
     private final long acceptableTimePeriod;
     private final long gpsWaitPeriod;
     private final long networkWaitPeriod;
-    private final String gpsMessage;
+    private final DialogProvider gpsDialogProvider;
 
     private DefaultProviderConfiguration(Builder builder) {
         this.requiredTimeInterval = builder.requiredTimeInterval;
@@ -19,7 +23,7 @@ public final class DefaultProviderConfiguration {
         this.acceptableTimePeriod = builder.acceptableTimePeriod;
         this.gpsWaitPeriod = builder.gpsWaitPeriod;
         this.networkWaitPeriod = builder.networkWaitPeriod;
-        this.gpsMessage = builder.gpsMessage;
+        this.gpsDialogProvider = builder.gpsDialogProvider;
     }
 
     // region Getters
@@ -40,11 +44,11 @@ public final class DefaultProviderConfiguration {
     }
 
     public boolean askForGPSEnable() {
-        return gpsMessage != null && gpsMessage.length() > 0;
+        return gpsDialogProvider != null;
     }
 
-    public String gpsMessage() {
-        return gpsMessage;
+    public DialogProvider getGpsDialogProvider() {
+        return gpsDialogProvider;
     }
 
     public long gpsWaitPeriod() {
@@ -65,6 +69,7 @@ public final class DefaultProviderConfiguration {
         private long acceptableTimePeriod = Defaults.TIME_PERIOD;
         private long gpsWaitPeriod = Defaults.WAIT_PERIOD;
         private long networkWaitPeriod = Defaults.WAIT_PERIOD;
+        private DialogProvider gpsDialogProvider;
         private String gpsMessage = Defaults.EMPTY_STRING;
 
         /**
@@ -130,6 +135,20 @@ public final class DefaultProviderConfiguration {
         }
 
         /**
+         * If you need to display a custom dialog to ask user to enable GPS, you can provide your own
+         * implementation of {@linkplain DialogProvider} and manager will use that implementation to display the dialog.
+         * Important, if you set your own implementation, please make sure to handle gpsMessage as well.
+         * Because {@linkplain DefaultProviderConfiguration.Builder#gpsMessage} will be ignored in that case.
+         *
+         * If you don't specify any dialogProvider implementation {@linkplain SimpleMessageDialogProvider} will be used with
+         * given {@linkplain DefaultProviderConfiguration.Builder#gpsMessage}
+         */
+        public Builder gpsDialogProvider(DialogProvider dialogProvider) {
+            this.gpsDialogProvider = dialogProvider;
+            return this;
+        }
+
+        /**
          * Indicates waiting time period before switching to next possible provider.
          * Possible to set provider wait periods separately by passing providerType as one of the
          * {@linkplain ProviderType.Source} values.
@@ -165,6 +184,10 @@ public final class DefaultProviderConfiguration {
         }
 
         public DefaultProviderConfiguration build() {
+            if (gpsDialogProvider == null && !TextUtils.isEmpty(gpsMessage)) {
+                gpsDialogProvider = new SimpleMessageDialogProvider(gpsMessage);
+            }
+
             return new DefaultProviderConfiguration(this);
         }
     }

@@ -6,18 +6,18 @@ import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 
-public class RationaleDialogProvider extends DialogProvider implements DialogInterface.OnClickListener {
+public class SimpleMessageDialogProvider extends DialogProvider implements DialogInterface.OnClickListener {
 
-    private String rationale;
+    private String message;
 
-    public RationaleDialogProvider(String rationale) {
-        this.rationale = rationale;
+    public SimpleMessageDialogProvider(String message) {
+        this.message = message;
     }
 
     @Override
     public Dialog getDialog(@NonNull Context context) {
         return new AlertDialog.Builder(context)
-              .setMessage(rationale)
+              .setMessage(message)
               .setCancelable(false)
               .setPositiveButton(android.R.string.ok, this)
               .setNegativeButton(android.R.string.cancel, this)
