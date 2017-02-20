@@ -89,12 +89,18 @@ Below permissions are required while using NetworkProvider, and they are not in 
 <uses-permission android:name="android.permission.INTERNET" />
 ```
 
-But these permissions are in "Dangerous Permissions" categories, so library will ask for permission on Android M and above.
+But this permission is in "Dangerous Permissions" categories, so library will ask for permission on Android M and above.
 
-```html 
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+```html
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 ```
+
+You might also need to consider information below from [the location guide page.](https://developer.android.com/guide/topics/location/strategies.html)
+
+<blockquote>
+<b>Caution:</b> If your app targets Android 5.0 (API level 21) or higher, you must declare that your app uses the android
+.hardware.location.network or android.hardware.location.gps hardware feature in the manifest file, depending on whether your app receives location updates from NETWORK_PROVIDER or from GPS_PROVIDER. If your app receives location information from either of these location provider sources, you need to declare that the app uses these hardware features in your app manifest. On devices running verions prior to Android 5.0 (API 21), requesting the ACCESS_FINE_LOCATION or ACCESS_COARSE_LOCATION permission includes an implied request for location hardware features. However, requesting those permissions does not automatically request location hardware features on Android 5.0 (API level 21) and higher.
+</blockquote>
 
 ## Download
 Add library dependency to your `build.gradle` file:

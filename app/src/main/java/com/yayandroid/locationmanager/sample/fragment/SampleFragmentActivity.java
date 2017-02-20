@@ -20,7 +20,7 @@ public class SampleFragmentActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         // This is necessary because SettingsApi requires Activity, and because it calls startActivityForResult from the
-        // activity, but not fragment, fragment doesn't receive onActivityResult callback.
+        // activity, not fragment, fragment doesn't receive onActivityResult callback.
         SampleFragment sampleFragment = (SampleFragment) getSupportFragmentManager().findFragmentById(R.id.sample_fragment);
         sampleFragment.onActivityResult(requestCode, resultCode, data);
     }

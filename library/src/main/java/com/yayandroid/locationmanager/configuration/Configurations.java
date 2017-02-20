@@ -15,10 +15,10 @@ public final class Configurations {
 
     /**
      * Returns a LocationConfiguration that keeps tracking,
-     * see also {@linkplain Configurations#silenceConfiguration(boolean)}
+     * see also {@linkplain Configurations#silentConfiguration(boolean)}
      */
-    public static LocationConfiguration silenceConfiguration() {
-        return silenceConfiguration(true);
+    public static LocationConfiguration silentConfiguration() {
+        return silentConfiguration(true);
     }
 
     /**
@@ -28,7 +28,7 @@ public final class Configurations {
      *
      * # Best use case of this configuration is within Service implementations
      */
-    public static LocationConfiguration silenceConfiguration(boolean keepTracking) {
+    public static LocationConfiguration silentConfiguration(boolean keepTracking) {
         return new LocationConfiguration.Builder()
               .keepTracking(keepTracking)
               .useGooglePlayServices(new GPServicesConfiguration.Builder().askForSettingsApi(false).build())

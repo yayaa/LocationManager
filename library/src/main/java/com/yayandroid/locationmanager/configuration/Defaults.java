@@ -25,8 +25,7 @@ public final class Defaults {
 
     static final String EMPTY_STRING = "";
     public static final String[] LOCATION_PERMISSIONS = new String[]{
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION
     };
 
     private static final int LOCATION_PRIORITY = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
