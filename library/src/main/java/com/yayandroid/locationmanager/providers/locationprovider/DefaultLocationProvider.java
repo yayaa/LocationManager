@@ -141,7 +141,10 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
         gpsDialogProvider.setDialogListener(new DialogListener() {
             @Override
             public void onPositiveButtonClick() {
-                if (getActivity() != null) {
+                if (getFragment() != null) {
+                    getFragment().startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),
+                          RequestCode.GPS_ENABLE);
+                } else if (getActivity() != null) {
                     getActivity().startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),
                                 RequestCode.GPS_ENABLE);
                 } else {

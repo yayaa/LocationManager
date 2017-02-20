@@ -1,8 +1,10 @@
 package com.yayandroid.locationmanager.configuration;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.location.LocationRequest;
+import com.yayandroid.locationmanager.LocationManager;
 
 public final class GPServicesConfiguration {
 
@@ -74,7 +76,10 @@ public final class GPServicesConfiguration {
          * manager will check whether GPS, Wifi and Cell networks are available or not.
          * Then if this flag is on it will ask user to turn them on, again, via GooglePlayServices
          * by displaying a system dialog if not it will directly try to receive location
-         * -which probably not going to return no values.
+         * -which probably not going to return any values.
+         *
+         * Important: SettingsApi only supports Activity, so make sure your activity's onActivityResult method is
+         * overridden and redirected to {@linkplain LocationManager#onActivityResult(int, int, Intent)}.
          *
          * Default is True.
          */

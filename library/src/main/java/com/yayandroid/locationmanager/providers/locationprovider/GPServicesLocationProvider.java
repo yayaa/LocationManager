@@ -189,6 +189,7 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
                     // and check the result in onActivityResult().
                     LogUtils.logI("We need settingsApi to display dialog to switch required settings on, displaying the dialog...", LogType.GENERAL);
                     settingsDialogIsOn = true;
+
                     if (getActivity() != null) {
                         status.startResolutionForResult(getActivity(), RequestCode.SETTINGS_API);
                     } else {
