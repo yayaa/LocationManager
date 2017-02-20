@@ -16,6 +16,14 @@ public final class LocationConfiguration {
         this.defaultProviderConfiguration = builder.defaultProviderConfiguration;
     }
 
+    public LocationConfiguration.Builder newBuilder() {
+        return new LocationConfiguration.Builder()
+              .keepTracking(keepTracking)
+              .askForPermission(permissionConfiguration)
+              .useGooglePlayServices(gpServicesConfiguration)
+              .useDefaultProviders(defaultProviderConfiguration);
+    }
+
     // region Getters
     public boolean keepTracking() {
         return keepTracking;

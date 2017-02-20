@@ -26,6 +26,17 @@ public final class DefaultProviderConfiguration {
         this.gpsDialogProvider = builder.gpsDialogProvider;
     }
 
+    public DefaultProviderConfiguration.Builder newBuilder() {
+        return new DefaultProviderConfiguration.Builder()
+              .requiredTimeInterval(requiredTimeInterval)
+              .requiredDistanceInterval(requiredDistanceInterval)
+              .acceptableAccuracy(acceptableAccuracy)
+              .acceptableTimePeriod(acceptableTimePeriod)
+              .setWaitPeriod(ProviderType.GPS, gpsWaitPeriod)
+              .setWaitPeriod(ProviderType.NETWORK, networkWaitPeriod)
+              .gpsDialogProvider(gpsDialogProvider);
+    }
+
     // region Getters
     public long requiredTimeInterval() {
         return requiredTimeInterval;
@@ -79,9 +90,6 @@ public final class DefaultProviderConfiguration {
          * Default is {@linkplain Defaults#LOCATION_INTERVAL}
          */
         public Builder requiredTimeInterval(long requiredTimeInterval) {
-            if (requiredTimeInterval < 0)
-                throw new IllegalArgumentException("Required time interval cannot be set to negative value.");
-
             this.requiredTimeInterval = requiredTimeInterval;
             return this;
         }
@@ -93,9 +101,6 @@ public final class DefaultProviderConfiguration {
          * Default is {@linkplain Defaults#LOCATION_DISTANCE_INTERVAL}
          */
         public Builder requiredDistanceInterval(long requiredDistanceInterval) {
-            if (requiredDistanceInterval < 0)
-                throw new IllegalArgumentException("Required distance interval cannot be set to negative value.");
-
             this.requiredDistanceInterval = requiredDistanceInterval;
             return this;
         }
@@ -105,9 +110,6 @@ public final class DefaultProviderConfiguration {
          * Default is {@linkplain Defaults#MIN_ACCURACY}
          */
         public Builder acceptableAccuracy(float acceptableAccuracy) {
-            if (acceptableAccuracy < 0)
-                throw new IllegalArgumentException("Acceptable accuracy cannot be set to negative value.");
-
             this.acceptableAccuracy = acceptableAccuracy;
             return this;
         }
@@ -118,9 +120,6 @@ public final class DefaultProviderConfiguration {
          * Default is {@linkplain Defaults#TIME_PERIOD}
          */
         public Builder acceptableTimePeriod(long acceptableTimePeriod) {
-            if (acceptableTimePeriod < 0)
-                throw new IllegalArgumentException("Acceptable time period cannot be set to negative value.");
-
             this.acceptableTimePeriod = acceptableTimePeriod;
             return this;
         }
@@ -155,9 +154,6 @@ public final class DefaultProviderConfiguration {
          * Default values are {@linkplain Defaults#WAIT_PERIOD}
          */
         public Builder setWaitPeriod(@ProviderType.Source int providerType, long milliseconds) {
-            if (milliseconds < 0)
-                throw new IllegalArgumentException("Wait period cannot be set to negative value.");
-
             switch (providerType) {
                 case ProviderType.GOOGLE_PLAY_SERVICES: {
                     throw new IllegalStateException("GooglePlayServices waiting time period should be set on "
@@ -184,6 +180,30 @@ public final class DefaultProviderConfiguration {
         }
 
         public DefaultProviderConfiguration build() {
+            if (requiredTimeInterval < 0) {
+                throw new IllegalArgumentException("Required time interval cannot be set to negative value.");
+            }
+
+            if (requiredDistanceInterval < 0) {
+                throw new IllegalArgumentException("Required distance interval cannot be set to negative value.");
+            }
+
+            if (acceptableAccuracy < 0) {
+                throw new IllegalArgumentException("Acceptable accuracy cannot be set to negative value.");
+            }
+
+            if (acceptableTimePeriod < 0) {
+                throw new IllegalArgumentException("Acceptable time period cannot be set to negative value.");
+            }
+
+            if (networkWaitPeriod < 0) {
+                throw new IllegalArgumentException("Network Wait period cannot be set to negative value.");
+            }
+
+            if (gpsWaitPeriod < 0) {
+                throw new IllegalArgumentException("GPS Wait period cannot be set to negative value.");
+            }
+
             if (gpsDialogProvider == null && !TextUtils.isEmpty(gpsMessage)) {
                 gpsDialogProvider = new SimpleMessageDialogProvider(gpsMessage);
             }

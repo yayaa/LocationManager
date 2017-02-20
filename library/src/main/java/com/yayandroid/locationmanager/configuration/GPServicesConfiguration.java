@@ -24,6 +24,16 @@ public final class GPServicesConfiguration {
         this.googlePlayServicesWaitPeriod = builder.googlePlayServicesWaitPeriod;
     }
 
+    public GPServicesConfiguration.Builder newBuilder() {
+        return new GPServicesConfiguration.Builder()
+              .locationRequest(locationRequest)
+              .askForGooglePlayServices(askForGooglePlayServices)
+              .askForSettingsApi(askForSettingsApi)
+              .failOnConnectionSuspended(failOnConnectionSuspended)
+              .failOnSettingsApiSuspended(failOnSettingsApiSuspended)
+              .setWaitPeriod(googlePlayServicesWaitPeriod);
+    }
+
     // region Getters
     public LocationRequest locationRequest() {
         return locationRequest;
@@ -132,13 +142,14 @@ public final class GPServicesConfiguration {
          * Default values are {@linkplain Defaults#WAIT_PERIOD}
          */
         public Builder setWaitPeriod(long milliseconds) {
-            if (milliseconds < 0) { throw new IllegalArgumentException("Wait period cannot be set to negative value."); }
-
             this.googlePlayServicesWaitPeriod = milliseconds;
             return this;
         }
 
         public GPServicesConfiguration build() {
+            if (googlePlayServicesWaitPeriod < 0)
+                throw new IllegalArgumentException("GooglePlayServices WaitPeriod cannot be set to negative value.");
+
             return new GPServicesConfiguration(this);
         }
     }

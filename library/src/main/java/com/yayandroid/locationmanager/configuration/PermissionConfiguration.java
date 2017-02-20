@@ -19,6 +19,13 @@ public class PermissionConfiguration {
         this.requiredPermissions = builder.requiredPermissions;
     }
 
+    public PermissionConfiguration.Builder newBuilder() {
+        return new PermissionConfiguration.Builder()
+              .permissionProvider(permissionProvider)
+              .rationalMessage(rationalMessage)
+              .requiredPermissions(requiredPermissions);
+    }
+
     // region Getters
     public String rationalMessage() {
         return rationalMessage;
@@ -58,10 +65,6 @@ public class PermissionConfiguration {
          * by calling this method with new permissions' array.
          */
         public Builder requiredPermissions(String[] permissions) {
-            if (permissions == null || permissions.length == 0) {
-                throw new IllegalStateException("Required Permissions cannot be empty.");
-            }
-
             this.requiredPermissions = permissions;
             return this;
         }
@@ -95,6 +98,10 @@ public class PermissionConfiguration {
         }
 
         public PermissionConfiguration build() {
+            if (requiredPermissions == null || requiredPermissions.length == 0) {
+                throw new IllegalStateException("Required Permissions cannot be empty.");
+            }
+
             if (rationaleDialogProvider == null && !TextUtils.isEmpty(rationalMessage)) {
                 rationaleDialogProvider = new SimpleMessageDialogProvider(rationalMessage);
             }
