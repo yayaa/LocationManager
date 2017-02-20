@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
+import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.sample.R;
 import com.yayandroid.locationmanager.sample.SamplePresenter;
 import com.yayandroid.locationmanager.sample.SamplePresenter.SampleView;
@@ -73,7 +74,8 @@ public class SampleServiceActivity extends AppCompatActivity implements SampleVi
             if (action.equals(SampleService.ACTION_LOCATION_CHANGED)) {
                 samplePresenter.onLocationChanged((Location) intent.getParcelableExtra(SampleService.EXTRA_LOCATION));
             } else if (action.equals(SampleService.ACTION_LOCATION_FAILED)) {
-                samplePresenter.onLocationFailed(intent.getIntExtra(SampleService.EXTRA_FAIL_TYPE, -1));
+                //noinspection WrongConstant
+                samplePresenter.onLocationFailed(intent.getIntExtra(SampleService.EXTRA_FAIL_TYPE, FailType.UNKNOWN));
             }
         }
     };

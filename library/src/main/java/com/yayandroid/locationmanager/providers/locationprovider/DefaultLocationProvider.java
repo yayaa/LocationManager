@@ -232,7 +232,7 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
         setWaiting(false);
     }
 
-    private void onLocationFailed(int type) {
+    private void onLocationFailed(@FailType.Reason int type) {
         if (getListener() != null) {
             getListener().onLocationFailed(type);
         }

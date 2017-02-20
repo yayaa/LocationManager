@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import com.yayandroid.locationmanager.base.LocationBaseService;
 import com.yayandroid.locationmanager.configuration.Configurations;
 import com.yayandroid.locationmanager.configuration.LocationConfiguration;
+import com.yayandroid.locationmanager.constants.FailType;
 
 public class SampleService extends LocationBaseService {
 
@@ -54,7 +55,7 @@ public class SampleService extends LocationBaseService {
     }
 
     @Override
-    public void onLocationFailed(int type) {
+    public void onLocationFailed(@FailType.Reason int type) {
         Intent intent = new Intent(ACTION_LOCATION_FAILED);
         intent.putExtra(EXTRA_FAIL_TYPE, type);
         sendBroadcast(intent);

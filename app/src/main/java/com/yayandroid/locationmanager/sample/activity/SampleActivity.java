@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.yayandroid.locationmanager.base.LocationBaseActivity;
 import com.yayandroid.locationmanager.configuration.Configurations;
 import com.yayandroid.locationmanager.configuration.LocationConfiguration;
+import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.sample.R;
 import com.yayandroid.locationmanager.sample.SamplePresenter;
 import com.yayandroid.locationmanager.sample.SamplePresenter.SampleView;
@@ -47,7 +48,7 @@ public class SampleActivity extends LocationBaseActivity implements SampleView {
     }
 
     @Override
-    public void onLocationFailed(int failType) {
+    public void onLocationFailed(@FailType.Reason int failType) {
         samplePresenter.onLocationFailed(failType);
     }
 

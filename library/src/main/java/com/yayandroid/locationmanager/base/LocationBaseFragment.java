@@ -1,7 +1,6 @@
 package com.yayandroid.locationmanager.base;
 
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -15,10 +14,6 @@ public abstract class LocationBaseFragment extends Fragment implements LocationL
     private LocationManager locationManager;
 
     public abstract LocationConfiguration getLocationConfiguration();
-
-    public abstract void onLocationFailed(int failType);
-
-    public abstract void onLocationChanged(Location location);
 
     protected LocationManager getLocationManager() {
         return locationManager;

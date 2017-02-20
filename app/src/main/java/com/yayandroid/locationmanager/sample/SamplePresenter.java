@@ -22,7 +22,7 @@ public class SamplePresenter {
         setText(location);
     }
 
-    public void onLocationFailed(int failType) {
+    public void onLocationFailed(@FailType.Reason int failType) {
         sampleView.dismissProgress();
 
         switch (failType) {

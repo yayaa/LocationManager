@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.yayandroid.locationmanager.base.LocationBaseFragment;
 import com.yayandroid.locationmanager.configuration.Configurations;
 import com.yayandroid.locationmanager.configuration.LocationConfiguration;
+import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.sample.R;
 import com.yayandroid.locationmanager.sample.SamplePresenter;
 import com.yayandroid.locationmanager.sample.SamplePresenter.SampleView;
@@ -57,7 +58,7 @@ public class SampleFragment extends LocationBaseFragment implements SampleView {
     }
 
     @Override
-    public void onLocationFailed(int failType) {
+    public void onLocationFailed(@FailType.Reason int failType) {
         samplePresenter.onLocationFailed(failType);
     }
 

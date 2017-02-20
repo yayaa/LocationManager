@@ -328,7 +328,7 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
         return permissionProvider;
     }
 
-    private void failed(int type) {
+    private void failed(@FailType.Reason int type) {
         if (listener != null) {
             listener.onLocationFailed(type);
         }
