@@ -1,18 +1,24 @@
 package com.yayandroid.locationmanager.providers.permissionprovider;
 
+import android.app.Activity;
+import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 
 import com.yayandroid.locationmanager.LocationManager;
 import com.yayandroid.locationmanager.listener.PermissionListener;
 import com.yayandroid.locationmanager.providers.dialogprovider.DialogProvider;
 import com.yayandroid.locationmanager.view.ContextProcessor;
 
+import java.lang.ref.WeakReference;
+
 public abstract class PermissionProvider {
 
-    protected ContextProcessor contextProcessor;
-    protected final String[] requiredPermissions;
-    protected PermissionListener permissionListener;
-    protected DialogProvider rationalDialogProvider;
+    private WeakReference<ContextProcessor> weakContextProcessor;
+    private WeakReference<PermissionListener> weakPermissionListener;
+    private final String[] requiredPermissions;
+    private DialogProvider rationalDialogProvider;
 
     /**
      * This class is responsible to get required permissions, and notify {@linkplain LocationManager}.
@@ -30,18 +36,42 @@ public abstract class PermissionProvider {
         this.rationalDialogProvider = rationaleDialogProvider;
     }
 
-    /**
-     * This method will be called by {@linkplain LocationManager} internally
-     */
-    public void setContextProcessor(ContextProcessor contextProcessor) {
-        this.contextProcessor = contextProcessor;
+    protected String[] getRequiredPermissions() {
+        return requiredPermissions;
+    }
+
+    @Nullable protected DialogProvider getDialogProvider() {
+        return rationalDialogProvider;
+    }
+
+    @Nullable protected Context getContext() {
+        return weakContextProcessor.get() == null ? null : weakContextProcessor.get().getContext();
+    }
+
+    @Nullable protected Activity getActivity() {
+        return weakContextProcessor.get() == null ? null : weakContextProcessor.get().getActivity();
+    }
+
+    @Nullable protected Fragment getFragment() {
+        return weakContextProcessor.get() == null ? null : weakContextProcessor.get().getFragment();
+    }
+
+    @Nullable protected PermissionListener getPermissionListener() {
+        return weakPermissionListener.get();
     }
 
     /**
-     * This method will be called by {@linkplain LocationManager} internally
+     * This will be set internally by {@linkplain LocationManager} before any call is executed on PermissionProvider
+     */
+    public void setContextProcessor(ContextProcessor contextProcessor) {
+        this.weakContextProcessor = new WeakReference<>(contextProcessor);
+    }
+
+    /**
+     * This will be set internally by {@linkplain LocationManager} before any call is executed on PermissionProvider
      */
     public void setPermissionListener(PermissionListener permissionListener) {
-        this.permissionListener = permissionListener;
+        this.weakPermissionListener = new WeakReference<>(permissionListener);
     }
 
     /**
@@ -55,7 +85,8 @@ public abstract class PermissionProvider {
     public abstract boolean requestPermissions();
 
     /**
-     * This method needs to be called when
+     * This method needs to be called when permission results are received
      */
-    public abstract void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults);
+    public abstract void onRequestPermissionsResult(int requestCode,
+          @Nullable String[] permissions, @NonNull int[] grantResults);
 }

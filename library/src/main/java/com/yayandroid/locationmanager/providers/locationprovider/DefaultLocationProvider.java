@@ -51,7 +51,7 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
     @Override
     public boolean requiresActivityResult() {
         // If we need to ask for enabling GPS then we'll need to get onActivityResult callback
-        return configuration.defaultProviderConfiguration().askForGPSEnable();
+        return getConfiguration().defaultProviderConfiguration().askForGPSEnable();
     }
 
     @Override
@@ -63,8 +63,8 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
     public void get() {
         setWaiting(true);
 
-        if (contextProcessor.getContext() != null) {
-            locationManager = (LocationManager) contextProcessor.getContext().getSystemService(Context.LOCATION_SERVICE);
+        if (getContext() != null) {
+            locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         } else {
             onLocationFailed(FailType.VIEW_DETACHED);
             return;
@@ -76,7 +76,7 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
             askForLocation(LocationManager.GPS_PROVIDER);
         } else {
             // GPS is not enabled,
-            if (configuration.defaultProviderConfiguration().askForGPSEnable() && contextProcessor.getActivity() != null) {
+            if (getConfiguration().defaultProviderConfiguration().askForGPSEnable() && getActivity() != null) {
                 LogUtils.logI("GPS is not enabled, asking user to enable it...", LogType.GENERAL);
                 askForEnableGPS();
             } else {
@@ -137,13 +137,12 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
     }
 
     private void askForEnableGPS() {
-        DialogProvider gpsDialogProvider = configuration.defaultProviderConfiguration().getGpsDialogProvider();
+        DialogProvider gpsDialogProvider = getConfiguration().defaultProviderConfiguration().getGpsDialogProvider();
         gpsDialogProvider.setDialogListener(new DialogListener() {
             @Override
             public void onPositiveButtonClick() {
-                if (contextProcessor.getActivity() != null) {
-                    contextProcessor.getActivity()
-                          .startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),
+                if (getActivity() != null) {
+                    getActivity().startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),
                                 RequestCode.GPS_ENABLE);
                 } else {
                     onLocationFailed(FailType.VIEW_DETACHED);
@@ -157,7 +156,7 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
                 getLocationByNetwork();
             }
         });
-        gpsDialog = gpsDialogProvider.getDialog(contextProcessor.getActivity());
+        gpsDialog = gpsDialogProvider.getDialog(getActivity());
         gpsDialog.show();
     }
 
@@ -183,7 +182,7 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
         boolean locationIsAlreadyAvailable = false;
         Location lastKnownLocation = locationManager.getLastKnownLocation(provider);
 
-        if (LocationUtils.isUsable(configuration, lastKnownLocation)) {
+        if (LocationUtils.isUsable(getConfiguration(), lastKnownLocation)) {
             LogUtils.logI("LastKnowLocation is usable.", LogType.IMPORTANT);
             onLocationReceived(lastKnownLocation);
             locationIsAlreadyAvailable = true;
@@ -191,7 +190,7 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
             LogUtils.logI("LastKnowLocation is not usable.", LogType.GENERAL);
         }
 
-        if (configuration.keepTracking() || !locationIsAlreadyAvailable) {
+        if (getConfiguration().keepTracking() || !locationIsAlreadyAvailable) {
             LogUtils.logI("Ask for location update...", LogType.IMPORTANT);
             // Ask for immediate location update
             requestUpdateLocation(0, 0, !locationIsAlreadyAvailable);
@@ -211,12 +210,12 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
 
     private long getWaitPeriod() {
         return provider.equals(LocationManager.GPS_PROVIDER)
-              ? configuration.defaultProviderConfiguration().gpsWaitPeriod()
-              : configuration.defaultProviderConfiguration().networkWaitPeriod();
+              ? getConfiguration().defaultProviderConfiguration().gpsWaitPeriod()
+              : getConfiguration().defaultProviderConfiguration().networkWaitPeriod();
     }
 
     private boolean isNetworkAvailable() {
-        return LocationUtils.isNetworkAvailable(contextProcessor.getContext());
+        return LocationUtils.isNetworkAvailable(getContext());
     }
 
     private boolean isNetworkProviderEnabled() {
@@ -228,15 +227,15 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
     }
 
     private void onLocationReceived(Location location) {
-        if (listener != null) {
-            listener.onLocationChanged(location);
+        if (getListener() != null) {
+            getListener().onLocationChanged(location);
         }
         setWaiting(false);
     }
 
     private void onLocationFailed(int type) {
-        if (listener != null) {
-            listener.onLocationFailed(type);
+        if (getListener() != null) {
+            getListener().onLocationFailed(type);
         }
         setWaiting(false);
     }
@@ -249,9 +248,9 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
         // no need to switch or call fail
         cancelTask.stop();
 
-        if (configuration.keepTracking()) {
-            requestUpdateLocation(configuration.defaultProviderConfiguration().requiredTimeInterval(),
-                  configuration.defaultProviderConfiguration().requiredDistanceInterval(), false);
+        if (getConfiguration().keepTracking()) {
+            requestUpdateLocation(getConfiguration().defaultProviderConfiguration().requiredTimeInterval(),
+                  getConfiguration().defaultProviderConfiguration().requiredDistanceInterval(), false);
         } else {
             locationManager.removeUpdates(this);
         }
@@ -259,22 +258,22 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        if (listener != null) {
-            listener.onStatusChanged(provider, status, extras);
+        if (getListener() != null) {
+            getListener().onStatusChanged(provider, status, extras);
         }
     }
 
     @Override
     public void onProviderEnabled(String provider) {
-        if (listener != null) {
-            listener.onProviderEnabled(provider);
+        if (getListener() != null) {
+            getListener().onProviderEnabled(provider);
         }
     }
 
     @Override
     public void onProviderDisabled(String provider) {
-        if (listener != null) {
-            listener.onProviderDisabled(provider);
+        if (getListener() != null) {
+            getListener().onProviderDisabled(provider);
         }
     }
 

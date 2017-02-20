@@ -13,13 +13,13 @@ public class StubPermissionProvider extends PermissionProvider {
 
     @Override
     public boolean hasPermission() {
-        if (contextProcessor.getContext() == null) {
+        if (getContext() == null) {
             LogUtils.logE("Couldn't check whether permissions are granted or not "
-                  + "because of contextProcessor doesn't contain any context.", LogType.IMPORTANT);
+                  + "because of PermissionProvider doesn't contain any context.", LogType.IMPORTANT);
             return false;
         }
 
-        return PermissionManager.hasPermissions(contextProcessor.getContext(), requiredPermissions);
+        return PermissionManager.hasPermissions(getContext(), getRequiredPermissions());
     }
 
     @Override

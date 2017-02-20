@@ -28,11 +28,11 @@ public class SimpleMessageDialogProvider extends DialogProvider implements Dialo
     public void onClick(DialogInterface dialog, int which) {
         switch (which) {
             case DialogInterface.BUTTON_POSITIVE: {
-                if (dialogListener != null) dialogListener.onPositiveButtonClick();
+                if (getDialogListener() != null) getDialogListener().onPositiveButtonClick();
                 break;
             }
             case DialogInterface.BUTTON_NEGATIVE: {
-                if (dialogListener != null) dialogListener.onNegativeButtonClick();
+                if (getDialogListener() != null) getDialogListener().onNegativeButtonClick();
                 break;
             }
         }

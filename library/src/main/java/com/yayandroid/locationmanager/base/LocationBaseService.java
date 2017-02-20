@@ -24,11 +24,11 @@ public abstract class LocationBaseService extends Service implements LocationLis
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public LocationManager getLocationManager() {
+    protected LocationManager getLocationManager() {
         return locationManager;
     }
 
-    public void getLocation() {
+    protected void getLocation() {
         if (locationManager != null) {
             locationManager.get();
         } else {

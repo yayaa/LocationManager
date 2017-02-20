@@ -167,7 +167,7 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
     /**
      * Provide requestPermissionResult to manager so the it can handle RuntimePermission
      */
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         getPermissionProvider().onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 

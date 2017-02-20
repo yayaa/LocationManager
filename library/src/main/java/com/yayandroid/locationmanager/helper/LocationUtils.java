@@ -42,7 +42,7 @@ public final class LocationUtils {
     }
 
     public static boolean isUsable(LocationConfiguration configuration, Location location) {
-        if (location == null) return false;
+        if (location == null || configuration == null) return false;
 
         float givenAccuracy = location.getAccuracy();
         long givenTime = location.getTime();

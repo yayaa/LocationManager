@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Edited by Yahya Bayramoglu on 09/02/16.
+ * Edited by Yahya Bayramoglu.
  * Original Source: https://github.com/googlesamples/easypermissions
  */
 public final class PermissionManager {

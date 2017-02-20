@@ -1,22 +1,27 @@
 package com.yayandroid.locationmanager.providers.locationprovider;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.CallSuper;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 
 import com.yayandroid.locationmanager.listener.LocationListener;
 import com.yayandroid.locationmanager.configuration.LocationConfiguration;
 import com.yayandroid.locationmanager.view.ContextProcessor;
 
+import java.lang.ref.WeakReference;
+
 public abstract class LocationProvider {
 
     private boolean isWaiting = false;
-    protected LocationConfiguration configuration;
-    protected ContextProcessor contextProcessor;
-    protected LocationListener listener;
+    private LocationConfiguration configuration;
+    private WeakReference<ContextProcessor> weakContextProcessor;
+    private WeakReference<LocationListener> weakLocationListener;
 
-    @CallSuper
-    public void configure(ContextProcessor contextProcessor, LocationConfiguration configuration) {
-        this.contextProcessor = contextProcessor;
+    @CallSuper public void configure(ContextProcessor contextProcessor, LocationConfiguration configuration) {
+        this.weakContextProcessor = new WeakReference<>(contextProcessor);
         this.configuration = configuration;
     }
 
@@ -62,7 +67,7 @@ public abstract class LocationProvider {
      * then you have to invoke methods
      */
     public void notifyTo(LocationListener listener) {
-        this.listener = listener;
+        this.weakLocationListener = new WeakReference<>(listener);
     }
 
     /**
@@ -74,10 +79,10 @@ public abstract class LocationProvider {
     /**
      * To remove location updates while getting from GPS or Network Provider
      */
-    public void onDestroy() {
-        // Release instances not to cause leak
-        this.configuration = null;
-        this.listener = null;
+    @CallSuper public void onDestroy() {
+        configuration = null;
+        weakContextProcessor.clear();
+        weakLocationListener.clear();
     }
 
     public void onPause() {
@@ -85,4 +90,25 @@ public abstract class LocationProvider {
 
     public void onResume() {
     }
+
+    protected LocationConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    @Nullable protected LocationListener getListener() {
+        return weakLocationListener.get();
+    }
+
+    @Nullable protected Context getContext() {
+        return weakContextProcessor.get() == null ? null : weakContextProcessor.get().getContext();
+    }
+
+    @Nullable protected Activity getActivity() {
+        return weakContextProcessor.get() == null ? null : weakContextProcessor.get().getActivity();
+    }
+
+    @Nullable protected Fragment getFragment() {
+        return weakContextProcessor.get() == null ? null : weakContextProcessor.get().getFragment();
+    }
+
 }

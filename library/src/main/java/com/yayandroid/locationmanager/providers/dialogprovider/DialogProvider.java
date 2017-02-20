@@ -5,13 +5,14 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.yayandroid.locationmanager.LocationManager;
 import com.yayandroid.locationmanager.listener.DialogListener;
 import com.yayandroid.locationmanager.providers.permissionprovider.DefaultPermissionProvider;
 
+import java.lang.ref.WeakReference;
+
 public abstract class DialogProvider {
 
-    protected DialogListener dialogListener;
+    private WeakReference<DialogListener> weakDialogListener;
 
     /**
      * Create a dialog object on given context
@@ -29,6 +30,10 @@ public abstract class DialogProvider {
      * @param dialogListener will be used to notify on specific actions
      */
     public void setDialogListener(@Nullable DialogListener dialogListener) {
-        this.dialogListener = dialogListener;
+        this.weakDialogListener = new WeakReference<>(dialogListener);
+    }
+
+    @Nullable public DialogListener getDialogListener() {
+        return weakDialogListener.get();
     }
 }

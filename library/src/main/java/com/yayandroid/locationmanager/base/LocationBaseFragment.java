@@ -3,6 +3,7 @@ package com.yayandroid.locationmanager.base;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
 import com.yayandroid.locationmanager.LocationManager;
@@ -23,7 +24,7 @@ public abstract class LocationBaseFragment extends Fragment implements LocationL
         return locationManager;
     }
 
-    public void getLocation() {
+    protected void getLocation() {
         if (locationManager != null) {
             locationManager.get();
         } else {
@@ -65,7 +66,7 @@ public abstract class LocationBaseFragment extends Fragment implements LocationL
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         locationManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
