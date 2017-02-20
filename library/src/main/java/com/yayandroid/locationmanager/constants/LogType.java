@@ -2,9 +2,6 @@ package com.yayandroid.locationmanager.constants;
 
 import android.support.annotation.IntDef;
 
-/**
- * Created by Yahya Bayramoglu on 10/02/16.
- */
 public class LogType {
 
     public static final int NONE = 0;

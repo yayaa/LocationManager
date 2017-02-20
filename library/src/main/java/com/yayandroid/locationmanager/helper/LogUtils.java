@@ -4,9 +4,6 @@ import android.util.Log;
 
 import com.yayandroid.locationmanager.constants.LogType;
 
-/**
- * Created by Yahya Bayramoglu on 09/02/16.
- */
 public final class LogUtils {
 
     private static int logType = LogType.IMPORTANT;

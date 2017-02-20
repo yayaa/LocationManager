@@ -4,11 +4,11 @@ import android.support.annotation.NonNull;
 
 import com.yayandroid.locationmanager.listener.LocationListener;
 
-/**
- * Pre-Defined Configurations
- */
 public final class Configurations {
 
+    /**
+     * Pre-Defined Configurations
+     */
     private Configurations() {
         // No instance
     }
