@@ -193,7 +193,7 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
                     if (getActivity() != null) {
                         status.startResolutionForResult(getActivity(), RequestCode.SETTINGS_API);
                     } else {
-                        settingsApiFail(FailType.VIEW_DETACHED);
+                        settingsApiFail(FailType.VIEW_NOT_REQUIRED_TYPE);
                     }
                 } catch (IntentSender.SendIntentException e) {
                     LogUtils.logE("Error on displaying SettingsApi dialog, GP_SettingsApi failing...", LogType.IMPORTANT);

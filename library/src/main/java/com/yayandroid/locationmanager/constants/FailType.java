@@ -13,5 +13,6 @@ public class FailType {
     public static final int GP_SERVICES_SETTINGS_DIALOG = 6;
     public static final int GP_SERVICES_SETTINGS_DENIED = 7;
     public static final int VIEW_DETACHED = 8;
+    public static final int VIEW_NOT_REQUIRED_TYPE = 9;
 
 }

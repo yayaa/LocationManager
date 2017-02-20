@@ -26,8 +26,16 @@ public class SamplePresenter {
         sampleView.dismissProgress();
 
         switch (failType) {
+            case FailType.TIMEOUT: {
+                sampleView.setText("Couldn't get location, and timeout!");
+                break;
+            }
             case FailType.PERMISSION_DENIED: {
                 sampleView.setText("Couldn't get location, because user didn't give permission!");
+                break;
+            }
+            case FailType.NETWORK_NOT_AVAILABLE: {
+                sampleView.setText("Couldn't get location, because network is not accessible!");
                 break;
             }
             case FailType.GP_SERVICES_NOT_AVAILABLE: {
@@ -38,20 +46,21 @@ public class SamplePresenter {
                 sampleView.setText("Couldn't get location, because Google Play Services connection failed!");
                 break;
             }
-            case FailType.NETWORK_NOT_AVAILABLE: {
-                sampleView.setText("Couldn't get location, because network is not accessible!");
-                break;
-            }
-            case FailType.TIMEOUT: {
-                sampleView.setText("Couldn't get location, and timeout!");
+            case FailType.GP_SERVICES_SETTINGS_DIALOG: {
+                sampleView.setText("Couldn't display settingsApi dialog!");
                 break;
             }
             case FailType.GP_SERVICES_SETTINGS_DENIED: {
                 sampleView.setText("Couldn't get location, because user didn't activate providers via settingsApi!");
                 break;
             }
-            case FailType.GP_SERVICES_SETTINGS_DIALOG: {
-                sampleView.setText("Couldn't display settingsApi dialog!");
+            case FailType.VIEW_DETACHED: {
+                sampleView.setText("Couldn't get location, because in the process view was detached!");
+                break;
+            }
+            case FailType.VIEW_NOT_REQUIRED_TYPE: {
+                sampleView.setText("Couldn't get location, "
+                      + "because view wasn't sufficient enough to fulfill given configuration!");
                 break;
             }
         }

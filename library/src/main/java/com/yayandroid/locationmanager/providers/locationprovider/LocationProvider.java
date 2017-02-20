@@ -3,10 +3,13 @@ package com.yayandroid.locationmanager.providers.locationprovider;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import com.yayandroid.locationmanager.constants.LogType;
+import com.yayandroid.locationmanager.helper.LogUtils;
 import com.yayandroid.locationmanager.listener.LocationListener;
 import com.yayandroid.locationmanager.configuration.LocationConfiguration;
 import com.yayandroid.locationmanager.view.ContextProcessor;
@@ -20,7 +23,8 @@ public abstract class LocationProvider {
     private WeakReference<ContextProcessor> weakContextProcessor;
     private WeakReference<LocationListener> weakLocationListener;
 
-    @CallSuper public void configure(ContextProcessor contextProcessor, LocationConfiguration configuration) {
+    @CallSuper
+    public void configure(ContextProcessor contextProcessor, LocationConfiguration configuration) {
         this.weakContextProcessor = new WeakReference<>(contextProcessor);
         this.configuration = configuration;
     }
@@ -79,7 +83,8 @@ public abstract class LocationProvider {
     /**
      * To remove location updates while getting from GPS or Network Provider
      */
-    @CallSuper public void onDestroy() {
+    @CallSuper
+    public void onDestroy() {
         configuration = null;
         weakContextProcessor.clear();
         weakLocationListener.clear();
@@ -95,20 +100,36 @@ public abstract class LocationProvider {
         return configuration;
     }
 
-    @Nullable protected LocationListener getListener() {
+    @Nullable
+    protected LocationListener getListener() {
         return weakLocationListener.get();
     }
 
-    @Nullable protected Context getContext() {
+    @Nullable
+    protected Context getContext() {
         return weakContextProcessor.get() == null ? null : weakContextProcessor.get().getContext();
     }
 
-    @Nullable protected Activity getActivity() {
+    @Nullable
+    protected Activity getActivity() {
         return weakContextProcessor.get() == null ? null : weakContextProcessor.get().getActivity();
     }
 
-    @Nullable protected Fragment getFragment() {
+    @Nullable
+    protected Fragment getFragment() {
         return weakContextProcessor.get() == null ? null : weakContextProcessor.get().getFragment();
     }
 
+    protected boolean startActivityForResult(Intent intent, int requestCode) {
+        if (getFragment() != null) {
+            getFragment().startActivityForResult(intent, requestCode);
+        } else if (getActivity() != null) {
+            getActivity().startActivityForResult(intent, requestCode);
+        } else {
+            LogUtils
+                  .logE("Cannot startActivityForResult because host is neither Activity nor Fragment.", LogType.IMPORTANT);
+            return false;
+        }
+        return true;
+    }
 }
