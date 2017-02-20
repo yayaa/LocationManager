@@ -52,7 +52,7 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
     /**
      * To create an instance of this manager you MUST specify a LocationConfiguration
      */
-    public LocationManager(LocationConfiguration configuration) {
+    public LocationManager(@NonNull LocationConfiguration configuration) {
         this.configuration = configuration;
     }
 
@@ -60,7 +60,7 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
      * This specifies on which context this manager will run,
      * this also needs to be set before you attempt to get location
      */
-    public LocationManager on(Context context) {
+    public LocationManager on(@NonNull Context context) {
         if (contextProcessor != null) throw new IllegalStateException("on method can be called only once.");
         this.contextProcessor = new ContextProcessor(context);
         return this;
@@ -70,7 +70,7 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
      * This specifies on which context this manager will run,
      * this also needs to be set before you attempt to get location
      */
-    public LocationManager on(Fragment fragment) {
+    public LocationManager on(@NonNull Fragment fragment) {
         if (contextProcessor != null) throw new IllegalStateException("on method can be called only once.");
         this.contextProcessor = new ContextProcessor(fragment);
         return this;
@@ -95,14 +95,6 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
         }
 
         this.activeProvider = provider;
-        return this;
-    }
-
-    /**
-     * Possible to change configuration object on runtime
-     */
-    public LocationManager setConfiguration(LocationConfiguration configuration) {
-        this.configuration = configuration;
         return this;
     }
 
