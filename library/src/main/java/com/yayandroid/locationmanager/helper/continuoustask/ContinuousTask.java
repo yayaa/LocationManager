@@ -3,7 +3,6 @@ package com.yayandroid.locationmanager.helper.continuoustask;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 
-import com.yayandroid.locationmanager.constants.LogType;
 import com.yayandroid.locationmanager.helper.LogUtils;
 
 import java.lang.ref.WeakReference;
@@ -50,7 +49,7 @@ public class ContinuousTask extends Handler implements Runnable {
         if (weekContinuousTaskRunner.get() != null) {
             weekContinuousTaskRunner.get().runScheduledTask(taskId);
         } else {
-            LogUtils.logE("Something went wrong and task failed.", LogType.IMPORTANT);
+            LogUtils.logE("Something went wrong and task failed.");
         }
         continuousTaskScheduler.clean();
     }

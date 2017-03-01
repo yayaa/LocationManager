@@ -18,7 +18,6 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.yayandroid.locationmanager.constants.FailType;
-import com.yayandroid.locationmanager.constants.LogType;
 import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.helper.LocationUtils;
 import com.yayandroid.locationmanager.helper.LogUtils;
@@ -80,7 +79,7 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
 
     @Override
     public void cancel() {
-        LogUtils.logI("Canceling GPServiceLocationProvider...", LogType.GENERAL);
+        LogUtils.logI("Canceling GPServiceLocationProvider...");
         if (googleApiClient != null && googleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
             googleApiClient.disconnect();
@@ -95,10 +94,10 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
             settingsDialogIsOn = false;
 
             if (resultCode == Activity.RESULT_OK) {
-                LogUtils.logI("We got settings changed, requesting location update...", LogType.GENERAL);
+                LogUtils.logI("We got settings changed, requesting location update...");
                 requestLocationUpdate();
             } else {
-                LogUtils.logI("User denied settingsApi dialog, GP_Settings failing...", LogType.IMPORTANT);
+                LogUtils.logI("User denied settingsApi dialog, GP_Settings failing...");
                 settingsApiFail(FailType.GP_SERVICES_SETTINGS_DENIED);
             }
         }
@@ -108,49 +107,49 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
     @SuppressWarnings("ResourceType")
     @Override
     public void onConnected(Bundle bundle) {
-        LogUtils.logI("GoogleApiClient is connected.", LogType.GENERAL);
+        LogUtils.logI("GoogleApiClient is connected.");
         boolean locationIsAlreadyAvailable = false;
 
         if (LocationServices.FusedLocationApi.getLocationAvailability(googleApiClient).isLocationAvailable()) {
             Location lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
 
             if (LocationUtils.isUsable(getConfiguration(), lastKnownLocation)) {
-                LogUtils.logI("LastKnowLocation is usable.", LogType.IMPORTANT);
+                LogUtils.logI("LastKnowLocation is usable.");
                 onLocationChanged(lastKnownLocation);
                 locationIsAlreadyAvailable = true;
             } else {
-                LogUtils.logI("LastKnowLocation is not usable.", LogType.GENERAL);
+                LogUtils.logI("LastKnowLocation is not usable.");
             }
         }
 
         if (getConfiguration().keepTracking() || !locationIsAlreadyAvailable) {
-            LogUtils.logI("Ask for location update...", LogType.IMPORTANT);
+            LogUtils.logI("Ask for location update...");
             if (getConfiguration().gpServicesConfiguration().askForSettingsApi()) {
-                LogUtils.logI("Asking for SettingsApi...", LogType.IMPORTANT);
+                LogUtils.logI("Asking for SettingsApi...");
                 askForSettingsApi();
             } else {
-                LogUtils.logI("SettingsApi is not enabled, requesting for location update...", LogType.GENERAL);
+                LogUtils.logI("SettingsApi is not enabled, requesting for location update...");
                 requestLocationUpdate();
             }
         } else {
-            LogUtils.logI("We got location, no need to ask for location updates.", LogType.GENERAL);
+            LogUtils.logI("We got location, no need to ask for location updates.");
         }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
         if (!getConfiguration().gpServicesConfiguration().failOnConnectionSuspended() && googleApiClient != null) {
-            LogUtils.logI("GoogleApiClient connection is suspended, try to connect again.", LogType.IMPORTANT);
+            LogUtils.logI("GoogleApiClient connection is suspended, try to connect again.");
             googleApiClient.connect();
         } else {
-            LogUtils.logI("GoogleApiClient connection is suspended, calling fail...", LogType.GENERAL);
+            LogUtils.logI("GoogleApiClient connection is suspended, calling fail...");
             failed(FailType.GP_SERVICES_CONNECTION_FAIL);
         }
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        LogUtils.logI("GoogleApiClient connection is failed.", LogType.GENERAL);
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        LogUtils.logI("GoogleApiClient connection is failed.");
         failed(FailType.GP_SERVICES_CONNECTION_FAIL);
     }
 
@@ -164,7 +163,7 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
         setWaiting(false);
 
         if (!getConfiguration().keepTracking()) {
-            LogUtils.logI("We got location and no need to keep tracking, so location update is removed.", LogType.GENERAL);
+            LogUtils.logI("We got location and no need to keep tracking, so location update is removed.");
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
         }
     }
@@ -177,8 +176,8 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
             case LocationSettingsStatusCodes.SUCCESS:
                 // All location settings are satisfied. The client can initialize location
                 // requests here.
-                LogUtils.logI("We got GPS, Wifi and/or Cell network providers enabled enough " +
-                        "to receive location as we needed. Requesting location update...", LogType.GENERAL);
+                LogUtils.logI("We got GPS, Wifi and/or Cell network providers enabled enough "
+                      + "to receive location as we needed. Requesting location update...");
                 requestLocationUpdate();
                 break;
             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
@@ -187,7 +186,7 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
                 try {
                     // Show the dialog by calling startResolutionForResult(),
                     // and check the result in onActivityResult().
-                    LogUtils.logI("We need settingsApi to display dialog to switch required settings on, displaying the dialog...", LogType.GENERAL);
+                    LogUtils.logI("We need settingsApi dialog to switch required settings on, displaying the dialog...");
                     settingsDialogIsOn = true;
 
                     if (getActivity() != null) {
@@ -196,14 +195,14 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
                         settingsApiFail(FailType.VIEW_NOT_REQUIRED_TYPE);
                     }
                 } catch (IntentSender.SendIntentException e) {
-                    LogUtils.logE("Error on displaying SettingsApi dialog, GP_SettingsApi failing...", LogType.IMPORTANT);
+                    LogUtils.logE("Error on displaying SettingsApi dialog, SettingsApi failing...");
                     settingsApiFail(FailType.GP_SERVICES_SETTINGS_DIALOG);
                 }
                 break;
             case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                // Location settings are not satisfied. However, we have no way to fix the
-                // settings so we won't show the dialog.
-                LogUtils.logE("Settings change is not available, GP_SettingsApi failing...", LogType.IMPORTANT);
+                // Location settings are not satisfied.
+                // However, we have no way to fix the settings so we won't show the dialog.
+                LogUtils.logE("Settings change is not available, SettingsApi failing...");
                 settingsApiFail(FailType.GP_SERVICES_SETTINGS_DIALOG);
                 break;
         }
@@ -229,12 +228,12 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
         if (getConfiguration().gpServicesConfiguration().failOnSettingsApiSuspended()) {
             failed(failType);
         } else {
-            LogUtils.logE("Even though settingsApi failed, configuration requires moving on, " +
-                    "so requesting location update...", LogType.GENERAL);
+            LogUtils.logE("Even though settingsApi failed, configuration requires moving on. "
+                  + "So requesting location update...");
             if (googleApiClient.isConnected()) {
                 requestLocationUpdate();
             } else {
-                LogUtils.logE("GoogleApiClient is not connected. Aborting...", LogType.IMPORTANT);
+                LogUtils.logE("GoogleApiClient is not connected. Aborting...");
                 failed(failType);
             }
         }

@@ -11,7 +11,6 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 
 import com.yayandroid.locationmanager.constants.FailType;
-import com.yayandroid.locationmanager.constants.LogType;
 import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.helper.LocationUtils;
 import com.yayandroid.locationmanager.helper.LogUtils;
@@ -72,15 +71,15 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
 
         // First check for GPS
         if (isGPSProviderEnabled()) {
-            LogUtils.logI("GPS is already enabled, getting location...", LogType.GENERAL);
+            LogUtils.logI("GPS is already enabled, getting location...");
             askForLocation(LocationManager.GPS_PROVIDER);
         } else {
             // GPS is not enabled,
             if (getConfiguration().defaultProviderConfiguration().askForGPSEnable() && getActivity() != null) {
-                LogUtils.logI("GPS is not enabled, asking user to enable it...", LogType.GENERAL);
+                LogUtils.logI("GPS is not enabled, asking user to enable it...");
                 askForEnableGPS();
             } else {
-                LogUtils.logI("GPS is not enabled, moving on with Network...", LogType.GENERAL);
+                LogUtils.logI("GPS is not enabled, moving on with Network...");
                 getLocationByNetwork();
             }
         }
@@ -100,7 +99,7 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
             if (isGPSProviderEnabled()) {
                 onGPSActivated();
             } else {
-                LogUtils.logI("User didn't activate GPS, so continue with Network Provider", LogType.IMPORTANT);
+                LogUtils.logI("User didn't activate GPS, so continue with Network Provider");
                 getLocationByNetwork();
             }
         }
@@ -150,8 +149,7 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
 
             @Override
             public void onNegativeButtonClick() {
-                LogUtils.logI("User didn't want to enable GPS, so continue with Network Provider",
-                      LogType.IMPORTANT);
+                LogUtils.logI("User didn't want to enable GPS, so continue with Network Provider");
                 getLocationByNetwork();
             }
         });
@@ -160,16 +158,16 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
     }
 
     private void onGPSActivated() {
-        LogUtils.logI("User activated GPS, listen for location", LogType.GENERAL);
+        LogUtils.logI("User activated GPS, listen for location");
         askForLocation(LocationManager.GPS_PROVIDER);
     }
 
     private void getLocationByNetwork() {
         if (isNetworkProviderEnabled() && isNetworkAvailable()) {
-            LogUtils.logI("Network is enabled, getting location...", LogType.GENERAL);
+            LogUtils.logI("Network is enabled, getting location...");
             askForLocation(LocationManager.NETWORK_PROVIDER);
         } else {
-            LogUtils.logI("Network is not enabled, calling fail...", LogType.GENERAL);
+            LogUtils.logI("Network is not enabled, calling fail...");
             onLocationFailed(FailType.NETWORK_NOT_AVAILABLE);
         }
     }
@@ -182,19 +180,19 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
         Location lastKnownLocation = locationManager.getLastKnownLocation(provider);
 
         if (LocationUtils.isUsable(getConfiguration(), lastKnownLocation)) {
-            LogUtils.logI("LastKnowLocation is usable.", LogType.IMPORTANT);
+            LogUtils.logI("LastKnowLocation is usable.");
             onLocationReceived(lastKnownLocation);
             locationIsAlreadyAvailable = true;
         } else {
-            LogUtils.logI("LastKnowLocation is not usable.", LogType.GENERAL);
+            LogUtils.logI("LastKnowLocation is not usable.");
         }
 
         if (getConfiguration().keepTracking() || !locationIsAlreadyAvailable) {
-            LogUtils.logI("Ask for location update...", LogType.IMPORTANT);
+            LogUtils.logI("Ask for location update...");
             // Ask for immediate location update
             requestUpdateLocation(0, 0, !locationIsAlreadyAvailable);
         } else {
-            LogUtils.logI("We got location, no need to ask for location updates.", LogType.GENERAL);
+            LogUtils.logI("We got location, no need to ask for location updates.");
         }
     }
 
@@ -284,11 +282,10 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
             }
 
             if (provider.equals(LocationManager.GPS_PROVIDER)) {
-                LogUtils.logI("We waited enough for GPS, switching to Network provider...", LogType.IMPORTANT);
+                LogUtils.logI("We waited enough for GPS, switching to Network provider...");
                 getLocationByNetwork();
             } else {
-                LogUtils.logI("Network Provider is not provide location in required period, calling fail...",
-                      LogType.GENERAL);
+                LogUtils.logI("Network Provider is not provide location in required period, calling fail...");
                 onLocationFailed(FailType.TIMEOUT);
             }
         }

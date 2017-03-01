@@ -2,11 +2,14 @@ package com.yayandroid.locationmanager.providers.permissionprovider;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 
 import com.yayandroid.locationmanager.LocationManager;
+import com.yayandroid.locationmanager.helper.LogUtils;
 import com.yayandroid.locationmanager.listener.PermissionListener;
 import com.yayandroid.locationmanager.providers.dialogprovider.DialogProvider;
 import com.yayandroid.locationmanager.view.ContextProcessor;
@@ -77,7 +80,20 @@ public abstract class PermissionProvider {
     /**
      * Return true if required permissions are granted, false otherwise
      */
-    public abstract boolean hasPermission();
+    public boolean hasPermission() {
+        if (getContext() == null) {
+            LogUtils.logE("Couldn't check whether permissions are granted or not "
+                  + "because of PermissionProvider doesn't contain any context.");
+            return false;
+        }
+
+        for (String permission : getRequiredPermissions()) {
+            if (ContextCompat.checkSelfPermission(getContext(), permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * Return true if it is possible to ask permission, false otherwise

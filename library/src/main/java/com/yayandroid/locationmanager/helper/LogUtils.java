@@ -2,48 +2,36 @@ package com.yayandroid.locationmanager.helper;
 
 import android.util.Log;
 
-import com.yayandroid.locationmanager.constants.LogType;
-
 public final class LogUtils {
 
-    private static int logType = LogType.IMPORTANT;
+    private static boolean isEnabled = false;
 
     private LogUtils() {
         // No instance
     }
 
-    public static void setLogType(@LogType.Level int logType) {
-        LogUtils.logType = logType;
+    public static void enable(boolean isEnabled) {
+        LogUtils.isEnabled = isEnabled;
     }
 
-    public static void logD(String message, @LogType.Level int type) {
-        if (type <= logType) {
-            Log.d(getClassName(), message);
-        }
+    public static void logD(String message) {
+        if (isEnabled) Log.d(getClassName(), message);
     }
 
-    public static void logE(String message, @LogType.Level int type) {
-        if (type <= logType) {
-            Log.e(getClassName(), message);
-        }
+    public static void logE(String message) {
+        if (isEnabled) Log.e(getClassName(), message);
     }
 
-    public static void logI(String message, @LogType.Level int type) {
-        if (type <= logType) {
-            Log.i(getClassName(), message);
-        }
+    public static void logI(String message) {
+        if (isEnabled) Log.i(getClassName(), message);
     }
 
-    public static void logV(String message, @LogType.Level int type) {
-        if (type <= logType) {
-            Log.v(getClassName(), message);
-        }
+    public static void logV(String message) {
+        if (isEnabled) Log.v(getClassName(), message);
     }
 
-    public static void logW(String message, @LogType.Level int type) {
-        if (type <= logType) {
-            Log.w(getClassName(), message);
-        }
+    public static void logW(String message) {
+        if (isEnabled) Log.w(getClassName(), message);
     }
 
     private static String getClassName() {

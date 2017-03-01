@@ -11,7 +11,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.yayandroid.locationmanager.configuration.LocationConfiguration;
 import com.yayandroid.locationmanager.constants.FailType;
-import com.yayandroid.locationmanager.constants.LogType;
 import com.yayandroid.locationmanager.constants.ProviderType;
 import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.helper.LocationUtils;
@@ -41,12 +40,13 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
     private PermissionProvider permissionProvider;
 
     /**
-     * This library contains a lot of log to make tracing steps easier,
-     * So you can set the type which one corresponds your requirements.
-     * Do not forget to set it to NONE before you publish your application!
+     * Library tries to log as much as possible in order to make it transparent to see what is actually going on
+     * under the hood. You can enable it for debug purposes, but do not forget to disable on production.
+     *
+     * Log is disabled as default.
      */
-    public static void setLogType(@LogType.Level int type) {
-        LogUtils.setLogType(type);
+    public static void enableLog(boolean enable) {
+        LogUtils.enable(enable);
     }
 
     /**
@@ -204,8 +204,8 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
             throw new RuntimeException("You must set a context to runScheduledTask LocationManager on!");
 
         if (configuration.gpServicesConfiguration() == null) {
-            LogUtils.logI("Configuration requires not to use Google Play Services, " +
-                    "so skipping that step to Default Location Providers", LogType.GENERAL);
+            LogUtils.logI("Configuration requires not to use Google Play Services, "
+                  + "so skipping that step to Default Location Providers");
             continueWithDefaultProviders();
             return;
         }
@@ -213,17 +213,17 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
         int gpServicesAvailability = LocationUtils.isGooglePlayServicesAvailable(contextProcessor.getContext());
 
         if (gpServicesAvailability == ConnectionResult.SUCCESS) {
-            LogUtils.logI("GooglePlayServices is available on device.", LogType.GENERAL);
+            LogUtils.logI("GooglePlayServices is available on device.");
             askForPermission(ProviderType.GOOGLE_PLAY_SERVICES);
         } else {
-            LogUtils.logI("GooglePlayServices is NOT available on device.", LogType.IMPORTANT);
+            LogUtils.logI("GooglePlayServices is NOT available on device.");
 
             if (askForGPServices) {
                 if (configuration.gpServicesConfiguration().askForGooglePlayServices() &&
                         GoogleApiAvailability.getInstance()
                                 .isUserResolvableError(gpServicesAvailability)) {
 
-                    LogUtils.logI("Asking user to handle GooglePlayServices error...", LogType.GENERAL);
+                    LogUtils.logI("Asking user to handle GooglePlayServices error...");
                     gpServicesDialog = LocationUtils.getGooglePlayServicesErrorDialog(contextProcessor.getContext(),
                           gpServicesAvailability, RequestCode.GOOGLE_PLAY_SERVICES, new DialogInterface.OnCancelListener() {
                               @Override
@@ -236,19 +236,18 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
                         gpServicesDialog.show();
                     } else {
                         LogUtils.logI("GooglePlayServices error could've been resolved, but since LocationManager "
-                              + "is not running on an Activity, dialog cannot be displayed.", LogType.GENERAL);
+                              + "is not running on an Activity, dialog cannot be displayed.");
                         continueWithDefaultProviders();
                     }
                 } else {
                     LogUtils.logI("Either GooglePlayServices error is not resolvable "
-                            + "or the configuration doesn't wants us to bother user.", LogType.GENERAL);
+                            + "or the configuration doesn't wants us to bother user.");
                     continueWithDefaultProviders();
                 }
 
             } else {
-                LogUtils.logI("GooglePlayServices is NOT available and "
-                        + "even though we ask user to handle error, "
-                        + "it is still NOT available.", LogType.IMPORTANT);
+                LogUtils.logI("GooglePlayServices is NOT available and even though we ask user to handle error, "
+                      + "it is still NOT available.");
 
                 // This means get method is called by onActivityResult
                 // which we already ask user to handle with gpServices error
@@ -259,10 +258,10 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
 
     private void continueWithDefaultProviders() {
         if (configuration.defaultProviderConfiguration() == null) {
-            LogUtils.logI("Because the configuration, we can only use GooglePlayServices, so we abort.", LogType.GENERAL);
+            LogUtils.logI("Because the configuration, we can only use GooglePlayServices, so we abort.");
             failed(FailType.GP_SERVICES_NOT_AVAILABLE);
         } else {
-            LogUtils.logI("Attempting to get location from default providers...", LogType.GENERAL);
+            LogUtils.logI("Attempting to get location from default providers...");
             askForPermission(ProviderType.DEFAULT_PROVIDERS);
         }
     }
@@ -273,16 +272,16 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
             locationPermissionGranted(true);
         } else {
             if (getPermissionProvider().requestPermissions()) {
-                LogUtils.logI("Waiting until we receive any callback from PermissionProvider...", LogType.GENERAL);
+                LogUtils.logI("Waiting until we receive any callback from PermissionProvider...");
             } else {
-                LogUtils.logI("We don't have permissions and cannot ask for it. Aborting...", LogType.GENERAL);
+                LogUtils.logI("We don't have permissions and cannot ask for it. Aborting...");
                 failed(FailType.PERMISSION_DENIED);
             }
         }
     }
 
     private void locationPermissionGranted(boolean alreadyHadPermission) {
-        LogUtils.logI("We got permission, getting location...", LogType.GENERAL);
+        LogUtils.logI("We got permission, getting location...");
 
         if (listener != null) {
             listener.onPermissionGranted(alreadyHadPermission);
@@ -330,8 +329,7 @@ public class LocationManager implements ContinuousTaskRunner, PermissionListener
     public void runScheduledTask(@NonNull String taskId) {
         if (taskId.equals(GOOGLE_PLAY_SERVICE_SWITCH_TASK)) {
             if (activeProvider instanceof GPServicesLocationProvider && activeProvider.isWaiting()) {
-                LogUtils.logI("We couldn't receive location from GooglePlayServices, "
-                      + "so switching default providers...", LogType.IMPORTANT);
+                LogUtils.logI("We couldn't receive location from GooglePlayServices, so switching default providers...");
                 cancel();
                 continueWithDefaultProviders();
             }

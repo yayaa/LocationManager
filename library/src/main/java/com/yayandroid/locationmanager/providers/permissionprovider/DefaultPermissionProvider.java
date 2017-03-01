@@ -3,7 +3,6 @@ package com.yayandroid.locationmanager.providers.permissionprovider;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.yayandroid.locationmanager.constants.LogType;
 import com.yayandroid.locationmanager.helper.LocationUtils;
 import com.yayandroid.locationmanager.helper.LogUtils;
 import com.yayandroid.locationmanager.helper.PermissionManager;
@@ -18,25 +17,14 @@ public class DefaultPermissionProvider extends PermissionProvider implements Per
     }
 
     @Override
-    public boolean hasPermission() {
-        if (getContext() == null) {
-            LogUtils.logE("Couldn't check whether permissions are granted or not "
-                  + "because of DefaultPermissionProvider doesn't contain any context.", LogType.IMPORTANT);
-            return false;
-        }
-
-        return PermissionManager.hasPermissions(getContext(), getRequiredPermissions());
-    }
-
-    @Override
     public boolean requestPermissions() {
         if (getActivity() == null) {
-            LogUtils.logI("Cannot ask for location, "
-                  + "because DefaultPermissionProvider doesn't contain an Activity instance.", LogType.GENERAL);
+            LogUtils.logI("Cannot ask for permissions, "
+                  + "because DefaultPermissionProvider doesn't contain an Activity instance.");
             return false;
         }
 
-        LogUtils.logI("Asking for Runtime Permissions...", LogType.GENERAL);
+        LogUtils.logI("Asking for Runtime Permissions...");
 
         PermissionManager.requestPermissions(getFragment() != null ? getFragment() : getActivity(),
               this, getDialogProvider(), getRequiredPermissions());
@@ -51,25 +39,25 @@ public class DefaultPermissionProvider extends PermissionProvider implements Per
     @Override
     public void onPermissionsGranted(List<String> perms) {
         if (perms.size() == getRequiredPermissions().length) {
-            LogUtils.logI("We got all required permission!", LogType.GENERAL);
+            LogUtils.logI("We got all required permission!");
             if (getPermissionListener() != null) getPermissionListener().onPermissionsGranted();
         } else {
             LogUtils.logI("User denied some of required permissions! "
                   + "Even though we have following permissions now, "
-                  + "task will still be aborted.\n" + LocationUtils.getStringFromList(perms), LogType.GENERAL);
+                  + "task will still be aborted.\n" + LocationUtils.getStringFromList(perms));
             if (getPermissionListener() != null) getPermissionListener().onPermissionsDenied();
         }
     }
 
     @Override
     public void onPermissionsDenied(List<String> perms) {
-        LogUtils.logI("User denied required permissions!\n" + LocationUtils.getStringFromList(perms), LogType.IMPORTANT);
+        LogUtils.logI("User denied required permissions!\n" + LocationUtils.getStringFromList(perms));
         if (getPermissionListener() != null) getPermissionListener().onPermissionsDenied();
     }
 
     @Override
     public void onPermissionRequestRejected() {
-        LogUtils.logI("User didn't even let us to ask for permission!", LogType.IMPORTANT);
+        LogUtils.logI("User didn't even let us to ask for permission!");
         if (getPermissionListener() != null) getPermissionListener().onPermissionsDenied();
     }
 }
