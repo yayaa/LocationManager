@@ -2,6 +2,7 @@ package com.yayandroid.locationmanager.base;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
@@ -28,6 +29,7 @@ public abstract class LocationBaseFragment extends Fragment implements LocationL
         }
     }
 
+    @CallSuper
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,30 +38,35 @@ public abstract class LocationBaseFragment extends Fragment implements LocationL
               .notify(this);
     }
 
+    @CallSuper
     @Override
     public void onDestroy() {
         locationManager.onDestroy();
         super.onDestroy();
     }
 
+    @CallSuper
     @Override
     public void onPause() {
         super.onPause();
         locationManager.onPause();
     }
 
+    @CallSuper
     @Override
     public void onResume() {
         super.onResume();
         locationManager.onResume();
     }
 
+    @CallSuper
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         locationManager.onActivityResult(requestCode, resultCode, data);
     }
-
+    
+    @CallSuper
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

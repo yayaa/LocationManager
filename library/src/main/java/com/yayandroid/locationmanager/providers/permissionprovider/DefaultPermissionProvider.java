@@ -1,5 +1,6 @@
 package com.yayandroid.locationmanager.providers.permissionprovider;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.yayandroid.locationmanager.constants.LogType;
@@ -43,7 +44,7 @@ public class DefaultPermissionProvider extends PermissionProvider implements Per
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, @NonNull int[] grantResults) {
         PermissionManager.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 

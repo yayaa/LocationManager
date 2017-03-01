@@ -1,5 +1,7 @@
 package com.yayandroid.locationmanager.providers.permissionprovider;
 
+import android.support.annotation.NonNull;
+
 import com.yayandroid.locationmanager.configuration.Defaults;
 import com.yayandroid.locationmanager.constants.LogType;
 import com.yayandroid.locationmanager.helper.LogUtils;
@@ -28,6 +30,6 @@ public class StubPermissionProvider extends PermissionProvider {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, @NonNull int[] grantResults) {
     }
 }

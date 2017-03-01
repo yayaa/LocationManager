@@ -2,6 +2,7 @@ package com.yayandroid.locationmanager.base;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
@@ -28,6 +29,7 @@ public abstract class LocationBaseActivity extends AppCompatActivity implements 
         }
     }
 
+    @CallSuper
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,30 +38,35 @@ public abstract class LocationBaseActivity extends AppCompatActivity implements 
               .notify(this);
     }
 
+    @CallSuper
     @Override
     protected void onDestroy() {
         locationManager.onDestroy();
         super.onDestroy();
     }
 
+    @CallSuper
     @Override
     protected void onPause() {
         super.onPause();
         locationManager.onPause();
     }
 
+    @CallSuper
     @Override
     protected void onResume() {
         super.onResume();
         locationManager.onResume();
     }
 
+    @CallSuper
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         locationManager.onActivityResult(requestCode, resultCode, data);
     }
 
+    @CallSuper
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

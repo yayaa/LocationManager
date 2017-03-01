@@ -3,15 +3,14 @@ package com.yayandroid.locationmanager.providers.locationprovider;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import com.yayandroid.locationmanager.configuration.LocationConfiguration;
 import com.yayandroid.locationmanager.constants.LogType;
 import com.yayandroid.locationmanager.helper.LogUtils;
 import com.yayandroid.locationmanager.listener.LocationListener;
-import com.yayandroid.locationmanager.configuration.LocationConfiguration;
 import com.yayandroid.locationmanager.view.ContextProcessor;
 
 import java.lang.ref.WeakReference;
