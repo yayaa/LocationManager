@@ -1,16 +1,16 @@
 package com.yayandroid.locationmanager.providers.permissionprovider;
 
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 
-import com.yayandroid.locationmanager.helper.LocationUtils;
+import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.helper.LogUtils;
-import com.yayandroid.locationmanager.helper.PermissionManager;
+import com.yayandroid.locationmanager.listener.DialogListener;
 import com.yayandroid.locationmanager.providers.dialogprovider.DialogProvider;
 
-import java.util.List;
-
-public class DefaultPermissionProvider extends PermissionProvider implements PermissionManager.PermissionListener {
+public class DefaultPermissionProvider extends PermissionProvider {
 
     public DefaultPermissionProvider(String[] requiredPermissions, @Nullable DialogProvider dialogProvider) {
         super(requiredPermissions, dialogProvider);
@@ -24,40 +24,73 @@ public class DefaultPermissionProvider extends PermissionProvider implements Per
             return false;
         }
 
-        LogUtils.logI("Asking for Runtime Permissions...");
+        boolean shouldShowRationale = false;
+        for (String permission : getRequiredPermissions()) {
+            shouldShowRationale = shouldShowRationale || shouldShowRequestPermissionRationale(permission);
+        }
 
-        PermissionManager.requestPermissions(getFragment() != null ? getFragment() : getActivity(),
-              this, getDialogProvider(), getRequiredPermissions());
+        LogUtils.logI("Should show rationale dialog for required permissions: " + shouldShowRationale);
+        if (shouldShowRationale && getActivity() != null && getDialogProvider() != null) {
+            getDialogProvider().setDialogListener(new DialogListener() {
+                @Override
+                public void onPositiveButtonClick() {
+                    executePermissionsRequest();
+                }
+
+                @Override
+                public void onNegativeButtonClick() {
+                    LogUtils.logI("User didn't even let us to ask for permission!");
+                    if (getPermissionListener() != null) getPermissionListener().onPermissionsDenied();
+                }
+            });
+            getDialogProvider().getDialog(getActivity()).show();
+        } else {
+            executePermissionsRequest();
+        }
+
         return true;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, @NonNull int[] grantResults) {
-        PermissionManager.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+        if (requestCode == RequestCode.RUNTIME_PERMISSION) {
+
+            // Check if any of required permissions are denied.
+            boolean isDenied = false;
+            for (int i = 0, size = permissions.length; i < size; i++) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    isDenied = true;
+                }
+            }
+
+            if (isDenied) {
+                LogUtils.logI("User denied some of required permissions, task will be aborted!");
+                if (getPermissionListener() != null) getPermissionListener().onPermissionsDenied();
+            } else {
+                LogUtils.logI("We got all required permission!");
+                if (getPermissionListener() != null) getPermissionListener().onPermissionsGranted();
+            }
+        }
     }
 
-    @Override
-    public void onPermissionsGranted(List<String> perms) {
-        if (perms.size() == getRequiredPermissions().length) {
-            LogUtils.logI("We got all required permission!");
-            if (getPermissionListener() != null) getPermissionListener().onPermissionsGranted();
+    private boolean shouldShowRequestPermissionRationale(String permission) {
+        if (getFragment() != null) {
+            return getFragment().shouldShowRequestPermissionRationale(permission);
         } else {
-            LogUtils.logI("User denied some of required permissions! "
-                  + "Even though we have following permissions now, "
-                  + "task will still be aborted.\n" + LocationUtils.getStringFromList(perms));
+            return getActivity() != null && ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission);
+        }
+    }
+
+    private void executePermissionsRequest() {
+        LogUtils.logI("Asking for Runtime Permissions...");
+        if (getFragment() != null) {
+            getFragment().requestPermissions(getRequiredPermissions(), RequestCode.RUNTIME_PERMISSION);
+        } else if (getActivity() != null) {
+            ActivityCompat.requestPermissions(getActivity(), getRequiredPermissions(), RequestCode.RUNTIME_PERMISSION);
+        } else {
+            LogUtils.logE("Something went wrong requesting for permissions.");
             if (getPermissionListener() != null) getPermissionListener().onPermissionsDenied();
         }
     }
 
-    @Override
-    public void onPermissionsDenied(List<String> perms) {
-        LogUtils.logI("User denied required permissions!\n" + LocationUtils.getStringFromList(perms));
-        if (getPermissionListener() != null) getPermissionListener().onPermissionsDenied();
-    }
-
-    @Override
-    public void onPermissionRequestRejected() {
-        LogUtils.logI("User didn't even let us to ask for permission!");
-        if (getPermissionListener() != null) getPermissionListener().onPermissionsDenied();
-    }
 }
