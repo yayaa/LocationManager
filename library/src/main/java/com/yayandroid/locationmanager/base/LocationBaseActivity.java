@@ -33,9 +33,10 @@ public abstract class LocationBaseActivity extends AppCompatActivity implements 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        locationManager = new LocationManager(getLocationConfiguration())
-              .on(this)
-              .notify(this);
+        locationManager = new LocationManager.Builder(this)
+              .configuration(getLocationConfiguration())
+              .notify(this)
+              .build();
     }
 
     @CallSuper
