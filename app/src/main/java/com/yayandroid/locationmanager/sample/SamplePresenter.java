@@ -4,6 +4,7 @@ import android.location.Location;
 import android.text.TextUtils;
 
 import com.yayandroid.locationmanager.constants.FailType;
+import com.yayandroid.locationmanager.constants.ProcessType;
 
 public class SamplePresenter {
 
@@ -22,7 +23,7 @@ public class SamplePresenter {
         setText(location);
     }
 
-    public void onLocationFailed(@FailType.Reason int failType) {
+    public void onLocationFailed(@FailType int failType) {
         sampleView.dismissProgress();
 
         switch (failType) {
@@ -63,6 +64,31 @@ public class SamplePresenter {
                       + "because view wasn't sufficient enough to fulfill given configuration!");
                 break;
             }
+            case FailType.UNKNOWN: {
+                sampleView.setText("Ops! Something went wrong!");
+                break;
+            }
+        }
+    }
+
+    public void onProcessTypeChanged(@ProcessType int newProcess) {
+        switch (newProcess) {
+            case ProcessType.GETTING_LOCATION_FROM_GOOGLE_PLAY_SERVICES: {
+                sampleView.updateProgress("Getting Location from Google Play Services...");
+                break;
+            }
+            case ProcessType.GETTING_LOCATION_FROM_GPS_PROVIDER: {
+                sampleView.updateProgress("Getting Location from GPS...");
+                break;
+            }
+            case ProcessType.GETTING_LOCATION_FROM_NETWORK_PROVIDER: {
+                sampleView.updateProgress("Getting Location from Network...");
+                break;
+            }
+            case ProcessType.ASKING_PERMISSIONS:
+            case ProcessType.GETTING_LOCATION_FROM_CUSTOM_PROVIDER:
+                // Ignored
+                break;
         }
     }
 
@@ -85,6 +111,8 @@ public class SamplePresenter {
         String getText();
 
         void setText(String text);
+
+        void updateProgress(String text);
 
         void dismissProgress();
 

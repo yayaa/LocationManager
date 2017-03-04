@@ -4,8 +4,16 @@ import android.location.Location;
 import android.os.Bundle;
 
 import com.yayandroid.locationmanager.constants.FailType;
+import com.yayandroid.locationmanager.constants.ProcessType;
 
 public interface LocationListener {
+
+    /**
+     * This method will be called whenever the process is changed.
+     *
+     * @param processType new on going process
+     */
+    void onProcessTypeChanged(@ProcessType int processType);
 
     /**
      * This method will be invoked whenever new location update received

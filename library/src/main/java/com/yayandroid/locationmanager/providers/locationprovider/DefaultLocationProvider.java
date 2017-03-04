@@ -11,6 +11,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 
 import com.yayandroid.locationmanager.constants.FailType;
+import com.yayandroid.locationmanager.constants.ProcessType;
 import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.helper.LocationUtils;
 import com.yayandroid.locationmanager.helper.LogUtils;
@@ -183,10 +184,19 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
 
         if (getConfiguration().keepTracking() || !locationIsAlreadyAvailable) {
             LogUtils.logI("Ask for location update...");
+            notifyProcessChange();
             // Ask for immediate location update
             requestUpdateLocation(0, 0, !locationIsAlreadyAvailable);
         } else {
             LogUtils.logI("We got location, no need to ask for location updates.");
+        }
+    }
+
+    private void notifyProcessChange() {
+        if (getListener() != null) {
+            getListener().onProcessTypeChanged(provider.equals(LocationManager.GPS_PROVIDER)
+                  ? ProcessType.GETTING_LOCATION_FROM_GPS_PROVIDER
+                  : ProcessType.GETTING_LOCATION_FROM_NETWORK_PROVIDER);
         }
     }
 

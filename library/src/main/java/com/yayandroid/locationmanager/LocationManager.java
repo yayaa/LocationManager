@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 
 import com.yayandroid.locationmanager.configuration.LocationConfiguration;
 import com.yayandroid.locationmanager.constants.FailType;
+import com.yayandroid.locationmanager.constants.ProcessType;
 import com.yayandroid.locationmanager.helper.LogUtils;
 import com.yayandroid.locationmanager.listener.LocationListener;
 import com.yayandroid.locationmanager.listener.PermissionListener;
@@ -191,6 +192,10 @@ public class LocationManager implements PermissionListener {
         if (permissionProvider.hasPermission()) {
             permissionGranted(true);
         } else {
+            if (listener != null) {
+                listener.onProcessTypeChanged(ProcessType.ASKING_PERMISSIONS);
+            }
+
             if (permissionProvider.requestPermissions()) {
                 LogUtils.logI("Waiting until we receive any callback from PermissionProvider...");
             } else {

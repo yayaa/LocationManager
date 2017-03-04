@@ -14,6 +14,7 @@ import com.yayandroid.locationmanager.base.LocationBaseFragment;
 import com.yayandroid.locationmanager.configuration.Configurations;
 import com.yayandroid.locationmanager.configuration.LocationConfiguration;
 import com.yayandroid.locationmanager.constants.FailType;
+import com.yayandroid.locationmanager.constants.ProcessType;
 import com.yayandroid.locationmanager.sample.R;
 import com.yayandroid.locationmanager.sample.SamplePresenter;
 import com.yayandroid.locationmanager.sample.SamplePresenter.SampleView;
@@ -58,8 +59,13 @@ public class SampleFragment extends LocationBaseFragment implements SampleView {
     }
 
     @Override
-    public void onLocationFailed(@FailType.Reason int failType) {
+    public void onLocationFailed(@FailType int failType) {
         samplePresenter.onLocationFailed(failType);
+    }
+
+    @Override
+    public void onProcessTypeChanged(@ProcessType int processType) {
+        samplePresenter.onProcessTypeChanged(processType);
     }
 
     @Override
@@ -98,6 +104,13 @@ public class SampleFragment extends LocationBaseFragment implements SampleView {
     @Override
     public void setText(String text) {
         locationText.setText(text);
+    }
+
+    @Override
+    public void updateProgress(String text) {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.setMessage(text);
+        }
     }
 
     @Override

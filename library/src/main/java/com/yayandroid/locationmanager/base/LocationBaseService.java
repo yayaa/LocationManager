@@ -7,6 +7,7 @@ import android.support.annotation.CallSuper;
 
 import com.yayandroid.locationmanager.LocationManager;
 import com.yayandroid.locationmanager.configuration.LocationConfiguration;
+import com.yayandroid.locationmanager.constants.ProcessType;
 import com.yayandroid.locationmanager.listener.LocationListener;
 
 public abstract class LocationBaseService extends Service implements LocationListener {
@@ -36,6 +37,11 @@ public abstract class LocationBaseService extends Service implements LocationLis
             throw new IllegalStateException("locationManager is null. "
                   + "Make sure you call super.onStartCommand before attempting to getLocation");
         }
+    }
+
+    @Override
+    public void onProcessTypeChanged(@ProcessType int processType) {
+        // override if needed
     }
 
     @Override

@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 
 import com.yayandroid.locationmanager.LocationManager;
 import com.yayandroid.locationmanager.configuration.LocationConfiguration;
+import com.yayandroid.locationmanager.constants.ProcessType;
 import com.yayandroid.locationmanager.listener.LocationListener;
 
 public abstract class LocationBaseFragment extends Fragment implements LocationListener {
@@ -72,6 +73,11 @@ public abstract class LocationBaseFragment extends Fragment implements LocationL
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         locationManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public void onProcessTypeChanged(@ProcessType int processType) {
+        // override if needed
     }
 
     @Override

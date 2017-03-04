@@ -18,6 +18,7 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.yayandroid.locationmanager.constants.FailType;
+import com.yayandroid.locationmanager.constants.ProcessType;
 import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.helper.LocationUtils;
 import com.yayandroid.locationmanager.helper.LogUtils;
@@ -214,6 +215,10 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
 
     @SuppressWarnings("ResourceType")
     private void requestLocationUpdate() {
+        if (getListener() != null) {
+            getListener().onProcessTypeChanged(ProcessType.GETTING_LOCATION_FROM_GOOGLE_PLAY_SERVICES);
+        }
+
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient,
               getConfiguration().gpServicesConfiguration().locationRequest(), this);
     }
