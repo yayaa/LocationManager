@@ -2,20 +2,18 @@ package com.yayandroid.locationmanager.constants;
 
 import android.support.annotation.IntDef;
 
-public class ProviderType {
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-    public static final int NONE = 0;
-    public static final int GOOGLE_PLAY_SERVICES = 1;
-    public static final int GPS = 2;
-    public static final int NETWORK = 3;
+@IntDef({ProviderType.NONE, ProviderType.GOOGLE_PLAY_SERVICES,
+      ProviderType.GPS, ProviderType.NETWORK, ProviderType.DEFAULT_PROVIDERS})
+@Retention(RetentionPolicy.SOURCE)
+public @interface ProviderType {
 
-    /**
-     * Covers both GPS and NETWORK
-     */
-    public static final int DEFAULT_PROVIDERS = 4;
-
-    @IntDef({NONE, GOOGLE_PLAY_SERVICES, GPS, NETWORK, DEFAULT_PROVIDERS})
-    public @interface Source {
-    }
-
+    int NONE = 0;
+    int GOOGLE_PLAY_SERVICES = 1;
+    int GPS = 2;
+    int NETWORK = 3;
+    int DEFAULT_PROVIDERS = 4; // Covers both GPS and NETWORK
+    
 }

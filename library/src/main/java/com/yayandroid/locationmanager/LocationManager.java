@@ -210,7 +210,7 @@ public class LocationManager implements PermissionListener {
         activeProvider.get();
     }
 
-    private void failed(@FailType.Reason int type) {
+    private void failed(@FailType int type) {
         if (listener != null) {
             listener.onLocationFailed(type);
         }

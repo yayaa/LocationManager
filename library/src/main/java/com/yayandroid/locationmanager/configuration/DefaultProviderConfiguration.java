@@ -150,10 +150,10 @@ public final class DefaultProviderConfiguration {
         /**
          * Indicates waiting time period before switching to next possible provider.
          * Possible to set provider wait periods separately by passing providerType as one of the
-         * {@linkplain ProviderType.Source} values.
+         * {@linkplain ProviderType} values.
          * Default values are {@linkplain Defaults#WAIT_PERIOD}
          */
-        public Builder setWaitPeriod(@ProviderType.Source int providerType, long milliseconds) {
+        public Builder setWaitPeriod(@ProviderType int providerType, long milliseconds) {
             switch (providerType) {
                 case ProviderType.GOOGLE_PLAY_SERVICES: {
                     throw new IllegalStateException("GooglePlayServices waiting time period should be set on "

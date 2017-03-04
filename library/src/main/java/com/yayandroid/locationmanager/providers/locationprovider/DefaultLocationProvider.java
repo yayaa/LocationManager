@@ -224,7 +224,7 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
         setWaiting(false);
     }
 
-    private void onLocationFailed(@FailType.Reason int type) {
+    private void onLocationFailed(@FailType int type) {
         if (getListener() != null) {
             getListener().onLocationFailed(type);
         }

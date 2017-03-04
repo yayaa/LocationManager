@@ -218,7 +218,7 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
               getConfiguration().gpServicesConfiguration().locationRequest(), this);
     }
 
-    private void settingsApiFail(@FailType.Reason int failType) {
+    private void settingsApiFail(@FailType int failType) {
         if (getConfiguration().gpServicesConfiguration().failOnSettingsApiSuspended()) {
             failed(failType);
         } else {
@@ -233,7 +233,7 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
         }
     }
 
-    private void failed(@FailType.Reason int type) {
+    private void failed(@FailType int type) {
         if (getListener() != null) {
             getListener().onLocationFailed(type);
         }

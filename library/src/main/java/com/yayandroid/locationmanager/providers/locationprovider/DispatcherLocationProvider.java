@@ -128,7 +128,9 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
                           gpServicesAvailability, RequestCode.GOOGLE_PLAY_SERVICES, new DialogInterface.OnCancelListener() {
                               @Override
                               public void onCancel(DialogInterface dialog) {
-                                  failed(FailType.GP_SERVICES_NOT_AVAILABLE);
+                                  LogUtils.logI("GooglePlayServices error could've been resolved, "
+                                        + "but user canceled it.");
+                                  continueWithDefaultProviders();
                               }
                           });
 
@@ -162,10 +164,19 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
         activeProvider.get();
     }
 
+    /**
+     * Called in case of Google Play Services failed to retrieve location,
+     * or GooglePlayServicesConfiguration doesn't provided by developer
+     */
     private void continueWithDefaultProviders() {
-        LogUtils.logI("Attempting to get location from default providers...");
-        setLocationProvider(new DefaultLocationProvider());
-        activeProvider.get();
+        if (getConfiguration().defaultProviderConfiguration() == null) {
+            LogUtils.logI("Configuration requires not to use default providers, abort!");
+            failed(FailType.GP_SERVICES_NOT_AVAILABLE);
+        } else {
+            LogUtils.logI("Attempting to get location from default providers...");
+            setLocationProvider(new DefaultLocationProvider());
+            activeProvider.get();
+        }
     }
 
     public void setLocationProvider(LocationProvider provider) {
@@ -173,7 +184,7 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
         activeProvider.configure(this);
     }
 
-    private void failed(@FailType.Reason int type) {
+    private void failed(@FailType int type) {
         if (getListener() != null) {
             getListener().onLocationFailed(type);
         }

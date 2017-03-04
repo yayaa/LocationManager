@@ -17,7 +17,7 @@ public interface LocationListener {
      * It will pass an integer value from {@linkplain FailType}
      * which will help you to determine how did it fail to receive location
      */
-    void onLocationFailed(@FailType.Reason int type);
+    void onLocationFailed(@FailType int type);
 
     /**
      * This method will be invoked when user grants for location permissions,
