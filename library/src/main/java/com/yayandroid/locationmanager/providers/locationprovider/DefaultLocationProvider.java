@@ -48,12 +48,6 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
     }
 
     @Override
-    public boolean requiresActivityResult() {
-        // If we need to ask for enabling GPS then we'll need to get onActivityResult callback
-        return getConfiguration().defaultProviderConfiguration().askForGPSEnable();
-    }
-
-    @Override
     public boolean isDialogShowing() {
         return gpsDialog != null && gpsDialog.isShowing();
     }

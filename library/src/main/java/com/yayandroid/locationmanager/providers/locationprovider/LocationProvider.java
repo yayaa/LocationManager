@@ -7,6 +7,7 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import com.yayandroid.locationmanager.LocationManager;
 import com.yayandroid.locationmanager.configuration.LocationConfiguration;
 import com.yayandroid.locationmanager.helper.LogUtils;
 import com.yayandroid.locationmanager.listener.LocationListener;
@@ -21,6 +22,9 @@ public abstract class LocationProvider {
     private WeakReference<ContextProcessor> weakContextProcessor;
     private WeakReference<LocationListener> weakLocationListener;
 
+    /**
+     * This method is called immediately once the LocationProvider is set to {@linkplain LocationManager}
+     */
     @CallSuper
     public void configure(ContextProcessor contextProcessor, LocationConfiguration configuration) {
         this.weakContextProcessor = new WeakReference<>(contextProcessor);
@@ -28,9 +32,14 @@ public abstract class LocationProvider {
     }
 
     /**
-     * Return true if the provider needs to listen for activityResult, false otherwise.
+     * This is used for passing object between LocationProviders
      */
-    public abstract boolean requiresActivityResult();
+    @CallSuper
+    public void configure(LocationProvider locationProvider) {
+        this.weakContextProcessor = locationProvider.weakContextProcessor;
+        this.configuration = locationProvider.configuration;
+        this.weakLocationListener = locationProvider.weakLocationListener;
+    }
 
     /**
      * This method will be used to determine whether any LocationProvider

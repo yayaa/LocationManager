@@ -1,5 +1,7 @@
 package com.yayandroid.locationmanager.configuration;
 
+import android.support.annotation.Nullable;
+
 import com.yayandroid.locationmanager.providers.permissionprovider.StubPermissionProvider;
 
 public final class LocationConfiguration {
@@ -33,11 +35,11 @@ public final class LocationConfiguration {
         return permissionConfiguration;
     }
 
-    public GPServicesConfiguration gpServicesConfiguration() {
+    @Nullable public GPServicesConfiguration gpServicesConfiguration() {
         return gpServicesConfiguration;
     }
 
-    public DefaultProviderConfiguration defaultProviderConfiguration() {
+    @Nullable public DefaultProviderConfiguration defaultProviderConfiguration() {
         return defaultProviderConfiguration;
     }
     // endregion

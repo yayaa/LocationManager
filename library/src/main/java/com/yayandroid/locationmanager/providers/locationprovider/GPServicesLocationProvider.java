@@ -51,12 +51,6 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
     }
 
     @Override
-    public boolean requiresActivityResult() {
-        // If we need to ask for settingsApi then we'll need to get onActivityResult callback
-        return getConfiguration().gpServicesConfiguration().askForSettingsApi();
-    }
-
-    @Override
     public boolean isDialogShowing() {
         return settingsDialogIsOn;
     }
