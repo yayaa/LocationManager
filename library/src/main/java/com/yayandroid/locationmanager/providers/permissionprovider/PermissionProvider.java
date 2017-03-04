@@ -39,6 +39,17 @@ public abstract class PermissionProvider {
         this.rationalDialogProvider = rationaleDialogProvider;
     }
 
+    /**
+     * Return true if it is possible to ask permission, false otherwise
+     */
+    public abstract boolean requestPermissions();
+
+    /**
+     * This method needs to be called when permission results are received
+     */
+    public abstract void onRequestPermissionsResult(int requestCode,
+          @Nullable String[] permissions, @NonNull int[] grantResults);
+
     protected String[] getRequiredPermissions() {
         return requiredPermissions;
     }
@@ -94,15 +105,4 @@ public abstract class PermissionProvider {
         }
         return true;
     }
-
-    /**
-     * Return true if it is possible to ask permission, false otherwise
-     */
-    public abstract boolean requestPermissions();
-
-    /**
-     * This method needs to be called when permission results are received
-     */
-    public abstract void onRequestPermissionsResult(int requestCode,
-          @Nullable String[] permissions, @NonNull int[] grantResults);
 }
