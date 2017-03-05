@@ -1,7 +1,6 @@
 package com.yayandroid.locationmanager.configuration;
 
-import android.text.TextUtils;
-
+import com.yayandroid.locationmanager.helper.StringUtils;
 import com.yayandroid.locationmanager.providers.dialogprovider.DialogProvider;
 import com.yayandroid.locationmanager.providers.dialogprovider.SimpleMessageDialogProvider;
 import com.yayandroid.locationmanager.providers.permissionprovider.DefaultPermissionProvider;
@@ -44,6 +43,10 @@ public class PermissionConfiguration {
          * by calling this method with new permissions' array.
          */
         public Builder requiredPermissions(String[] permissions) {
+            if (permissions == null || permissions.length == 0) {
+                throw new IllegalArgumentException("requiredPermissions cannot be empty.");
+            }
+
             this.requiredPermissions = permissions;
             return this;
         }
@@ -77,11 +80,7 @@ public class PermissionConfiguration {
         }
 
         public PermissionConfiguration build() {
-            if (requiredPermissions == null || requiredPermissions.length == 0) {
-                throw new IllegalStateException("Required Permissions cannot be empty.");
-            }
-
-            if (rationaleDialogProvider == null && !TextUtils.isEmpty(rationaleMessage)) {
+            if (rationaleDialogProvider == null && StringUtils.isNotEmpty(rationaleMessage)) {
                 rationaleDialogProvider = new SimpleMessageDialogProvider(rationaleMessage);
             }
 

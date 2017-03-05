@@ -159,14 +159,15 @@ public final class GooglePlayServicesConfiguration {
          * Default values are {@linkplain Defaults#WAIT_PERIOD}
          */
         public Builder setWaitPeriod(long milliseconds) {
+            if (milliseconds < 0) {
+                throw new IllegalArgumentException("waitPeriod cannot be set to negative value.");
+            }
+
             this.googlePlayServicesWaitPeriod = milliseconds;
             return this;
         }
 
         public GooglePlayServicesConfiguration build() {
-            if (googlePlayServicesWaitPeriod < 0)
-                throw new IllegalArgumentException("GooglePlayServices WaitPeriod cannot be set to negative value.");
-
             return new GooglePlayServicesConfiguration(this);
         }
     }

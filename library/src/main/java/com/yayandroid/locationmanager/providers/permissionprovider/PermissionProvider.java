@@ -3,6 +3,7 @@ package com.yayandroid.locationmanager.providers.permissionprovider;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -50,12 +51,16 @@ public abstract class PermissionProvider {
     public abstract void onRequestPermissionsResult(int requestCode,
           @Nullable String[] permissions, @NonNull int[] grantResults);
 
-    protected String[] getRequiredPermissions() {
+    public String[] getRequiredPermissions() {
         return requiredPermissions;
     }
 
-    @Nullable protected DialogProvider getDialogProvider() {
+    @Nullable public DialogProvider getDialogProvider() {
         return rationalDialogProvider;
+    }
+
+    @Nullable public PermissionListener getPermissionListener() {
+        return weakPermissionListener.get();
     }
 
     @Nullable protected Context getContext() {
@@ -70,21 +75,17 @@ public abstract class PermissionProvider {
         return weakContextProcessor.get() == null ? null : weakContextProcessor.get().getFragment();
     }
 
-    @Nullable protected PermissionListener getPermissionListener() {
-        return weakPermissionListener.get();
-    }
-
     /**
      * This will be set internally by {@linkplain LocationManager} before any call is executed on PermissionProvider
      */
-    public void setContextProcessor(ContextProcessor contextProcessor) {
+    @CallSuper public void setContextProcessor(ContextProcessor contextProcessor) {
         this.weakContextProcessor = new WeakReference<>(contextProcessor);
     }
 
     /**
      * This will be set internally by {@linkplain LocationManager} before any call is executed on PermissionProvider
      */
-    public void setPermissionListener(PermissionListener permissionListener) {
+    @CallSuper public void setPermissionListener(PermissionListener permissionListener) {
         this.weakPermissionListener = new WeakReference<>(permissionListener);
     }
 

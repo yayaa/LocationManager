@@ -131,7 +131,7 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
     }
 
     private void askForEnableGPS() {
-        DialogProvider gpsDialogProvider = getConfiguration().defaultProviderConfiguration().getGpsDialogProvider();
+        DialogProvider gpsDialogProvider = getConfiguration().defaultProviderConfiguration().gpsDialogProvider();
         gpsDialogProvider.setDialogListener(new DialogListener() {
             @Override
             public void onPositiveButtonClick() {

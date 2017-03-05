@@ -14,6 +14,10 @@ public class SimpleMessageDialogProvider extends DialogProvider implements Dialo
         this.message = message;
     }
 
+    public String message() {
+        return message;
+    }
+
     @Override
     public Dialog getDialog(@NonNull Context context) {
         return new AlertDialog.Builder(context)

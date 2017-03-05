@@ -25,9 +25,7 @@ public final class Defaults {
     static final boolean IGNORE_LAST_KNOW_LOCATION = false;
 
     static final String EMPTY_STRING = "";
-    public static final String[] LOCATION_PERMISSIONS = new String[]{
-            Manifest.permission.ACCESS_FINE_LOCATION
-    };
+    public static final String[] LOCATION_PERMISSIONS = new String[] { Manifest.permission.ACCESS_FINE_LOCATION };
 
     private static final int LOCATION_PRIORITY = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
     private static final int LOCATION_FASTEST_INTERVAL = MINUTE;
