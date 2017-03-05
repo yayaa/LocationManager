@@ -1,10 +1,8 @@
 package com.yayandroid.locationmanager.configuration;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.location.LocationRequest;
-import com.yayandroid.locationmanager.LocationManager;
 
 public final class GPServicesConfiguration {
 
@@ -13,6 +11,7 @@ public final class GPServicesConfiguration {
     private final boolean askForSettingsApi;
     private final boolean failOnConnectionSuspended;
     private final boolean failOnSettingsApiSuspended;
+    private final boolean ignoreLastKnowLocation;
     private final long googlePlayServicesWaitPeriod;
 
     private GPServicesConfiguration(Builder builder) {
@@ -21,6 +20,7 @@ public final class GPServicesConfiguration {
         this.askForSettingsApi = builder.askForSettingsApi;
         this.failOnConnectionSuspended = builder.failOnConnectionSuspended;
         this.failOnSettingsApiSuspended = builder.failOnSettingsApiSuspended;
+        this.ignoreLastKnowLocation = builder.ignoreLastKnowLocation;
         this.googlePlayServicesWaitPeriod = builder.googlePlayServicesWaitPeriod;
     }
 
@@ -31,6 +31,7 @@ public final class GPServicesConfiguration {
               .askForSettingsApi(askForSettingsApi)
               .failOnConnectionSuspended(failOnConnectionSuspended)
               .failOnSettingsApiSuspended(failOnSettingsApiSuspended)
+              .ignoreLastKnowLocation(ignoreLastKnowLocation)
               .setWaitPeriod(googlePlayServicesWaitPeriod);
     }
 
@@ -55,6 +56,10 @@ public final class GPServicesConfiguration {
         return failOnSettingsApiSuspended;
     }
 
+    public boolean ignoreLastKnowLocation() {
+        return ignoreLastKnowLocation;
+    }
+
     public long googlePlayServicesWaitPeriod() {
         return googlePlayServicesWaitPeriod;
     }
@@ -67,7 +72,17 @@ public final class GPServicesConfiguration {
         private boolean askForSettingsApi = Defaults.ASK_FOR_SETTINGS_API;
         private boolean failOnConnectionSuspended = Defaults.FAIL_ON_CONNECTION_SUSPENDED;
         private boolean failOnSettingsApiSuspended = Defaults.FAIL_ON_SETTINGS_API_SUSPENDED;
+        private boolean ignoreLastKnowLocation = Defaults.IGNORE_LAST_KNOW_LOCATION;
         private long googlePlayServicesWaitPeriod = Defaults.WAIT_PERIOD;
+
+        /**
+         * LocationRequest object that you specified to use while getting location from Google Play Services
+         * Default is {@linkplain Defaults#createDefaultLocationRequest()}
+         */
+        public Builder locationRequest(@NonNull LocationRequest locationRequest) {
+            this.locationRequest = locationRequest;
+            return this;
+        }
 
         /**
          * Set true to ask user handle when there is some resolvable error
@@ -87,9 +102,6 @@ public final class GPServicesConfiguration {
          * Then if this flag is on it will ask user to turn them on, again, via GooglePlayServices
          * by displaying a system dialog if not it will directly try to receive location
          * -which probably not going to return any values.
-         *
-         * Important: SettingsApi only supports Activity, so make sure your activity's onActivityResult method is
-         * overridden and redirected to {@linkplain LocationManager#onActivityResult(int, int, Intent)}.
          *
          * Default is True.
          */
@@ -128,11 +140,16 @@ public final class GPServicesConfiguration {
         }
 
         /**
-         * LocationRequest object that you specified to use while getting location from Google Play Services
-         * Default is {@linkplain Defaults#createDefaultLocationRequest()}
+         * GooglePlayServices Api returns the best most recent location currently available. It is highly recommended to
+         * use this functionality unless your requirements are really specific and precise.
+         *
+         * Default is False. So GooglePlayServices Api will return immediately if there is location already.
+         *
+         * https://developers.google.com/android/reference/com/google/android/gms/location/FusedLocationProviderApi.html
+         * #getLastLocation(com.google.android.gms.common.api.GoogleApiClient)
          */
-        public Builder locationRequest(@NonNull LocationRequest locationRequest) {
-            this.locationRequest = locationRequest;
+        public Builder ignoreLastKnowLocation(boolean ignore) {
+            this.ignoreLastKnowLocation = ignore;
             return this;
         }
 

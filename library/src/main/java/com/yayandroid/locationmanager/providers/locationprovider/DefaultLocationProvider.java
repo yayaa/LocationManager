@@ -174,7 +174,8 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
         boolean locationIsAlreadyAvailable = false;
         Location lastKnownLocation = locationManager.getLastKnownLocation(provider);
 
-        if (LocationUtils.isUsable(getConfiguration(), lastKnownLocation)) {
+        if (LocationUtils.isUsable(lastKnownLocation, getConfiguration().defaultProviderConfiguration()
+              .acceptableTimePeriod(), getConfiguration().defaultProviderConfiguration().acceptableAccuracy())) {
             LogUtils.logI("LastKnowLocation is usable.");
             onLocationReceived(lastKnownLocation);
             locationIsAlreadyAvailable = true;

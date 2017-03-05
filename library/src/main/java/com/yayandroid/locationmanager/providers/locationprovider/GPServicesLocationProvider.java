@@ -105,15 +105,20 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
         LogUtils.logI("GoogleApiClient is connected.");
         boolean locationIsAlreadyAvailable = false;
 
-        if (LocationServices.FusedLocationApi.getLocationAvailability(googleApiClient).isLocationAvailable()) {
-            Location lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-
-            if (LocationUtils.isUsable(getConfiguration(), lastKnownLocation)) {
-                LogUtils.logI("LastKnowLocation is usable.");
-                onLocationChanged(lastKnownLocation);
-                locationIsAlreadyAvailable = true;
+        if (getConfiguration().gpServicesConfiguration().ignoreLastKnowLocation()) {
+            LogUtils.logI("Configuration requires to ignore last know location from GooglePlayServices Api.");
+        } else {
+            if (LocationServices.FusedLocationApi.getLocationAvailability(googleApiClient).isLocationAvailable()) {
+                Location lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+                if (lastKnownLocation != null) {
+                    LogUtils.logI("LastKnowLocation is available.");
+                    onLocationChanged(lastKnownLocation);
+                    locationIsAlreadyAvailable = true;
+                } else {
+                    LogUtils.logI("LastKnowLocation is not available.");
+                }
             } else {
-                LogUtils.logI("LastKnowLocation is not usable.");
+                LogUtils.logI("LastKnowLocation is not available.");
             }
         }
 

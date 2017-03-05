@@ -18,10 +18,19 @@ public class SampleFragmentActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        dispatchToFragment(requestCode, resultCode, data);
+    }
 
-        // This is necessary because SettingsApi requires Activity, and because it calls startActivityForResult from the
-        // activity, not fragment, fragment doesn't receive onActivityResult callback.
-        SampleFragment sampleFragment = (SampleFragment) getSupportFragmentManager().findFragmentById(R.id.sample_fragment);
-        sampleFragment.onActivityResult(requestCode, resultCode, data);
+    /**
+     * This is required because GooglePlayServicesApi and SettingsApi requires Activity,
+     * and they call startActivityForResult from the activity, not fragment,
+     * fragment doesn't receive onActivityResult callback. We need to call/redirect manually.
+     */
+    private void dispatchToFragment(int requestCode, int resultCode, Intent data) {
+        SampleFragment sampleFragment = (SampleFragment) getSupportFragmentManager()
+              .findFragmentById(R.id.sample_fragment);
+        if (sampleFragment != null) {
+            sampleFragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }
