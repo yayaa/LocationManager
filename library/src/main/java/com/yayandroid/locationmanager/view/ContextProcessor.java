@@ -28,20 +28,17 @@ public class ContextProcessor {
         weakFragment = new WeakReference<>(fragment);
     }
 
-    @Nullable
-    public Fragment getFragment() {
+    @Nullable public Fragment getFragment() {
         return weakFragment.get();
     }
 
-    @Nullable
-    public Context getContext() {
+    @Nullable public Context getContext() {
         if (weakContext.get() != null) return weakContext.get();
         if (weakFragment.get() != null && weakFragment.get().getContext() != null) return weakFragment.get().getContext();
         return null;
     }
 
-    @Nullable
-    public Activity getActivity() {
+    @Nullable public Activity getActivity() {
         if (getContext() != null && getContext() instanceof Activity) return (Activity) getContext();
         if (getFragment() != null && getFragment().getActivity() != null) return getFragment().getActivity();
         return null;

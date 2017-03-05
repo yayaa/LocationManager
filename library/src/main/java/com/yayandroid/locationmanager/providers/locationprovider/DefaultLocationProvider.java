@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -13,12 +15,13 @@ import android.support.annotation.NonNull;
 import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.ProcessType;
 import com.yayandroid.locationmanager.constants.RequestCode;
-import com.yayandroid.locationmanager.helper.LocationUtils;
 import com.yayandroid.locationmanager.helper.LogUtils;
 import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask;
 import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask.ContinuousTaskRunner;
 import com.yayandroid.locationmanager.listener.DialogListener;
 import com.yayandroid.locationmanager.providers.dialogprovider.DialogProvider;
+
+import java.util.Date;
 
 @SuppressWarnings("ResourceType")
 public class DefaultLocationProvider extends LocationProvider implements ContinuousTaskRunner, LocationListener {
@@ -158,7 +161,7 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
     }
 
     private void getLocationByNetwork() {
-        if (isNetworkProviderEnabled() && isNetworkAvailable()) {
+        if (isNetworkProviderEnabled() && isNetworkAvailable(getContext())) {
             LogUtils.logI("Network is enabled, getting location...");
             askForLocation(LocationManager.NETWORK_PROVIDER);
         } else {
@@ -174,7 +177,7 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
         boolean locationIsAlreadyAvailable = false;
         Location lastKnownLocation = locationManager.getLastKnownLocation(provider);
 
-        if (LocationUtils.isUsable(lastKnownLocation, getConfiguration().defaultProviderConfiguration()
+        if (isLocationSufficient(lastKnownLocation, getConfiguration().defaultProviderConfiguration()
               .acceptableTimePeriod(), getConfiguration().defaultProviderConfiguration().acceptableAccuracy())) {
             LogUtils.logI("LastKnowLocation is usable.");
             onLocationReceived(lastKnownLocation);
@@ -216,8 +219,12 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
               : getConfiguration().defaultProviderConfiguration().networkWaitPeriod();
     }
 
-    private boolean isNetworkAvailable() {
-        return LocationUtils.isNetworkAvailable(getContext());
+    private boolean isNetworkAvailable(Context context) {
+        if (context == null) return false;
+
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = cm.getActiveNetworkInfo();
+        return activeNetworkInfo != null;
     }
 
     private boolean isNetworkProviderEnabled() {
@@ -240,6 +247,16 @@ public class DefaultLocationProvider extends LocationProvider implements Continu
             getListener().onLocationFailed(type);
         }
         setWaiting(false);
+    }
+
+    private boolean isLocationSufficient(Location location, long acceptableTimePeriod, float acceptableAccuracy) {
+        if (location == null) return false;
+
+        float givenAccuracy = location.getAccuracy();
+        long givenTime = location.getTime();
+        long minAcceptableTime = new Date().getTime() - acceptableTimePeriod;
+
+        return minAcceptableTime <= givenTime && acceptableAccuracy >= givenAccuracy;
     }
 
     @Override
