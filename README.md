@@ -46,24 +46,35 @@ This library doesn't use singleton structure, so it will be specified to activit
 All those options below are optional. Use only those you really want to customize. If you don't set rationalMessage then library will skip the rational message to show user. But for GPS Message, if you set askForEnableGPS true, then you need to specify the message, otherwise it will throw an exception.
 
 ```java 
-new LocationConfiguration()
-                .keepTracking(true)
-                .useOnlyGPServices(false)
-                .askForGooglePlayServices(true)
-                .askForSettingsApi(true)
-                .failOnConnectionSuspended(true)
-                .failOnSettingsApiSuspended(false)
-                .doNotUseGooglePlayServices(false)
-                .askForEnableGPS(true)
-                .setMinAccuracy(200.0f)
-                .setWithinTimePeriod(60 * 1000)
-                .setTimeInterval(10 * 1000)
-                .setWaitPeriod(ProviderType.GOOGLE_PLAY_SERVICES, 5 * 1000)
-                .setWaitPeriod(ProviderType.GPS, 15 * 1000)
-                .setWaitPeriod(ProviderType.NETWORK, 10 * 1000)
-                .setLocationRequest(YourLocationRequest)
-                .setGPSMessage("Would you mind to turn GPS on?")
-                .setRationalMessage("Gimme the permission!");
+new LocationConfiguration.Builder()
+                .keepTracking(false)
+                .askForPermission(new PermissionConfiguration.Builder()
+                                        .permissionProvider(new YourCustomPermissionProvider())
+                                        .rationalMessage("Gimme the permission!")
+                                        .rationaleDialogProvider(new YourCustomDialogProvider())
+                                        .requiredPermissions(new String[] { permission.ACCESS_FINE_LOCATION })
+                                        .build())
+                .useGooglePlayServices(new GooglePlayServicesConfiguration.Builder()
+                                        .locationRequest(YOUR_CUSTOM_LOCATION_REQUEST_OBJECT)
+                                        .askForGooglePlayServices(false)
+                                        .askForSettingsApi(true)
+                                        .failOnConnectionSuspended(true)
+                                        .failOnSettingsApiSuspended(false)
+                                        .ignoreLastKnowLocation(false)
+                                        .setWaitPeriod(20 * 1000)
+                                        .build())
+                .useDefaultProviders(new DefaultProviderConfiguration.Builder()
+                                        .requiredTimeInterval(5 * 60 * 1000)
+                                        .requiredDistanceInterval(0)
+                                        .acceptableAccuracy(5.0f)
+                                        .acceptableTimePeriod(5 * 60 * 1000)
+                                        .gpsMessage("Turn on GPS?")
+                                        .gpsDialogProvider(new YourCustomDialogProvider())
+                                        .setWaitPeriod(ProviderType.GPS, 20 * 1000)
+                                        .setWaitPeriod(ProviderType.NETWORK, 20 * 1000)
+                                        .build())
+                .build();
+
 ``` 
 In [LocationConfiguration][4] class, all of these methods are explained as when and why to use.
 
