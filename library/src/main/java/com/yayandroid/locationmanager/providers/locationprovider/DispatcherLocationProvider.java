@@ -102,7 +102,7 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
 
     @Override
     public void get() {
-        if (getConfiguration().gpServicesConfiguration() != null) {
+        if (getConfiguration().googlePlayServicesConfiguration() != null) {
             checkGooglePlayServicesAvailability(true);
         } else {
             LogUtils.logI("Configuration requires not to use Google Play Services, "
@@ -120,7 +120,7 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
         } else {
             LogUtils.logI("GooglePlayServices is NOT available on device.");
             if (askForGPServices) {
-                if (getConfiguration().gpServicesConfiguration().askForGooglePlayServices() &&
+                if (getConfiguration().googlePlayServicesConfiguration().askForGooglePlayServices() &&
                       GoogleApiAvailability.getInstance().isUserResolvableError(gpServicesAvailability)) {
 
                     LogUtils.logI("Asking user to handle GooglePlayServices error...");
@@ -160,7 +160,7 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
     private void getLocationFromGooglePlayServices() {
         LogUtils.logI("Attempting to get location from Google Play Services providers...");
         setLocationProvider(new GPServicesLocationProvider());
-        gpServicesSwitchTask.delayed(getConfiguration().gpServicesConfiguration().googlePlayServicesWaitPeriod());
+        gpServicesSwitchTask.delayed(getConfiguration().googlePlayServicesConfiguration().googlePlayServicesWaitPeriod());
         activeProvider.get();
     }
 

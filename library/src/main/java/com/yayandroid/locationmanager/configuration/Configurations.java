@@ -31,7 +31,7 @@ public final class Configurations {
     public static LocationConfiguration silentConfiguration(boolean keepTracking) {
         return new LocationConfiguration.Builder()
               .keepTracking(keepTracking)
-              .useGooglePlayServices(new GPServicesConfiguration.Builder().askForSettingsApi(false).build())
+              .useGooglePlayServices(new GooglePlayServicesConfiguration.Builder().askForSettingsApi(false).build())
               .useDefaultProviders(new DefaultProviderConfiguration.Builder().build())
               .build();
     }
@@ -43,7 +43,7 @@ public final class Configurations {
     public static LocationConfiguration defaultConfiguration(@NonNull String rationalMessage, @NonNull String gpsMessage) {
         return new LocationConfiguration.Builder()
               .askForPermission(new PermissionConfiguration.Builder().rationalMessage(rationalMessage).build())
-              .useGooglePlayServices(new GPServicesConfiguration.Builder().build())
+              .useGooglePlayServices(new GooglePlayServicesConfiguration.Builder().build())
               .useDefaultProviders(new DefaultProviderConfiguration.Builder().gpsMessage(gpsMessage).build())
               .build();
     }

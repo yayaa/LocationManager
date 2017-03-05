@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.google.android.gms.location.LocationRequest;
 
-public final class GPServicesConfiguration {
+public final class GooglePlayServicesConfiguration {
 
     private final LocationRequest locationRequest;
     private final boolean askForGooglePlayServices;
@@ -14,7 +14,7 @@ public final class GPServicesConfiguration {
     private final boolean ignoreLastKnowLocation;
     private final long googlePlayServicesWaitPeriod;
 
-    private GPServicesConfiguration(Builder builder) {
+    private GooglePlayServicesConfiguration(Builder builder) {
         this.locationRequest = builder.locationRequest;
         this.askForGooglePlayServices = builder.askForGooglePlayServices;
         this.askForSettingsApi = builder.askForSettingsApi;
@@ -24,8 +24,8 @@ public final class GPServicesConfiguration {
         this.googlePlayServicesWaitPeriod = builder.googlePlayServicesWaitPeriod;
     }
 
-    public GPServicesConfiguration.Builder newBuilder() {
-        return new GPServicesConfiguration.Builder()
+    public GooglePlayServicesConfiguration.Builder newBuilder() {
+        return new GooglePlayServicesConfiguration.Builder()
               .locationRequest(locationRequest)
               .askForGooglePlayServices(askForGooglePlayServices)
               .askForSettingsApi(askForSettingsApi)
@@ -163,11 +163,11 @@ public final class GPServicesConfiguration {
             return this;
         }
 
-        public GPServicesConfiguration build() {
+        public GooglePlayServicesConfiguration build() {
             if (googlePlayServicesWaitPeriod < 0)
                 throw new IllegalArgumentException("GooglePlayServices WaitPeriod cannot be set to negative value.");
 
-            return new GPServicesConfiguration(this);
+            return new GooglePlayServicesConfiguration(this);
         }
     }
 }

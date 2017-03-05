@@ -157,7 +157,7 @@ public final class DefaultProviderConfiguration {
             switch (providerType) {
                 case ProviderType.GOOGLE_PLAY_SERVICES: {
                     throw new IllegalStateException("GooglePlayServices waiting time period should be set on "
-                          + "GPServicesConfiguration");
+                          + "GooglePlayServicesConfiguration");
                 }
                 case ProviderType.NETWORK: {
                     this.networkWaitPeriod = milliseconds;

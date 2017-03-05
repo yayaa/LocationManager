@@ -20,7 +20,6 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.ProcessType;
 import com.yayandroid.locationmanager.constants.RequestCode;
-import com.yayandroid.locationmanager.helper.LocationUtils;
 import com.yayandroid.locationmanager.helper.LogUtils;
 
 public class GPServicesLocationProvider extends LocationProvider implements LocationListener,
@@ -105,7 +104,7 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
         LogUtils.logI("GoogleApiClient is connected.");
         boolean locationIsAlreadyAvailable = false;
 
-        if (getConfiguration().gpServicesConfiguration().ignoreLastKnowLocation()) {
+        if (getConfiguration().googlePlayServicesConfiguration().ignoreLastKnowLocation()) {
             LogUtils.logI("Configuration requires to ignore last know location from GooglePlayServices Api.");
         } else {
             if (LocationServices.FusedLocationApi.getLocationAvailability(googleApiClient).isLocationAvailable()) {
@@ -124,7 +123,7 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
 
         if (getConfiguration().keepTracking() || !locationIsAlreadyAvailable) {
             LogUtils.logI("Ask for location update...");
-            if (getConfiguration().gpServicesConfiguration().askForSettingsApi()) {
+            if (getConfiguration().googlePlayServicesConfiguration().askForSettingsApi()) {
                 LogUtils.logI("Asking for SettingsApi...");
                 askForSettingsApi();
             } else {
@@ -138,7 +137,7 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
 
     @Override
     public void onConnectionSuspended(int i) {
-        if (!getConfiguration().gpServicesConfiguration().failOnConnectionSuspended() && googleApiClient != null) {
+        if (!getConfiguration().googlePlayServicesConfiguration().failOnConnectionSuspended() && googleApiClient != null) {
             LogUtils.logI("GoogleApiClient connection is suspended, try to connect again.");
             googleApiClient.connect();
         } else {
@@ -210,7 +209,7 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
 
     private void askForSettingsApi() {
         LocationSettingsRequest settingsRequest = new LocationSettingsRequest.Builder()
-                .addLocationRequest(getConfiguration().gpServicesConfiguration().locationRequest())
+                .addLocationRequest(getConfiguration().googlePlayServicesConfiguration().locationRequest())
                 .build();
 
         PendingResult<LocationSettingsResult> settingsResult = LocationServices.SettingsApi
@@ -225,11 +224,11 @@ public class GPServicesLocationProvider extends LocationProvider implements Loca
         }
 
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient,
-              getConfiguration().gpServicesConfiguration().locationRequest(), this);
+              getConfiguration().googlePlayServicesConfiguration().locationRequest(), this);
     }
 
     private void settingsApiFail(@FailType int failType) {
-        if (getConfiguration().gpServicesConfiguration().failOnSettingsApiSuspended()) {
+        if (getConfiguration().googlePlayServicesConfiguration().failOnSettingsApiSuspended()) {
             failed(failType);
         } else {
             LogUtils.logE("Even though settingsApi failed, configuration requires moving on. "

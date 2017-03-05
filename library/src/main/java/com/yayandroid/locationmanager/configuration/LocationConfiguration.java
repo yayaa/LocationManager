@@ -8,13 +8,13 @@ public final class LocationConfiguration {
 
     private final boolean keepTracking;
     private final PermissionConfiguration permissionConfiguration;
-    private final GPServicesConfiguration gpServicesConfiguration;
+    private final GooglePlayServicesConfiguration googlePlayServicesConfiguration;
     private final DefaultProviderConfiguration defaultProviderConfiguration;
 
     private LocationConfiguration(Builder builder) {
         this.keepTracking = builder.keepTracking;
         this.permissionConfiguration = builder.permissionConfiguration;
-        this.gpServicesConfiguration = builder.gpServicesConfiguration;
+        this.googlePlayServicesConfiguration = builder.googlePlayServicesConfiguration;
         this.defaultProviderConfiguration = builder.defaultProviderConfiguration;
     }
 
@@ -22,7 +22,7 @@ public final class LocationConfiguration {
         return new LocationConfiguration.Builder()
               .keepTracking(keepTracking)
               .askForPermission(permissionConfiguration)
-              .useGooglePlayServices(gpServicesConfiguration)
+              .useGooglePlayServices(googlePlayServicesConfiguration)
               .useDefaultProviders(defaultProviderConfiguration);
     }
 
@@ -35,8 +35,8 @@ public final class LocationConfiguration {
         return permissionConfiguration;
     }
 
-    @Nullable public GPServicesConfiguration gpServicesConfiguration() {
-        return gpServicesConfiguration;
+    @Nullable public GooglePlayServicesConfiguration googlePlayServicesConfiguration() {
+        return googlePlayServicesConfiguration;
     }
 
     @Nullable public DefaultProviderConfiguration defaultProviderConfiguration() {
@@ -48,7 +48,7 @@ public final class LocationConfiguration {
 
         private boolean keepTracking = Defaults.KEEP_TRACKING;
         private PermissionConfiguration permissionConfiguration;
-        private GPServicesConfiguration gpServicesConfiguration;
+        private GooglePlayServicesConfiguration googlePlayServicesConfiguration;
         private DefaultProviderConfiguration defaultProviderConfiguration;
 
         /**
@@ -76,8 +76,8 @@ public final class LocationConfiguration {
          * This configuration is required in order to configure GooglePlayServices Api.
          * If this is not set, then GooglePlayServices will not be used.
          */
-        public Builder useGooglePlayServices(GPServicesConfiguration gpServicesConfiguration) {
-            this.gpServicesConfiguration = gpServicesConfiguration;
+        public Builder useGooglePlayServices(GooglePlayServicesConfiguration googlePlayServicesConfiguration) {
+            this.googlePlayServicesConfiguration = googlePlayServicesConfiguration;
             return this;
         }
 
@@ -91,9 +91,9 @@ public final class LocationConfiguration {
         }
 
         public LocationConfiguration build() {
-            if (gpServicesConfiguration == null && defaultProviderConfiguration == null) {
+            if (googlePlayServicesConfiguration == null && defaultProviderConfiguration == null) {
                 throw new IllegalStateException("You need to specify one of the provider configurations."
-                      + " Please see GPServicesConfiguration and DefaultProviderConfiguration");
+                      + " Please see GooglePlayServicesConfiguration and DefaultProviderConfiguration");
             }
 
             if (permissionConfiguration == null) {
