@@ -85,7 +85,7 @@ public class LocationManager implements PermissionListener {
          * Instead of using {@linkplain DispatcherLocationProvider} you can create your own,
          * and set it to manager so it will use given one.
          */
-        public Builder setLocationProvider(@NonNull LocationProvider provider) {
+        public Builder locationProvider(@NonNull LocationProvider provider) {
             this.activeProvider = provider;
             return this;
         }
@@ -109,7 +109,7 @@ public class LocationManager implements PermissionListener {
             }
 
             if (activeProvider == null) {
-                setLocationProvider(new DispatcherLocationProvider());
+                locationProvider(new DispatcherLocationProvider());
             }
 
             this.activeProvider.configure(contextProcessor, configuration);

@@ -9,40 +9,19 @@ import com.yayandroid.locationmanager.providers.permissionprovider.PermissionPro
 
 public class PermissionConfiguration {
 
-    private final String rationalMessage;
-    private final String[] requiredPermissions;
     private final PermissionProvider permissionProvider;
 
     private PermissionConfiguration(Builder builder) {
         this.permissionProvider = builder.permissionProvider;
-        this.rationalMessage = builder.rationalMessage;
-        this.requiredPermissions = builder.requiredPermissions;
-    }
-
-    public PermissionConfiguration.Builder newBuilder() {
-        return new PermissionConfiguration.Builder()
-              .permissionProvider(permissionProvider)
-              .rationalMessage(rationalMessage)
-              .requiredPermissions(requiredPermissions);
-    }
-
-    // region Getters
-    public String rationalMessage() {
-        return rationalMessage;
-    }
-
-    public String[] requiredPermissions() {
-        return requiredPermissions;
     }
 
     public PermissionProvider permissionProvider() {
         return permissionProvider;
     }
-    // endregion
 
     public static class Builder {
 
-        private String rationalMessage = Defaults.EMPTY_STRING;
+        private String rationaleMessage = Defaults.EMPTY_STRING;
         private String[] requiredPermissions = Defaults.LOCATION_PERMISSIONS;
         private DialogProvider rationaleDialogProvider;
         private PermissionProvider permissionProvider;
@@ -54,8 +33,8 @@ public class PermissionConfiguration {
          * And if you set {@linkplain PermissionConfiguration.Builder#rationaleDialogProvider(DialogProvider)} then this
          * field will be ignored. Please make sure you handled in your custom dialogProvider implementation.
          */
-        public Builder rationalMessage(String rationalMessage) {
-            this.rationalMessage = rationalMessage;
+        public Builder rationaleMessage(String rationaleMessage) {
+            this.rationaleMessage = rationaleMessage;
             return this;
         }
 
@@ -73,10 +52,10 @@ public class PermissionConfiguration {
          * If you need to display a custom dialog to display rationale to user, you can provide your own
          * implementation of {@linkplain DialogProvider} and manager will use that implementation to display the dialog.
          * Important, if you set your own implementation, please make sure to handle rationaleMessage as well.
-         * Because {@linkplain PermissionConfiguration.Builder#rationalMessage} will be ignored in that case.
+         * Because {@linkplain PermissionConfiguration.Builder#rationaleMessage} will be ignored in that case.
          *
          * If you don't specify any dialogProvider implementation {@linkplain SimpleMessageDialogProvider} will be used with
-         * given {@linkplain PermissionConfiguration.Builder#rationalMessage}
+         * given {@linkplain PermissionConfiguration.Builder#rationaleMessage}
          */
         public Builder rationaleDialogProvider(DialogProvider dialogProvider) {
             this.rationaleDialogProvider = dialogProvider;
@@ -102,8 +81,8 @@ public class PermissionConfiguration {
                 throw new IllegalStateException("Required Permissions cannot be empty.");
             }
 
-            if (rationaleDialogProvider == null && !TextUtils.isEmpty(rationalMessage)) {
-                rationaleDialogProvider = new SimpleMessageDialogProvider(rationalMessage);
+            if (rationaleDialogProvider == null && !TextUtils.isEmpty(rationaleMessage)) {
+                rationaleDialogProvider = new SimpleMessageDialogProvider(rationaleMessage);
             }
 
             if (permissionProvider == null) {
