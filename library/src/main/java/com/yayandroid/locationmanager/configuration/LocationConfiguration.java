@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.yayandroid.locationmanager.providers.permissionprovider.StubPermissionProvider;
 
-public final class LocationConfiguration {
+public class LocationConfiguration {
 
     private final boolean keepTracking;
     private final PermissionConfiguration permissionConfiguration;

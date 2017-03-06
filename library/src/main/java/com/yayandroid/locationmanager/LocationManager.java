@@ -37,11 +37,9 @@ public class LocationManager implements PermissionListener {
      * To create an instance of this manager you MUST specify a LocationConfiguration
      */
     private LocationManager(Builder builder) {
-        this.configuration = builder.configuration;
         this.listener = builder.listener;
-
+        this.configuration = builder.configuration;
         this.activeProvider = builder.activeProvider;
-        this.activeProvider.notifyTo(listener);
 
         this.permissionProvider = getConfiguration().permissionConfiguration().permissionProvider();
         this.permissionProvider.setContextProcessor(builder.contextProcessor);
@@ -58,7 +56,16 @@ public class LocationManager implements PermissionListener {
         /**
          * Builder object to create LocationManager
          *
-         * @param context specifies on which context this manager will run
+         * @param contextProcessor holds the address of the context,which this manager will run on
+         */
+        public Builder(@NonNull ContextProcessor contextProcessor) {
+            this.contextProcessor = contextProcessor;
+        }
+
+        /**
+         * Builder object to create LocationManager
+         *
+         * @param context specifies which context this manager will run on
          */
         public Builder(@NonNull Context context) {
             this.contextProcessor = new ContextProcessor(context);
@@ -67,7 +74,7 @@ public class LocationManager implements PermissionListener {
         /**
          * Builder object to create LocationManager
          *
-         * @param fragment specifies on which fragment this manager will run
+         * @param fragment specifies which fragment this manager will run on
          */
         public Builder(@NonNull Fragment fragment) {
             this.contextProcessor = new ContextProcessor(fragment);
@@ -113,6 +120,8 @@ public class LocationManager implements PermissionListener {
             }
 
             this.activeProvider.configure(contextProcessor, configuration);
+            this.activeProvider.notifyTo(listener);
+
             return new LocationManager(this);
         }
     }
@@ -188,7 +197,14 @@ public class LocationManager implements PermissionListener {
         askForPermission();
     }
 
-    private void askForPermission() {
+    /**
+     * Only For Test Purposes
+     */
+    LocationProvider activeProvider() {
+        return activeProvider;
+    }
+
+    void askForPermission() {
         if (permissionProvider.hasPermission()) {
             permissionGranted(true);
         } else {
