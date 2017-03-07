@@ -5,7 +5,7 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
 
 import com.yayandroid.locationmanager.constants.RequestCode;
-import com.yayandroid.locationmanager.helper.PermissionCompatWrapper;
+import com.yayandroid.locationmanager.helper.wrappers.PermissionCompatWrapper;
 import com.yayandroid.locationmanager.listener.PermissionListener;
 import com.yayandroid.locationmanager.mocks.MockDialogProvider;
 import com.yayandroid.locationmanager.view.ContextProcessor;

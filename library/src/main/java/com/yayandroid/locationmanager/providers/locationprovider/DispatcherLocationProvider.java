@@ -1,18 +1,14 @@
 package com.yayandroid.locationmanager.providers.locationprovider;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.RequestCode;
+import com.yayandroid.locationmanager.helper.wrappers.GoogleApiAvailabilityWrapper;
 import com.yayandroid.locationmanager.helper.LogUtils;
 import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask;
 import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask.ContinuousTaskRunner;
@@ -24,6 +20,7 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
 
     private LocationProvider activeProvider;
     private Dialog gpServicesDialog;
+    private GoogleApiAvailabilityWrapper googleApiAvailability;
 
     @Override
     public void onPause() {
@@ -114,8 +111,20 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
         }
     }
 
+    // For test purposes
+    void setGoogleApiAvailability(GoogleApiAvailabilityWrapper googleApiAvailability) {
+        this.googleApiAvailability = googleApiAvailability;
+    }
+
+    private GoogleApiAvailabilityWrapper getGoogleApiAvailability() {
+        if (googleApiAvailability == null) {
+            googleApiAvailability = new GoogleApiAvailabilityWrapper();
+        }
+        return googleApiAvailability;
+    }
+
     private void checkGooglePlayServicesAvailability(boolean askForGPServices) {
-        int gpServicesAvailability = isGooglePlayServicesAvailable(getContext());
+        int gpServicesAvailability = getGoogleApiAvailability().isAvailable(getContext());
 
         if (gpServicesAvailability == ConnectionResult.SUCCESS) {
             LogUtils.logI("GooglePlayServices is available on device.");
@@ -124,11 +133,11 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
             LogUtils.logI("GooglePlayServices is NOT available on device.");
             if (askForGPServices) {
                 if (getConfiguration().googlePlayServicesConfiguration().askForGooglePlayServices() &&
-                      GoogleApiAvailability.getInstance().isUserResolvableError(gpServicesAvailability)) {
+                      getGoogleApiAvailability().isUserResolvableError(gpServicesAvailability)) {
 
                     LogUtils.logI("Asking user to handle GooglePlayServices error...");
-                    gpServicesDialog = getGooglePlayServicesErrorDialog(getActivity(),
-                          gpServicesAvailability, RequestCode.GOOGLE_PLAY_SERVICES, new DialogInterface.OnCancelListener() {
+                    gpServicesDialog = getGoogleApiAvailability().getErrorDialog(getActivity(), gpServicesAvailability,
+                          RequestCode.GOOGLE_PLAY_SERVICES, new DialogInterface.OnCancelListener() {
                               @Override
                               public void onCancel(DialogInterface dialog) {
                                   LogUtils.logI("GooglePlayServices error could've been resolved, "
@@ -158,18 +167,6 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
                 continueWithDefaultProviders();
             }
         }
-    }
-
-    private int isGooglePlayServicesAvailable(Context context) {
-        if (context == null) return -1;
-        return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
-    }
-
-    @Nullable private Dialog getGooglePlayServicesErrorDialog(Activity activity, int gpServicesAvailability,
-          int requestCode, OnCancelListener onCancelListener) {
-        if (activity == null) return null;
-        return GoogleApiAvailability.getInstance()
-              .getErrorDialog(activity, gpServicesAvailability, requestCode, onCancelListener);
     }
 
     private void getLocationFromGooglePlayServices() {

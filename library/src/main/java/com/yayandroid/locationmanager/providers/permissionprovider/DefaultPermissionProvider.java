@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.yayandroid.locationmanager.constants.RequestCode;
-import com.yayandroid.locationmanager.helper.PermissionCompatWrapper;
+import com.yayandroid.locationmanager.helper.wrappers.PermissionCompatWrapper;
 import com.yayandroid.locationmanager.helper.LogUtils;
 import com.yayandroid.locationmanager.listener.DialogListener;
 import com.yayandroid.locationmanager.providers.dialogprovider.DialogProvider;
@@ -58,6 +58,7 @@ public class DefaultPermissionProvider extends PermissionProvider implements Dia
         }
     }
 
+    // For test purposes
     void setPermissionCompatWrapper(PermissionCompatWrapper permissionCompatWrapper) {
         this.permissionCompatWrapper = permissionCompatWrapper;
     }
