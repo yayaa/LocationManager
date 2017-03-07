@@ -100,10 +100,15 @@ public abstract class PermissionProvider {
         }
 
         for (String permission : getRequiredPermissions()) {
-            if (ContextCompat.checkSelfPermission(getContext(), permission) != PackageManager.PERMISSION_GRANTED) {
+            if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
                 return false;
             }
         }
         return true;
     }
+
+    protected int checkSelfPermission(String permission) {
+        return ContextCompat.checkSelfPermission(getContext(), permission);
+    }
+
 }
