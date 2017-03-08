@@ -7,7 +7,7 @@ import com.yayandroid.locationmanager.helper.StringUtils;
 import com.yayandroid.locationmanager.providers.dialogprovider.DialogProvider;
 import com.yayandroid.locationmanager.providers.dialogprovider.SimpleMessageDialogProvider;
 
-public final class DefaultProviderConfiguration {
+public class DefaultProviderConfiguration {
 
     private final long requiredTimeInterval;
     private final long requiredDistanceInterval;

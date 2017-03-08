@@ -58,16 +58,15 @@ public class DefaultPermissionProvider extends PermissionProvider implements Dia
         }
     }
 
-    // For test purposes
-    void setPermissionCompatWrapper(PermissionCompatWrapper permissionCompatWrapper) {
-        this.permissionCompatWrapper = permissionCompatWrapper;
+    @Override
+    public void onPositiveButtonClick() {
+        executePermissionsRequest();
     }
 
-    protected PermissionCompatWrapper getPermissionCompatWrapper() {
-        if (permissionCompatWrapper == null) {
-            permissionCompatWrapper = new PermissionCompatWrapper();
-        }
-        return permissionCompatWrapper;
+    @Override
+    public void onNegativeButtonClick() {
+        LogUtils.logI("User didn't even let us to ask for permission!");
+        if (getPermissionListener() != null) getPermissionListener().onPermissionsDenied();
     }
 
     boolean shouldShowRequestPermissionRationale() {
@@ -105,14 +104,16 @@ public class DefaultPermissionProvider extends PermissionProvider implements Dia
         }
     }
 
-    @Override
-    public void onPositiveButtonClick() {
-        executePermissionsRequest();
+    // For test purposes
+    void setPermissionCompatWrapper(PermissionCompatWrapper permissionCompatWrapper) {
+        this.permissionCompatWrapper = permissionCompatWrapper;
     }
 
-    @Override
-    public void onNegativeButtonClick() {
-        LogUtils.logI("User didn't even let us to ask for permission!");
-        if (getPermissionListener() != null) getPermissionListener().onPermissionsDenied();
+    protected PermissionCompatWrapper getPermissionCompatWrapper() {
+        if (permissionCompatWrapper == null) {
+            permissionCompatWrapper = new PermissionCompatWrapper();
+        }
+        return permissionCompatWrapper;
     }
+
 }

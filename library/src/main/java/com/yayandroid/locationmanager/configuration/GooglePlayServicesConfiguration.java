@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.google.android.gms.location.LocationRequest;
 
-public final class GooglePlayServicesConfiguration {
+public class GooglePlayServicesConfiguration {
 
     private final LocationRequest locationRequest;
     private final boolean askForGooglePlayServices;

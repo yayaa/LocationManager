@@ -107,6 +107,7 @@ public abstract class PermissionProvider {
         return true;
     }
 
+    // For test purposes
     protected int checkSelfPermission(String permission) {
         return ContextCompat.checkSelfPermission(getContext(), permission);
     }

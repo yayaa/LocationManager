@@ -8,19 +8,18 @@ import android.support.annotation.NonNull;
 import com.google.android.gms.common.ConnectionResult;
 import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.RequestCode;
-import com.yayandroid.locationmanager.helper.wrappers.GoogleApiAvailabilityWrapper;
 import com.yayandroid.locationmanager.helper.LogUtils;
-import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask;
 import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask.ContinuousTaskRunner;
 
 public class DispatcherLocationProvider extends LocationProvider implements ContinuousTaskRunner {
 
-    private static final String GOOGLE_PLAY_SERVICE_SWITCH_TASK = "googlePlayServiceSwitchTask";
-    private final ContinuousTask gpServicesSwitchTask = new ContinuousTask(GOOGLE_PLAY_SERVICE_SWITCH_TASK, this);
-
-    private LocationProvider activeProvider;
     private Dialog gpServicesDialog;
-    private GoogleApiAvailabilityWrapper googleApiAvailability;
+    private LocationProvider activeProvider;
+    private DispatcherLocationSource dispatcherLocationSource;
+
+    public DispatcherLocationProvider() {
+        getSourceProvider().createSwitchTask(this);
+    }
 
     @Override
     public void onPause() {
@@ -30,7 +29,7 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
             activeProvider.onPause();
         }
 
-        gpServicesSwitchTask.pause();
+        getSourceProvider().gpServicesSwitchTask().pause();
     }
 
     @Override
@@ -41,7 +40,7 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
             activeProvider.onResume();
         }
 
-        gpServicesSwitchTask.resume();
+        getSourceProvider().gpServicesSwitchTask().resume();
     }
 
     @Override
@@ -52,8 +51,19 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
             activeProvider.onDestroy();
         }
 
-        gpServicesSwitchTask.stop();
+        getSourceProvider().gpServicesSwitchTask().stop();
+
+        dispatcherLocationSource = null;
         gpServicesDialog = null;
+    }
+
+    @Override
+    public void cancel() {
+        if (activeProvider != null) {
+            activeProvider.cancel();
+        }
+
+        getSourceProvider().gpServicesSwitchTask().stop();
     }
 
     @Override
@@ -69,15 +79,8 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
     }
 
     @Override
-    public void cancel() {
-        if (activeProvider != null) {
-            activeProvider.cancel();
-        }
-    }
-
-    @Override
     public void runScheduledTask(@NonNull String taskId) {
-        if (taskId.equals(GOOGLE_PLAY_SERVICE_SWITCH_TASK)) {
+        if (taskId.equals(DispatcherLocationSource.GOOGLE_PLAY_SERVICE_SWITCH_TASK)) {
             if (activeProvider instanceof GPServicesLocationProvider && activeProvider.isWaiting()) {
                 LogUtils.logI("We couldn't receive location from GooglePlayServices, so switching default providers...");
                 cancel();
@@ -111,20 +114,8 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
         }
     }
 
-    // For test purposes
-    void setGoogleApiAvailability(GoogleApiAvailabilityWrapper googleApiAvailability) {
-        this.googleApiAvailability = googleApiAvailability;
-    }
-
-    private GoogleApiAvailabilityWrapper getGoogleApiAvailability() {
-        if (googleApiAvailability == null) {
-            googleApiAvailability = new GoogleApiAvailabilityWrapper();
-        }
-        return googleApiAvailability;
-    }
-
-    private void checkGooglePlayServicesAvailability(boolean askForGPServices) {
-        int gpServicesAvailability = getGoogleApiAvailability().isAvailable(getContext());
+    void checkGooglePlayServicesAvailability(boolean askForGPServices) {
+        int gpServicesAvailability = getSourceProvider().isGoogleApiAvailable(getContext());
 
         if (gpServicesAvailability == ConnectionResult.SUCCESS) {
             LogUtils.logI("GooglePlayServices is available on device.");
@@ -132,32 +123,7 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
         } else {
             LogUtils.logI("GooglePlayServices is NOT available on device.");
             if (askForGPServices) {
-                if (getConfiguration().googlePlayServicesConfiguration().askForGooglePlayServices() &&
-                      getGoogleApiAvailability().isUserResolvableError(gpServicesAvailability)) {
-
-                    LogUtils.logI("Asking user to handle GooglePlayServices error...");
-                    gpServicesDialog = getGoogleApiAvailability().getErrorDialog(getActivity(), gpServicesAvailability,
-                          RequestCode.GOOGLE_PLAY_SERVICES, new DialogInterface.OnCancelListener() {
-                              @Override
-                              public void onCancel(DialogInterface dialog) {
-                                  LogUtils.logI("GooglePlayServices error could've been resolved, "
-                                        + "but user canceled it.");
-                                  continueWithDefaultProviders();
-                              }
-                          });
-
-                    if (gpServicesDialog != null) {
-                        gpServicesDialog.show();
-                    } else {
-                        LogUtils.logI("GooglePlayServices error could've been resolved, but since LocationManager "
-                              + "is not running on an Activity, dialog cannot be displayed.");
-                        continueWithDefaultProviders();
-                    }
-                } else {
-                    LogUtils.logI("Either GooglePlayServices error is not resolvable "
-                          + "or the configuration doesn't wants us to bother user.");
-                    continueWithDefaultProviders();
-                }
+                askForGooglePlayServices(gpServicesAvailability);
             } else {
                 LogUtils.logI("GooglePlayServices is NOT available and even though we ask user to handle error, "
                       + "it is still NOT available.");
@@ -169,10 +135,44 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
         }
     }
 
-    private void getLocationFromGooglePlayServices() {
+    void askForGooglePlayServices(int gpServicesAvailability) {
+        if (getConfiguration().googlePlayServicesConfiguration().askForGooglePlayServices() &&
+              getSourceProvider().isGoogleApiErrorUserResolvable(gpServicesAvailability)) {
+
+            resolveGooglePlayServices(gpServicesAvailability);
+        } else {
+            LogUtils.logI("Either GooglePlayServices error is not resolvable "
+                  + "or the configuration doesn't wants us to bother user.");
+            continueWithDefaultProviders();
+        }
+    }
+
+    void resolveGooglePlayServices(int gpServicesAvailability) {
+        LogUtils.logI("Asking user to handle GooglePlayServices error...");
+        gpServicesDialog = getSourceProvider().getGoogleApiErrorDialog(getActivity(), gpServicesAvailability,
+              RequestCode.GOOGLE_PLAY_SERVICES, new DialogInterface.OnCancelListener() {
+                  @Override
+                  public void onCancel(DialogInterface dialog) {
+                      LogUtils.logI("GooglePlayServices error could've been resolved, "
+                            + "but user canceled it.");
+                      continueWithDefaultProviders();
+                  }
+              });
+
+        if (gpServicesDialog != null) {
+            gpServicesDialog.show();
+        } else {
+            LogUtils.logI("GooglePlayServices error could've been resolved, but since LocationManager "
+                  + "is not running on an Activity, dialog cannot be displayed.");
+            continueWithDefaultProviders();
+        }
+    }
+
+    void getLocationFromGooglePlayServices() {
         LogUtils.logI("Attempting to get location from Google Play Services providers...");
-        setLocationProvider(new GPServicesLocationProvider());
-        gpServicesSwitchTask.delayed(getConfiguration().googlePlayServicesConfiguration().googlePlayServicesWaitPeriod());
+        setLocationProvider(getSourceProvider().createGooglePlayServicesLocationProvider());
+        getSourceProvider().gpServicesSwitchTask().delayed(getConfiguration()
+              .googlePlayServicesConfiguration().googlePlayServicesWaitPeriod());
         activeProvider.get();
     }
 
@@ -180,25 +180,33 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
      * Called in case of Google Play Services failed to retrieve location,
      * or GooglePlayServicesConfiguration doesn't provided by developer
      */
-    private void continueWithDefaultProviders() {
+    void continueWithDefaultProviders() {
         if (getConfiguration().defaultProviderConfiguration() == null) {
             LogUtils.logI("Configuration requires not to use default providers, abort!");
-            failed(FailType.GP_SERVICES_NOT_AVAILABLE);
+            if (getListener() != null) {
+                getListener().onLocationFailed(FailType.GP_SERVICES_NOT_AVAILABLE);
+            }
         } else {
             LogUtils.logI("Attempting to get location from default providers...");
-            setLocationProvider(new DefaultLocationProvider());
+            setLocationProvider(getSourceProvider().createDefaultLocationProvider());
             activeProvider.get();
         }
     }
 
-    public void setLocationProvider(LocationProvider provider) {
+    void setLocationProvider(LocationProvider provider) {
         this.activeProvider = provider;
         activeProvider.configure(this);
     }
 
-    private void failed(@FailType int type) {
-        if (getListener() != null) {
-            getListener().onLocationFailed(type);
+    // For test purposes
+    void setDispatcherLocationSource(DispatcherLocationSource dispatcherLocationSource) {
+        this.dispatcherLocationSource = dispatcherLocationSource;
+    }
+
+    private DispatcherLocationSource getSourceProvider() {
+        if (dispatcherLocationSource == null) {
+            dispatcherLocationSource = new DispatcherLocationSource();
         }
+        return dispatcherLocationSource;
     }
 }

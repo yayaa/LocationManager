@@ -74,8 +74,7 @@ public abstract class LocationProvider {
     }
 
     /**
-     * While you are providing location by yourself,
-     * then you have to invoke methods
+     * This is called by LocationManager if there is already a listener defined
      */
     public void notifyTo(LocationListener listener) {
         this.weakLocationListener = new WeakReference<>(listener);
@@ -92,7 +91,6 @@ public abstract class LocationProvider {
      */
     @CallSuper
     public void onDestroy() {
-        configuration = null;
         weakContextProcessor.clear();
         weakLocationListener.clear();
     }
