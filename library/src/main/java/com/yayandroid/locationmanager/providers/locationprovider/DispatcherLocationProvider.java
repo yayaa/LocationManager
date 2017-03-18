@@ -81,7 +81,7 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
     @Override
     public void runScheduledTask(@NonNull String taskId) {
         if (taskId.equals(DispatcherLocationSource.GOOGLE_PLAY_SERVICE_SWITCH_TASK)) {
-            if (activeProvider instanceof GPServicesLocationProvider && activeProvider.isWaiting()) {
+            if (activeProvider instanceof GooglePlayServicesLocationProvider && activeProvider.isWaiting()) {
                 LogUtils.logI("We couldn't receive location from GooglePlayServices, so switching default providers...");
                 cancel();
                 continueWithDefaultProviders();

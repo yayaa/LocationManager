@@ -22,7 +22,7 @@ import com.yayandroid.locationmanager.constants.ProcessType;
 import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.helper.LogUtils;
 
-public class GPServicesLocationProvider extends LocationProvider implements LocationListener,
+public class GooglePlayServicesLocationProvider extends LocationProvider implements LocationListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         ResultCallback<LocationSettingsResult> {
 

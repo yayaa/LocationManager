@@ -20,8 +20,8 @@ class DispatcherLocationSource {
         return new DefaultLocationProvider();
     }
 
-    GPServicesLocationProvider createGooglePlayServicesLocationProvider() {
-        return new GPServicesLocationProvider();
+    GooglePlayServicesLocationProvider createGooglePlayServicesLocationProvider() {
+        return new GooglePlayServicesLocationProvider();
     }
 
     void createSwitchTask(ContinuousTaskRunner continuousTaskRunner) {

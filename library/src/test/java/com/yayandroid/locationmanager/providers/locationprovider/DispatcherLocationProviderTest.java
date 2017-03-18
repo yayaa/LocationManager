@@ -48,7 +48,7 @@ public class DispatcherLocationProviderTest {
 
     @Mock DispatcherLocationSource dispatcherLocationSource;
     @Mock DefaultLocationProvider defaultLocationProvider;
-    @Mock GPServicesLocationProvider gpServicesLocationProvider;
+    @Mock GooglePlayServicesLocationProvider googlePlayServicesLocationProvider;
     @Mock ContinuousTask continuousTask;
 
     private DispatcherLocationProvider dispatcherLocationProvider;
@@ -67,7 +67,8 @@ public class DispatcherLocationProviderTest {
         when(googlePlayServicesConfiguration.googlePlayServicesWaitPeriod()).thenReturn(GOOGLE_PLAY_SERVICES_SWITCH_PERIOD);
 
         when(dispatcherLocationSource.createDefaultLocationProvider()).thenReturn(defaultLocationProvider);
-        when(dispatcherLocationSource.createGooglePlayServicesLocationProvider()).thenReturn(gpServicesLocationProvider);
+        when(dispatcherLocationSource.createGooglePlayServicesLocationProvider()).thenReturn(
+              googlePlayServicesLocationProvider);
         when(dispatcherLocationSource.gpServicesSwitchTask()).thenReturn(continuousTask);
 
         when(contextProcessor.getContext()).thenReturn(context);
@@ -162,20 +163,20 @@ public class DispatcherLocationProviderTest {
 
     @Test
     public void runScheduledTaskShouldDoNothingWhenNoOnGoingTask() {
-        dispatcherLocationProvider.setLocationProvider(gpServicesLocationProvider);
-        verify(gpServicesLocationProvider).configure(dispatcherLocationProvider);
-        when(gpServicesLocationProvider.isWaiting()).thenReturn(false);
+        dispatcherLocationProvider.setLocationProvider(googlePlayServicesLocationProvider);
+        verify(googlePlayServicesLocationProvider).configure(dispatcherLocationProvider);
+        when(googlePlayServicesLocationProvider.isWaiting()).thenReturn(false);
 
         dispatcherLocationProvider.runScheduledTask(DispatcherLocationSource.GOOGLE_PLAY_SERVICE_SWITCH_TASK);
-        verify(gpServicesLocationProvider).isWaiting();
+        verify(googlePlayServicesLocationProvider).isWaiting();
 
-        verifyNoMoreInteractions(gpServicesLocationProvider);
+        verifyNoMoreInteractions(googlePlayServicesLocationProvider);
     }
 
     @Test
     public void runScheduledTaskShouldCancelCurrentProviderAndRunWithDefaultWhenGpServicesTookEnough() {
-        dispatcherLocationProvider.setLocationProvider(gpServicesLocationProvider);
-        when(gpServicesLocationProvider.isWaiting()).thenReturn(true);
+        dispatcherLocationProvider.setLocationProvider(googlePlayServicesLocationProvider);
+        when(googlePlayServicesLocationProvider.isWaiting()).thenReturn(true);
 
         dispatcherLocationProvider.runScheduledTask(DispatcherLocationSource.GOOGLE_PLAY_SERVICE_SWITCH_TASK);
 
@@ -301,9 +302,9 @@ public class DispatcherLocationProviderTest {
     public void getLocationFromGooglePlayServices() {
         dispatcherLocationProvider.getLocationFromGooglePlayServices();
 
-        verify(gpServicesLocationProvider).configure(dispatcherLocationProvider);
+        verify(googlePlayServicesLocationProvider).configure(dispatcherLocationProvider);
         verify(continuousTask).delayed(GOOGLE_PLAY_SERVICES_SWITCH_PERIOD);
-        verify(gpServicesLocationProvider).get();
+        verify(googlePlayServicesLocationProvider).get();
     }
 
     @Test
@@ -328,8 +329,8 @@ public class DispatcherLocationProviderTest {
     public void setLocationProviderShouldConfigureGivenProvider() {
         dispatcherLocationProvider.setLocationProvider(defaultLocationProvider);
         verify(defaultLocationProvider).configure(dispatcherLocationProvider);
-        dispatcherLocationProvider.setLocationProvider(gpServicesLocationProvider);
-        verify(gpServicesLocationProvider).configure(dispatcherLocationProvider);
+        dispatcherLocationProvider.setLocationProvider(googlePlayServicesLocationProvider);
+        verify(googlePlayServicesLocationProvider).configure(dispatcherLocationProvider);
     }
 
     private void showGpServicesDialogShown() {
