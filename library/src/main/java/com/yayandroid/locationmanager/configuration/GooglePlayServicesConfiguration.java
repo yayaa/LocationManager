@@ -13,6 +13,7 @@ public class GooglePlayServicesConfiguration {
     private final boolean failOnSettingsApiSuspended;
     private final boolean ignoreLastKnowLocation;
     private final long googlePlayServicesWaitPeriod;
+    private final int suspendedConnectionRetryCount;
 
     private GooglePlayServicesConfiguration(Builder builder) {
         this.locationRequest = builder.locationRequest;
@@ -22,6 +23,7 @@ public class GooglePlayServicesConfiguration {
         this.failOnSettingsApiSuspended = builder.failOnSettingsApiSuspended;
         this.ignoreLastKnowLocation = builder.ignoreLastKnowLocation;
         this.googlePlayServicesWaitPeriod = builder.googlePlayServicesWaitPeriod;
+        this.suspendedConnectionRetryCount = builder.suspendedConnectionRetryCount;
     }
 
     public GooglePlayServicesConfiguration.Builder newBuilder() {
@@ -32,7 +34,8 @@ public class GooglePlayServicesConfiguration {
               .failOnConnectionSuspended(failOnConnectionSuspended)
               .failOnSettingsApiSuspended(failOnSettingsApiSuspended)
               .ignoreLastKnowLocation(ignoreLastKnowLocation)
-              .setWaitPeriod(googlePlayServicesWaitPeriod);
+              .setWaitPeriod(googlePlayServicesWaitPeriod)
+              .suspendedConnectionRetryCount(suspendedConnectionRetryCount);
     }
 
     // region Getters
@@ -63,6 +66,10 @@ public class GooglePlayServicesConfiguration {
     public long googlePlayServicesWaitPeriod() {
         return googlePlayServicesWaitPeriod;
     }
+
+    public int suspendedConnectionRetryCount() {
+        return suspendedConnectionRetryCount;
+    }
     // endregion
 
     public static class Builder {
@@ -74,6 +81,7 @@ public class GooglePlayServicesConfiguration {
         private boolean failOnSettingsApiSuspended = Defaults.FAIL_ON_SETTINGS_API_SUSPENDED;
         private boolean ignoreLastKnowLocation = Defaults.IGNORE_LAST_KNOW_LOCATION;
         private long googlePlayServicesWaitPeriod = Defaults.WAIT_PERIOD;
+        private int suspendedConnectionRetryCount = Defaults.SUSPENDED_CONNECTION_RETRY_COUNT;
 
         /**
          * LocationRequest object that you specified to use while getting location from Google Play Services
@@ -165,6 +173,22 @@ public class GooglePlayServicesConfiguration {
 
             this.googlePlayServicesWaitPeriod = milliseconds;
             return this;
+        }
+
+        /**
+         * Indicates how many times library should retry to connect GoogleApiClient in case it suspended. Be aware, if
+         * you already set {@see #failOnConnectionSuspended} to true, this retryCount will be ignored and library will
+         * call fail immediately in case of suspension. Otherwise, library will retry required times and then fail.
+         *
+         * Default value is {@linkplain Defaults#SUSPENDED_CONNECTION_RETRY_COUNT}
+         */
+        public Builder suspendedConnectionRetryCount(int suspendedConnectionRetryCount) {
+            if (suspendedConnectionRetryCount < 1) {
+                throw new IllegalArgumentException("suspendedConnectionRetryCount cannot be smaller than 1");
+            }
+
+            this.suspendedConnectionRetryCount = suspendedConnectionRetryCount;
+           return this;
         }
 
         public GooglePlayServicesConfiguration build() {

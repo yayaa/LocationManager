@@ -26,6 +26,7 @@ public class GooglePlayServicesConfigurationTest {
         assertThat(configuration.failOnSettingsApiSuspended()).isFalse();
         assertThat(configuration.ignoreLastKnowLocation()).isFalse();
         assertThat(configuration.googlePlayServicesWaitPeriod()).isEqualTo(20 * SECOND);
+        assertThat(configuration.suspendedConnectionRetryCount()).isEqualTo(2);
     }
 
     @Test public void setWaitPeriodShouldThrowExceptionWhenGooglePlayServicesWaitPeriodIsSet() {
@@ -33,6 +34,13 @@ public class GooglePlayServicesConfigurationTest {
         expectedException.expectMessage(CoreMatchers.startsWith("waitPeriod"));
 
         new GooglePlayServicesConfiguration.Builder().setWaitPeriod(-1);
+    }
+
+    @Test public void suspendedConnectionRetryCountShouldThrowExceptionWhenSetSmallerThanOne() {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage(CoreMatchers.startsWith("suspendedConnectionRetryCount"));
+
+        new GooglePlayServicesConfiguration.Builder().suspendedConnectionRetryCount(0);
     }
 
     @Test public void clonesShouldShareSameInstances() {

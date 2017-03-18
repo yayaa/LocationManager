@@ -114,7 +114,7 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
         }
     }
 
-    void checkGooglePlayServicesAvailability(boolean askForGPServices) {
+    void checkGooglePlayServicesAvailability(boolean askForGooglePlayServices) {
         int gpServicesAvailability = getSourceProvider().isGoogleApiAvailable(getContext());
 
         if (gpServicesAvailability == ConnectionResult.SUCCESS) {
@@ -122,7 +122,7 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
             getLocationFromGooglePlayServices();
         } else {
             LogUtils.logI("GooglePlayServices is NOT available on device.");
-            if (askForGPServices) {
+            if (askForGooglePlayServices) {
                 askForGooglePlayServices(gpServicesAvailability);
             } else {
                 LogUtils.logI("GooglePlayServices is NOT available and even though we ask user to handle error, "
@@ -184,7 +184,7 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
         if (getConfiguration().defaultProviderConfiguration() == null) {
             LogUtils.logI("Configuration requires not to use default providers, abort!");
             if (getListener() != null) {
-                getListener().onLocationFailed(FailType.GP_SERVICES_NOT_AVAILABLE);
+                getListener().onLocationFailed(FailType.GOOGLE_PLAY_SERVICES_NOT_AVAILABLE);
             }
         } else {
             LogUtils.logI("Attempting to get location from default providers...");

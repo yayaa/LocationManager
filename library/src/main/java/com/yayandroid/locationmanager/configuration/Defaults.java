@@ -23,6 +23,7 @@ public final class Defaults {
     static final boolean FAIL_ON_CONNECTION_SUSPENDED = true;
     static final boolean FAIL_ON_SETTINGS_API_SUSPENDED = false;
     static final boolean IGNORE_LAST_KNOW_LOCATION = false;
+    static final int SUSPENDED_CONNECTION_RETRY_COUNT = 2;
 
     static final String EMPTY_STRING = "";
     public static final String[] LOCATION_PERMISSIONS = new String[] { Manifest.permission.ACCESS_FINE_LOCATION };

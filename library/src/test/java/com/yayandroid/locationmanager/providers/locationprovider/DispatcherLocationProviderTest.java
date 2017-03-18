@@ -314,7 +314,7 @@ public class DispatcherLocationProviderTest {
         dispatcherLocationProvider.continueWithDefaultProviders();
 
         //noinspection WrongConstant
-        verify(locationListener).onLocationFailed(eq(FailType.GP_SERVICES_NOT_AVAILABLE));
+        verify(locationListener).onLocationFailed(eq(FailType.GOOGLE_PLAY_SERVICES_NOT_AVAILABLE));
     }
 
     @Test
