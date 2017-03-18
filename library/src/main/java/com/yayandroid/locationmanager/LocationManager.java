@@ -1,5 +1,6 @@
 package com.yayandroid.locationmanager;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -65,19 +66,32 @@ public class LocationManager implements PermissionListener {
         /**
          * Builder object to create LocationManager
          *
-         * @param context specifies which context this manager will run on
+         * @param context MUST be an application context
          */
         public Builder(@NonNull Context context) {
             this.contextProcessor = new ContextProcessor(context);
         }
 
         /**
-         * Builder object to create LocationManager
+         * Activity is required in order to ask for permission, GPS enable dialog, Rationale dialog,
+         * GoogleApiClient and SettingsApi.
          *
-         * @param fragment specifies which fragment this manager will run on
+         * @param activity will be kept as weakReference
          */
-        public Builder(@NonNull Fragment fragment) {
-            this.contextProcessor = new ContextProcessor(fragment);
+        public Builder activity(Activity activity) {
+            this.contextProcessor.setActivity(activity);
+            return this;
+        }
+
+        /**
+         * Fragment is required in order to ask for permission, GPS enable dialog, Rationale dialog,
+         * GoogleApiClient and SettingsApi.
+         *
+         * @param fragment will be kept as weakReference
+         */
+        public Builder fragment(Fragment fragment) {
+            this.contextProcessor.setFragment(fragment);
+            return this;
         }
 
         /**
@@ -119,8 +133,7 @@ public class LocationManager implements PermissionListener {
                 locationProvider(new DispatcherLocationProvider());
             }
 
-            this.activeProvider.configure(contextProcessor, configuration);
-            this.activeProvider.notifyTo(listener);
+            this.activeProvider.configure(contextProcessor, configuration, listener);
 
             return new LocationManager(this);
         }

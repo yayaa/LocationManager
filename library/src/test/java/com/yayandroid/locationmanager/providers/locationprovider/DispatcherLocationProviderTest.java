@@ -58,8 +58,7 @@ public class DispatcherLocationProviderTest {
         MockitoAnnotations.initMocks(this);
 
         dispatcherLocationProvider = spy(new DispatcherLocationProvider());
-        dispatcherLocationProvider.configure(contextProcessor, locationConfiguration);
-        dispatcherLocationProvider.notifyTo(locationListener);
+        dispatcherLocationProvider.configure(contextProcessor, locationConfiguration, locationListener);
         dispatcherLocationProvider.setDispatcherLocationSource(dispatcherLocationSource);
 
         when(locationConfiguration.defaultProviderConfiguration()).thenReturn(defaultProviderConfiguration);

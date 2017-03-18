@@ -51,8 +51,7 @@ public class GooglePlayServicesLocationProviderTest {
         MockitoAnnotations.initMocks(this);
 
         googlePlayServicesLocationProvider = spy(new GooglePlayServicesLocationProvider());
-        googlePlayServicesLocationProvider.configure(contextProcessor, locationConfiguration);
-        googlePlayServicesLocationProvider.notifyTo(locationListener);
+        googlePlayServicesLocationProvider.configure(contextProcessor, locationConfiguration, locationListener);
         googlePlayServicesLocationProvider.setDispatcherLocationSource(mockedSource);
 
         when(locationConfiguration.googlePlayServicesConfiguration()).thenReturn(googlePlayServicesConfiguration);

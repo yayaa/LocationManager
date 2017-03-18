@@ -67,8 +67,7 @@ public class LocationManagerTest {
     @Test public void buildingShouldCallConfigureAndSetListenerOnProvider() {
         buildLocationManager();
 
-        verify(locationProvider).notifyTo(locationListener);
-        verify(locationProvider).configure(contextProcessor, locationConfiguration);
+        verify(locationProvider).configure(contextProcessor, locationConfiguration, locationListener);
     }
 
     @Test public void buildingShouldSetContextProcessorAndListenerToPermissionListener() {

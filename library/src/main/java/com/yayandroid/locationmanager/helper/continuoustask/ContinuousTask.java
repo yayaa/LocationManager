@@ -3,15 +3,11 @@ package com.yayandroid.locationmanager.helper.continuoustask;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 
-import com.yayandroid.locationmanager.helper.LogUtils;
-
-import java.lang.ref.WeakReference;
-
 public class ContinuousTask extends Handler implements Runnable {
 
     private final String taskId;
-    private final WeakReference<ContinuousTaskRunner> weekContinuousTaskRunner;
     private final ContinuousTaskScheduler continuousTaskScheduler;
+    private final ContinuousTaskRunner continuousTaskRunner;
 
     public interface ContinuousTaskRunner {
         /**
@@ -25,7 +21,7 @@ public class ContinuousTask extends Handler implements Runnable {
     public ContinuousTask(@NonNull String taskId, @NonNull ContinuousTaskRunner continuousTaskRunner) {
         this.taskId = taskId;
         continuousTaskScheduler = new ContinuousTaskScheduler(this);
-        weekContinuousTaskRunner = new WeakReference<>(continuousTaskRunner);
+        this.continuousTaskRunner = continuousTaskRunner;
     }
 
     public void delayed(long delay) {
@@ -46,12 +42,7 @@ public class ContinuousTask extends Handler implements Runnable {
 
     @Override
     public void run() {
-        if (weekContinuousTaskRunner.get() != null) {
-            weekContinuousTaskRunner.get().runScheduledTask(taskId);
-        } else {
-            LogUtils.logE("Something went wrong and task failed.");
-        }
-        continuousTaskScheduler.clean();
+        continuousTaskRunner.runScheduledTask(taskId);
     }
 
     void schedule(long delay) {

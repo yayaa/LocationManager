@@ -34,8 +34,9 @@ public abstract class LocationBaseFragment extends Fragment implements LocationL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        locationManager = new LocationManager.Builder(this)
+        locationManager = new LocationManager.Builder(getContext().getApplicationContext())
               .configuration(getLocationConfiguration())
+              .fragment(this)
               .notify(this)
               .build();
     }
@@ -50,8 +51,8 @@ public abstract class LocationBaseFragment extends Fragment implements LocationL
     @CallSuper
     @Override
     public void onPause() {
-        super.onPause();
         locationManager.onPause();
+        super.onPause();
     }
 
     @CallSuper

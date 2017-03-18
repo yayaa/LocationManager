@@ -19,7 +19,7 @@ public abstract class LocationBaseService extends Service implements LocationLis
     @CallSuper
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        locationManager = new LocationManager.Builder(this)
+        locationManager = new LocationManager.Builder(getApplicationContext())
               .configuration(getLocationConfiguration())
               .notify(this)
               .build();

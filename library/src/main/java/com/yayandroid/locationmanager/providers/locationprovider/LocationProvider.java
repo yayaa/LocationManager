@@ -19,16 +19,18 @@ public abstract class LocationProvider {
 
     private boolean isWaiting = false;
     private LocationConfiguration configuration;
-    private WeakReference<ContextProcessor> weakContextProcessor;
+    private ContextProcessor contextProcessor;
     private WeakReference<LocationListener> weakLocationListener;
 
     /**
      * This method is called immediately once the LocationProvider is set to {@linkplain LocationManager}
      */
     @CallSuper
-    public void configure(ContextProcessor contextProcessor, LocationConfiguration configuration) {
-        this.weakContextProcessor = new WeakReference<>(contextProcessor);
+    public void configure(ContextProcessor contextProcessor, LocationConfiguration configuration,
+          LocationListener listener) {
+        this.contextProcessor = contextProcessor;
         this.configuration = configuration;
+        this.weakLocationListener = new WeakReference<>(listener);
     }
 
     /**
@@ -36,7 +38,7 @@ public abstract class LocationProvider {
      */
     @CallSuper
     public void configure(LocationProvider locationProvider) {
-        this.weakContextProcessor = locationProvider.weakContextProcessor;
+        this.contextProcessor = locationProvider.contextProcessor;
         this.configuration = locationProvider.configuration;
         this.weakLocationListener = locationProvider.weakLocationListener;
     }
@@ -74,13 +76,6 @@ public abstract class LocationProvider {
     }
 
     /**
-     * This is called by LocationManager if there is already a listener defined
-     */
-    public void notifyTo(LocationListener listener) {
-        this.weakLocationListener = new WeakReference<>(listener);
-    }
-
-    /**
      * Override when you need to handle activityResult such as listening for GPS activation
      */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -91,7 +86,6 @@ public abstract class LocationProvider {
      */
     @CallSuper
     public void onDestroy() {
-        weakContextProcessor.clear();
         weakLocationListener.clear();
     }
 
@@ -112,17 +106,17 @@ public abstract class LocationProvider {
 
     @Nullable
     protected Context getContext() {
-        return weakContextProcessor.get() == null ? null : weakContextProcessor.get().getContext();
+        return contextProcessor.getContext();
     }
 
     @Nullable
     protected Activity getActivity() {
-        return weakContextProcessor.get() == null ? null : weakContextProcessor.get().getActivity();
+        return contextProcessor.getActivity();
     }
 
     @Nullable
     protected Fragment getFragment() {
-        return weakContextProcessor.get() == null ? null : weakContextProcessor.get().getFragment();
+        return contextProcessor.getFragment();
     }
 
     protected boolean startActivityForResult(Intent intent, int requestCode) {
