@@ -55,7 +55,7 @@ public class DefaultProviderConfiguration {
         return acceptableTimePeriod;
     }
 
-    public boolean askForGPSEnable() {
+    public boolean askForEnableGPS() {
         return gpsDialogProvider != null;
     }
 

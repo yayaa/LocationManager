@@ -88,21 +88,21 @@ public class DefaultProviderConfigurationTest {
 
     @Test public void whenGpsMessageAndDialogProviderNotSetAskForGPSEnableShouldReturnFalse() {
         DefaultProviderConfiguration configuration = new DefaultProviderConfiguration.Builder().build();
-        assertThat(configuration.askForGPSEnable()).isFalse();
+        assertThat(configuration.askForEnableGPS()).isFalse();
     }
 
     @Test public void whenGpsMessageSetAskForGPSEnableShouldReturnTrue() {
         DefaultProviderConfiguration configuration = new DefaultProviderConfiguration.Builder()
               .gpsMessage("some_text")
               .build();
-        assertThat(configuration.askForGPSEnable()).isTrue();
+        assertThat(configuration.askForEnableGPS()).isTrue();
     }
 
     @Test public void whenDialogProviderSetAskForGPSEnableShouldReturnTrue() {
         DefaultProviderConfiguration configuration = new DefaultProviderConfiguration.Builder()
               .gpsDialogProvider(new MockDialogProvider("some_text"))
               .build();
-        assertThat(configuration.askForGPSEnable()).isTrue();
+        assertThat(configuration.askForEnableGPS()).isTrue();
     }
 
     @Test public void whenGpsMessageIsEmptyAndDialogProviderIsNotSetThenDialogProviderShouldBeNull() {

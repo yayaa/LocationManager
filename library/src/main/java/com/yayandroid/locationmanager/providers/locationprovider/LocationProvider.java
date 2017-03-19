@@ -31,6 +31,7 @@ public abstract class LocationProvider {
         this.contextProcessor = contextProcessor;
         this.configuration = configuration;
         this.weakLocationListener = new WeakReference<>(listener);
+        initialize();
     }
 
     /**
@@ -41,6 +42,7 @@ public abstract class LocationProvider {
         this.contextProcessor = locationProvider.contextProcessor;
         this.configuration = locationProvider.configuration;
         this.weakLocationListener = locationProvider.weakLocationListener;
+        initialize();
     }
 
     /**
@@ -79,6 +81,12 @@ public abstract class LocationProvider {
      * Override when you need to handle activityResult such as listening for GPS activation
      */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    }
+
+    /**
+     * This is called right after configurations are set
+     */
+    public void initialize() {
     }
 
     /**

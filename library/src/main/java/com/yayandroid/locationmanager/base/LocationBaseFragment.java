@@ -26,7 +26,7 @@ public abstract class LocationBaseFragment extends Fragment implements LocationL
             locationManager.get();
         } else {
             throw new IllegalStateException("locationManager is null. "
-                  + "Make sure you call super.onCreate before attempting to getLocation");
+                  + "Make sure you call super.initialize before attempting to getLocation");
         }
     }
 

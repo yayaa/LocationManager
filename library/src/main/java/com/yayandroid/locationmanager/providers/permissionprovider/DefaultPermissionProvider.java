@@ -5,14 +5,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.yayandroid.locationmanager.constants.RequestCode;
-import com.yayandroid.locationmanager.helper.wrappers.PermissionCompatWrapper;
 import com.yayandroid.locationmanager.helper.LogUtils;
 import com.yayandroid.locationmanager.listener.DialogListener;
 import com.yayandroid.locationmanager.providers.dialogprovider.DialogProvider;
 
 public class DefaultPermissionProvider extends PermissionProvider implements DialogListener {
 
-    private PermissionCompatWrapper permissionCompatWrapper;
+    private PermissionCompatSource permissionCompatSource;
 
     public DefaultPermissionProvider(String[] requiredPermissions, @Nullable DialogProvider dialogProvider) {
         super(requiredPermissions, dialogProvider);
@@ -82,9 +81,9 @@ public class DefaultPermissionProvider extends PermissionProvider implements Dia
 
     boolean checkRationaleForPermission(String permission) {
         if (getFragment() != null) {
-            return getPermissionCompatWrapper().shouldShowRequestPermissionRationale(getFragment(), permission);
+            return getPermissionCompatSource().shouldShowRequestPermissionRationale(getFragment(), permission);
         } else if (getActivity() != null) {
-            return getPermissionCompatWrapper().shouldShowRequestPermissionRationale(getActivity(), permission);
+            return getPermissionCompatSource().shouldShowRequestPermissionRationale(getActivity(), permission);
         } else {
             return false;
         }
@@ -93,10 +92,10 @@ public class DefaultPermissionProvider extends PermissionProvider implements Dia
     void executePermissionsRequest() {
         LogUtils.logI("Asking for Runtime Permissions...");
         if (getFragment() != null) {
-            getPermissionCompatWrapper().requestPermissions(getFragment(),
+            getPermissionCompatSource().requestPermissions(getFragment(),
                   getRequiredPermissions(), RequestCode.RUNTIME_PERMISSION);
         } else if (getActivity() != null) {
-            getPermissionCompatWrapper().requestPermissions(getActivity(),
+            getPermissionCompatSource().requestPermissions(getActivity(),
                   getRequiredPermissions(), RequestCode.RUNTIME_PERMISSION);
         } else {
             LogUtils.logE("Something went wrong requesting for permissions.");
@@ -105,15 +104,15 @@ public class DefaultPermissionProvider extends PermissionProvider implements Dia
     }
 
     // For test purposes
-    void setPermissionCompatWrapper(PermissionCompatWrapper permissionCompatWrapper) {
-        this.permissionCompatWrapper = permissionCompatWrapper;
+    void setPermissionCompatSource(PermissionCompatSource permissionCompatSource) {
+        this.permissionCompatSource = permissionCompatSource;
     }
 
-    protected PermissionCompatWrapper getPermissionCompatWrapper() {
-        if (permissionCompatWrapper == null) {
-            permissionCompatWrapper = new PermissionCompatWrapper();
+    protected PermissionCompatSource getPermissionCompatSource() {
+        if (permissionCompatSource == null) {
+            permissionCompatSource = new PermissionCompatSource();
         }
-        return permissionCompatWrapper;
+        return permissionCompatSource;
     }
 
 }

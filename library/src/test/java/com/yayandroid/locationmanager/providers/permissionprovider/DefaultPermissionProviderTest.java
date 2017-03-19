@@ -5,7 +5,6 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
 
 import com.yayandroid.locationmanager.constants.RequestCode;
-import com.yayandroid.locationmanager.helper.wrappers.PermissionCompatWrapper;
 import com.yayandroid.locationmanager.listener.PermissionListener;
 import com.yayandroid.locationmanager.mocks.MockDialogProvider;
 import com.yayandroid.locationmanager.view.ContextProcessor;
@@ -37,7 +36,7 @@ public class DefaultPermissionProviderTest {
     @Mock Activity activity;
     @Mock ContextProcessor contextProcessor;
     @Mock PermissionListener permissionListener;
-    @Mock PermissionCompatWrapper permissionCompatWrapper;
+    @Mock PermissionCompatSource permissionCompatSource;
 
     private DefaultPermissionProvider defaultPermissionProvider;
     private MockDialogProvider mockDialogProvider;
@@ -50,7 +49,7 @@ public class DefaultPermissionProviderTest {
         defaultPermissionProvider = new DefaultPermissionProvider(REQUIRED_PERMISSIONS, mockDialogProvider);
         defaultPermissionProvider.setContextProcessor(contextProcessor);
         defaultPermissionProvider.setPermissionListener(permissionListener);
-        defaultPermissionProvider.setPermissionCompatWrapper(permissionCompatWrapper);
+        defaultPermissionProvider.setPermissionCompatSource(permissionCompatSource);
     }
 
     @Test
@@ -66,7 +65,7 @@ public class DefaultPermissionProviderTest {
 
         defaultPermissionProvider.executePermissionsRequest();
 
-        verify(permissionCompatWrapper)
+        verify(permissionCompatSource)
               .requestPermissions(eq(fragment), eq(REQUIRED_PERMISSIONS), eq(RequestCode.RUNTIME_PERMISSION));
     }
 
@@ -91,7 +90,7 @@ public class DefaultPermissionProviderTest {
 
         defaultPermissionProvider.checkRationaleForPermission(SINGLE_PERMISSION);
 
-        verify(permissionCompatWrapper).shouldShowRequestPermissionRationale(eq(fragment), eq(SINGLE_PERMISSION));
+        verify(permissionCompatSource).shouldShowRequestPermissionRationale(eq(fragment), eq(SINGLE_PERMISSION));
     }
 
     @Test
@@ -100,17 +99,17 @@ public class DefaultPermissionProviderTest {
 
         defaultPermissionProvider.checkRationaleForPermission(SINGLE_PERMISSION);
 
-        verify(permissionCompatWrapper).shouldShowRequestPermissionRationale(eq(activity), eq(SINGLE_PERMISSION));
+        verify(permissionCompatSource).shouldShowRequestPermissionRationale(eq(activity), eq(SINGLE_PERMISSION));
     }
 
     @Test
     public void shouldShowRequestPermissionRationaleShouldReturnTrueWhenAnyIsTrue() {
         when(contextProcessor.getActivity()).thenReturn(activity);
-        when(permissionCompatWrapper.shouldShowRequestPermissionRationale(eq(activity), eq(REQUIRED_PERMISSIONS[0])))
+        when(permissionCompatSource.shouldShowRequestPermissionRationale(eq(activity), eq(REQUIRED_PERMISSIONS[0])))
               .thenReturn(true);
-        when(permissionCompatWrapper.shouldShowRequestPermissionRationale(eq(activity), eq(REQUIRED_PERMISSIONS[1])))
+        when(permissionCompatSource.shouldShowRequestPermissionRationale(eq(activity), eq(REQUIRED_PERMISSIONS[1])))
               .thenReturn(false);
-        when(permissionCompatWrapper.shouldShowRequestPermissionRationale(eq(activity), eq(REQUIRED_PERMISSIONS[2])))
+        when(permissionCompatSource.shouldShowRequestPermissionRationale(eq(activity), eq(REQUIRED_PERMISSIONS[2])))
               .thenReturn(false);
 
         assertThat(defaultPermissionProvider.shouldShowRequestPermissionRationale()).isTrue();
@@ -127,7 +126,7 @@ public class DefaultPermissionProviderTest {
         defaultPermissionProvider = new DefaultPermissionProvider(REQUIRED_PERMISSIONS, null);
         defaultPermissionProvider.setContextProcessor(contextProcessor);
         defaultPermissionProvider.setPermissionListener(permissionListener);
-        defaultPermissionProvider.setPermissionCompatWrapper(permissionCompatWrapper);
+        defaultPermissionProvider.setPermissionCompatSource(permissionCompatSource);
         makeShouldShowRequestPermissionRationaleTrue();
 
         assertThat(defaultPermissionProvider.shouldShowRequestPermissionRationale()).isFalse();
@@ -193,12 +192,12 @@ public class DefaultPermissionProviderTest {
 
     private void makeShouldShowRequestPermissionRationaleTrue() {
         when(contextProcessor.getActivity()).thenReturn(activity);
-        when(permissionCompatWrapper.shouldShowRequestPermissionRationale(eq(activity), eq(REQUIRED_PERMISSIONS[0])))
+        when(permissionCompatSource.shouldShowRequestPermissionRationale(eq(activity), eq(REQUIRED_PERMISSIONS[0])))
               .thenReturn(true);
     }
 
     private void verifyRequestPermissionOnActivity() {
-        verify(permissionCompatWrapper)
+        verify(permissionCompatSource)
               .requestPermissions(eq(activity), eq(REQUIRED_PERMISSIONS), eq(RequestCode.RUNTIME_PERMISSION));
     }
 

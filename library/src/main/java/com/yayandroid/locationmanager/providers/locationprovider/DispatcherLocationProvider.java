@@ -17,7 +17,10 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
     private LocationProvider activeProvider;
     private DispatcherLocationSource dispatcherLocationSource;
 
-    public DispatcherLocationProvider() {
+    @Override
+    public void initialize() {
+        super.initialize();
+
         getSourceProvider().createSwitchTask(this);
     }
 

@@ -42,7 +42,7 @@ public class ConfigurationsTest {
                     .permissionProvider().getDialogProvider()).message()).isEqualTo("rationale");
         assertThat(defaultConfiguration.googlePlayServicesConfiguration()).isNotNull();
         assertThat(defaultConfiguration.defaultProviderConfiguration()).isNotNull();
-        assertThat(defaultConfiguration.defaultProviderConfiguration().askForGPSEnable()).isTrue();
+        assertThat(defaultConfiguration.defaultProviderConfiguration().askForEnableGPS()).isTrue();
         assertThat(defaultConfiguration.defaultProviderConfiguration().gpsDialogProvider())
               .isNotNull()
               .isExactlyInstanceOf(SimpleMessageDialogProvider.class);
