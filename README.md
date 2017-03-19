@@ -107,7 +107,8 @@ You can create your own [DialogProvider][11] implementation to display `rational
 Ok, we have our configuration object up to requirements, now we need a manager configured with it.
 
 ```java
-LocationManager awesomeLocationManager = new LocationManager.Builder(context) // .Builder(fragment)
+// LocationManager MUST be initialized with Application context in order to prevent MemoryLeaks
+LocationManager awesomeLocationManager = new LocationManager.Builder(getApplicationContext())
     .configuration(awesomeConfiguration)
     .locationProvider(new YourCustomLocationProvider())
     .notify(new LocationListener() { ... })
