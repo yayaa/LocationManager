@@ -185,19 +185,19 @@ limitations under the License.
 ```
 
 [1]: https://developers.google.com/android/reference/com/google/android/gms/location/FusedLocationProviderApi
-[2]: https://github.com/yayaa/LocationManager/blob/version2/library/src/main/java/com/yayandroid/locationmanager/base/LocationBaseActivity.java
-[3]: https://github.com/yayaa/LocationManager/blob/version2/library/src/main/java/com/yayandroid/locationmanager/base/LocationBaseFragment.java
-[4]: https://github.com/yayaa/LocationManager/blob/version2/library/src/main/java/com/yayandroid/locationmanager/base/LocationBaseService.java
-[5]: https://github.com/yayaa/LocationManager/tree/version2/app
-[6]: https://github.com/yayaa/LocationManager/blob/version2/library/src/main/java/com/yayandroid/locationmanager/configuration/Configurations.java
-[7]: https://github.com/yayaa/LocationManager/blob/version2/library/src/main/java/com/yayandroid/locationmanager/providers/permissionprovider/PermissionProvider.java
-[8]: https://github.com/yayaa/LocationManager/blob/version2/library/src/main/java/com/yayandroid/locationmanager/configuration/PermissionConfiguration.java
-[9]: https://github.com/yayaa/LocationManager/blob/version2/library/src/main/java/com/yayandroid/locationmanager/providers/permissionprovider/DefaultPermissionProvider.java
-[10]: https://github.com/yayaa/LocationManager/blob/version2/library/src/main/java/com/yayandroid/locationmanager/providers/permissionprovider/StubPermissionProvider.java
-[11]: https://github.com/yayaa/LocationManager/blob/version2/library/src/main/java/com/yayandroid/locationmanager/providers/dialogprovider/DialogProvider.java
-[12]: https://github.com/yayaa/LocationManager/blob/version2/library/src/main/java/com/yayandroid/locationmanager/providers/dialogprovider/SimpleMessageDialogProvider.java
-[13]: https://github.com/yayaa/LocationManager/blob/version2/library/src/main/java/com/yayandroid/locationmanager/providers/locationprovider/LocationProvider.java
-[14]: https://github.com/yayaa/LocationManager/blob/version2/library/src/main/java/com/yayandroid/locationmanager/providers/locationprovider/DispatcherLocationProvider.java
-[15]: https://github.com/yayaa/LocationManager/blob/version2/app/src/main/java/com/yayandroid/locationmanager/sample/fragment/SampleFragmentActivity.java
-[16]: https://github.com/yayaa/LocationManager/blob/version2/app/src/main/java/com/yayandroid/locationmanager/sample/service/SampleService.java
+[2]: https://github.com/yayaa/LocationManager/blob/master/library/src/main/java/com/yayandroid/locationmanager/base/LocationBaseActivity.java
+[3]: https://github.com/yayaa/LocationManager/blob/master/library/src/main/java/com/yayandroid/locationmanager/base/LocationBaseFragment.java
+[4]: https://github.com/yayaa/LocationManager/blob/master/library/src/main/java/com/yayandroid/locationmanager/base/LocationBaseService.java
+[5]: https://github.com/yayaa/LocationManager/tree/master/app
+[6]: https://github.com/yayaa/LocationManager/blob/master/library/src/main/java/com/yayandroid/locationmanager/configuration/Configurations.java
+[7]: https://github.com/yayaa/LocationManager/blob/master/library/src/main/java/com/yayandroid/locationmanager/providers/permissionprovider/PermissionProvider.java
+[8]: https://github.com/yayaa/LocationManager/blob/master/library/src/main/java/com/yayandroid/locationmanager/configuration/PermissionConfiguration.java
+[9]: https://github.com/yayaa/LocationManager/blob/master/library/src/main/java/com/yayandroid/locationmanager/providers/permissionprovider/DefaultPermissionProvider.java
+[10]: https://github.com/yayaa/LocationManager/blob/master/library/src/main/java/com/yayandroid/locationmanager/providers/permissionprovider/StubPermissionProvider.java
+[11]: https://github.com/yayaa/LocationManager/blob/master/library/src/main/java/com/yayandroid/locationmanager/providers/dialogprovider/DialogProvider.java
+[12]: https://github.com/yayaa/LocationManager/blob/master/library/src/main/java/com/yayandroid/locationmanager/providers/dialogprovider/SimpleMessageDialogProvider.java
+[13]: https://github.com/yayaa/LocationManager/blob/master/library/src/main/java/com/yayandroid/locationmanager/providers/locationprovider/LocationProvider.java
+[14]: https://github.com/yayaa/LocationManager/blob/master/library/src/main/java/com/yayandroid/locationmanager/providers/locationprovider/DispatcherLocationProvider.java
+[15]: https://github.com/yayaa/LocationManager/blob/master/app/src/main/java/com/yayandroid/locationmanager/sample/fragment/SampleFragmentActivity.java
+[16]: https://github.com/yayaa/LocationManager/blob/master/app/src/main/java/com/yayandroid/locationmanager/sample/service/SampleService.java
 [17]:https://developer.android.com/guide/topics/location/strategies.html
