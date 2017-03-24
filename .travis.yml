@@ -7,6 +7,10 @@ android:
     - build-tools-25.0.0
     - android-25
 
+    - extra-google-google_play_services
+    - extra-google-m2repository
+    - extra-android-m2repository
+
   licenses:
     - 'android-sdk-license-.+'
 
