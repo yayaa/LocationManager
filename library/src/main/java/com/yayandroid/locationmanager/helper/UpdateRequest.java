@@ -26,7 +26,9 @@ public class UpdateRequest {
 
     @SuppressWarnings("ResourceType")
     public void run() {
-        locationManager.requestLocationUpdates(provider, minTime, minDistance, locationListener);
+        if(StringUtils.isNotEmpty(provider)) {
+            locationManager.requestLocationUpdates(provider, minTime, minDistance, locationListener);
+        }
     }
 
     @SuppressWarnings("ResourceType")
