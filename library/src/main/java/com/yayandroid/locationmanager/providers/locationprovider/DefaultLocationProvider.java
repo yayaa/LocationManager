@@ -271,19 +271,29 @@ public class DefaultLocationProvider extends LocationProvider
         }
     }
 
-    @Override
+     @Override
     public void onPositiveButtonClick() {
-        boolean activityStarted = startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),
-              RequestCode.GPS_ENABLE);
-        if (!activityStarted) {
-            onLocationFailed(FailType.VIEW_NOT_REQUIRED_TYPE);
+        if (isGPSProviderEnabled()) {
+            LogUtils.logI("User didn't activate GPS through the dialog, but using status bar");
+            onGPSActivated();
+        } else {
+            boolean activityStarted = startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),
+                    RequestCode.GPS_ENABLE);
+            if (!activityStarted) {
+                onLocationFailed(FailType.VIEW_NOT_REQUIRED_TYPE);
+            }
         }
     }
 
     @Override
     public void onNegativeButtonClick() {
-        LogUtils.logI("User didn't want to enable GPS, so continue with Network Provider");
-        getLocationByNetwork();
+        if (isGPSProviderEnabled()) {
+            LogUtils.logI("User didn't activate GPS through the dialog, but using status bar");
+            onGPSActivated();
+        } else {
+            LogUtils.logI("User didn't want to enable GPS, so continue with Network Provider");
+            getLocationByNetwork();
+        }
     }
 
     // For test purposes
