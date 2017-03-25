@@ -22,6 +22,11 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
     private boolean settingsDialogIsOn = false;
     private int suspendedConnectionIteration = 0;
     private GooglePlayServicesLocationSource googlePlayServicesLocationSource;
+    private SourceListener sourceListener;
+    
+    public GooglePlayServicesLocationProvider(SourceListener sourceListener){
+        this.sourceListener = sourceListener;
+    }
 
     @Override
     public void onResume() {
@@ -112,7 +117,7 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
         }
     }
 
-    @Override
+   @Override
     public void onConnectionSuspended(int i) {
         if (!getConfiguration().googlePlayServicesConfiguration().failOnConnectionSuspended()
               && suspendedConnectionIteration < getConfiguration().googlePlayServicesConfiguration()
@@ -121,15 +126,16 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
             suspendedConnectionIteration++;
             getSourceProvider().connectGoogleApiClient();
         } else {
-            LogUtils.logI("GoogleApiClient connection is suspended, calling fail...");
-            failed(FailType.GOOGLE_PLAY_SERVICES_CONNECTION_FAIL);
+            LogUtils.logI("GoogleApiClient connection is suspended, start DefaultLocation ");
+            sourceListener.onConnectionSuspended(i);
+
         }
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        LogUtils.logI("GoogleApiClient connection is failed.");
-        failed(FailType.GOOGLE_PLAY_SERVICES_CONNECTION_FAIL);
+        LogUtils.logI("GoogleApiClient connection is suspended, start DefaultLocation ");
+        sourceListener.onConnectionFailed(connectionResult);
     }
 
     @Override
