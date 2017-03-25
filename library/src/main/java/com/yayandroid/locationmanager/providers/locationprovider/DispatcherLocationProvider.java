@@ -173,7 +173,7 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
 
     void getLocationFromGooglePlayServices() {
         LogUtils.logI("Attempting to get location from Google Play Services providers...");
-        setLocationProvider(getSourceProvider().createGooglePlayServicesLocationProvider());
+        setLocationProvider(getSourceProvider().createGooglePlayServicesLocationProvider(this));
         getSourceProvider().gpServicesSwitchTask().delayed(getConfiguration()
               .googlePlayServicesConfiguration().googlePlayServicesWaitPeriod());
         activeProvider.get();
