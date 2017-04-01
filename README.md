@@ -109,11 +109,15 @@ Ok, we have our configuration object up to requirements, now we need a manager c
 ```java
 // LocationManager MUST be initialized with Application context in order to prevent MemoryLeaks
 LocationManager awesomeLocationManager = new LocationManager.Builder(getApplicationContext())
+    .activity(activityInstance) // Only required to ask permission and/or GoogleApi - SettingsApi
+    .fragment(fragmentInstance) // Only required to ask permission and/or GoogleApi - SettingsApi
     .configuration(awesomeConfiguration)
     .locationProvider(new YourCustomLocationProvider())
     .notify(new LocationListener() { ... })
     .build();
 ```
+
+LocationManager doesn't keep strong reference of your activity **OR** fragment in order not to cause any memory leak. They are required to ask for permission and/or GoogleApi - SettingsApi in case they need to be resolved.
 
 You can create your own [LocationProvider][13] implementation and ask library to use it. If you don't set any, library will use [DispatcherLocationProvider][14], which will do all the stuff is described above, as default.
 
