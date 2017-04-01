@@ -11,7 +11,7 @@ import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.helper.LogUtils;
 import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask.ContinuousTaskRunner;
 
-public class DispatcherLocationProvider extends LocationProvider implements ContinuousTaskRunner {
+public class DispatcherLocationProvider extends LocationProvider implements ContinuousTaskRunner, GooglePlayServicesLocationSource.SourceListener {
 
     private Dialog gpServicesDialog;
     private LocationProvider activeProvider;
@@ -173,7 +173,7 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
 
     void getLocationFromGooglePlayServices() {
         LogUtils.logI("Attempting to get location from Google Play Services providers...");
-        setLocationProvider(getSourceProvider().createGooglePlayServicesLocationProvider());
+        setLocationProvider(getSourceProvider().createGooglePlayServicesLocationProvider(this));
         getSourceProvider().gpServicesSwitchTask().delayed(getConfiguration()
               .googlePlayServicesConfiguration().googlePlayServicesWaitPeriod());
         activeProvider.get();
@@ -211,5 +211,36 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
             dispatcherLocationSource = new DispatcherLocationSource();
         }
         return dispatcherLocationSource;
+    }
+    
+     @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        if(activeProvider instanceof GooglePlayServicesLocationProvider){
+            activeProvider.cancel();
+            continueWithDefaultProviders();
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        if(activeProvider instanceof GooglePlayServicesLocationProvider) {
+            activeProvider.cancel();
+            continueWithDefaultProviders();
+        }
+    }
+
+    @Override
+    public void onResult(@NonNull LocationSettingsResult result) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
     }
 }
