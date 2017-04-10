@@ -17,6 +17,8 @@ public final class Defaults {
 
     static final float MIN_ACCURACY = 5.0f;
 
+    static final boolean USE_ALTERNATIVE_DEFAULT_PROVIDER = false;
+
     static final boolean KEEP_TRACKING = false;
     static final boolean ASK_FOR_GP_SERVICES = false;
     static final boolean ASK_FOR_SETTINGS_API = true;

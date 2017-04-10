@@ -9,6 +9,7 @@ import com.yayandroid.locationmanager.providers.dialogprovider.SimpleMessageDial
 
 public class DefaultProviderConfiguration {
 
+    private final boolean useAlternativeDefaultProvider;
     private final long requiredTimeInterval;
     private final long requiredDistanceInterval;
     private final float acceptableAccuracy;
@@ -18,6 +19,7 @@ public class DefaultProviderConfiguration {
     private final DialogProvider gpsDialogProvider;
 
     private DefaultProviderConfiguration(Builder builder) {
+        this.useAlternativeDefaultProvider = builder.useAlternativeDefaultProvider;
         this.requiredTimeInterval = builder.requiredTimeInterval;
         this.requiredDistanceInterval = builder.requiredDistanceInterval;
         this.acceptableAccuracy = builder.acceptableAccuracy;
@@ -39,6 +41,8 @@ public class DefaultProviderConfiguration {
     }
 
     // region Getters
+    public boolean useAlternativeDefaultProvider(){ return useAlternativeDefaultProvider; }
+
     public long requiredTimeInterval() {
         return requiredTimeInterval;
     }
@@ -72,9 +76,9 @@ public class DefaultProviderConfiguration {
     }
     // endregion
 
-
     public static class Builder {
 
+        private boolean useAlternativeDefaultProvider = Defaults.USE_ALTERNATIVE_DEFAULT_PROVIDER;
         private long requiredTimeInterval = Defaults.LOCATION_INTERVAL;
         private long requiredDistanceInterval = Defaults.LOCATION_DISTANCE_INTERVAL;
         private float acceptableAccuracy = Defaults.MIN_ACCURACY;
@@ -83,6 +87,16 @@ public class DefaultProviderConfiguration {
         private long networkWaitPeriod = Defaults.WAIT_PERIOD;
         private DialogProvider gpsDialogProvider;
         private String gpsMessage = Defaults.EMPTY_STRING;
+
+        /**
+         * Determine which fallback provider will be used. If set to true alternative Android Location Provider
+         * otherwise main Android Location Provider.
+         * Default is {@linkplain Defaults#USE_ALTERNATIVE_DEFAULT_PROVIDER}
+         */
+        public Builder useAlternativeDefaultProvider(boolean useAlternativeDefaultProvider){
+            this.useAlternativeDefaultProvider = useAlternativeDefaultProvider;
+            return this;
+        }
 
         /**
          * TimeInterval will be used while getting location from default location providers

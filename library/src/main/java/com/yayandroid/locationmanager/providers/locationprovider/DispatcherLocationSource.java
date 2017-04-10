@@ -21,6 +21,10 @@ class DispatcherLocationSource {
         return new DefaultLocationProvider();
     }
 
+    AlternativeDefaultLocationProvider createAlternativeDefaultLocationProvider(){
+        return new AlternativeDefaultLocationProvider();
+    }
+
     GooglePlayServicesLocationProvider createGooglePlayServicesLocationProvider(FallbackProviderListener fallbackProviderListener) {
         return new GooglePlayServicesLocationProvider(fallbackProviderListener);
     }
