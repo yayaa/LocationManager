@@ -19,9 +19,19 @@ import com.yayandroid.locationmanager.providers.locationprovider.GooglePlayServi
 
 public class GooglePlayServicesLocationProvider extends LocationProvider implements SourceListener {
 
+    public interface FallbackProviderListener {
+
+        void onStartFallbackProvider();
+    }
+
     private boolean settingsDialogIsOn = false;
     private int suspendedConnectionIteration = 0;
     private GooglePlayServicesLocationSource googlePlayServicesLocationSource;
+    private FallbackProviderListener fallbackProviderListener;
+
+    public GooglePlayServicesLocationProvider(FallbackProviderListener fallbackProviderListener){
+        this.fallbackProviderListener = fallbackProviderListener;
+    }
 
     @Override
     public void onResume() {
@@ -121,15 +131,15 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
             suspendedConnectionIteration++;
             getSourceProvider().connectGoogleApiClient();
         } else {
-            LogUtils.logI("GoogleApiClient connection is suspended, calling fail...");
-            failed(FailType.GOOGLE_PLAY_SERVICES_CONNECTION_FAIL);
+            LogUtils.logI("GoogleApiClient connection is suspended, start fallback provider");
+            fallbackProviderListener.onStartFallbackProvider();
         }
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        LogUtils.logI("GoogleApiClient connection is failed.");
-        failed(FailType.GOOGLE_PLAY_SERVICES_CONNECTION_FAIL);
+        LogUtils.logI("GoogleApiClient connection is failed, start fallback provider");
+        fallbackProviderListener.onStartFallbackProvider();
     }
 
     @Override

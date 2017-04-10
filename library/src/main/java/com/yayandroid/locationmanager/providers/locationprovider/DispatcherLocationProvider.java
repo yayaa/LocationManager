@@ -10,8 +10,9 @@ import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.helper.LogUtils;
 import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask.ContinuousTaskRunner;
+import com.yayandroid.locationmanager.providers.locationprovider.GooglePlayServicesLocationProvider.FallbackProviderListener;
 
-public class DispatcherLocationProvider extends LocationProvider implements ContinuousTaskRunner {
+public class DispatcherLocationProvider extends LocationProvider implements ContinuousTaskRunner, FallbackProviderListener {
 
     private Dialog gpServicesDialog;
     private LocationProvider activeProvider;
@@ -173,7 +174,7 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
 
     void getLocationFromGooglePlayServices() {
         LogUtils.logI("Attempting to get location from Google Play Services providers...");
-        setLocationProvider(getSourceProvider().createGooglePlayServicesLocationProvider());
+        setLocationProvider(getSourceProvider().createGooglePlayServicesLocationProvider(this));
         getSourceProvider().gpServicesSwitchTask().delayed(getConfiguration()
               .googlePlayServicesConfiguration().googlePlayServicesWaitPeriod());
         activeProvider.get();
@@ -193,6 +194,23 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
             LogUtils.logI("Attempting to get location from default providers...");
             setLocationProvider(getSourceProvider().createDefaultLocationProvider());
             activeProvider.get();
+        }
+    }
+
+    @Override
+    public void onStartFallbackProvider() {
+        int failType;
+        //Cancel Google Play Service actions
+        cancel();
+        if(getConfiguration().googlePlayServicesConfiguration().useFallbackProviderAfterConnectionFailed()
+                && getConfiguration().defaultProviderConfiguration() != null){
+            failType = FailType.GOOGLE_PLAY_SERVICES_CONNECTION_FAIL_START_FALLBACK;
+            continueWithDefaultProviders();
+        } else {
+            failType = FailType.GOOGLE_PLAY_SERVICES_CONNECTION_FAIL;
+        }
+        if (getListener() != null) {
+            getListener().onLocationFailed(failType);
         }
     }
 

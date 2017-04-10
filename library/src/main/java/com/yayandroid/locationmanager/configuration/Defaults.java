@@ -22,6 +22,7 @@ public final class Defaults {
     static final boolean ASK_FOR_SETTINGS_API = true;
     static final boolean FAIL_ON_CONNECTION_SUSPENDED = true;
     static final boolean FAIL_ON_SETTINGS_API_SUSPENDED = false;
+    static final boolean USE_FALLBACK_PROVIDER_AFTER_CONNECTION_FAILED = true;
     static final boolean IGNORE_LAST_KNOW_LOCATION = false;
     static final int SUSPENDED_CONNECTION_RETRY_COUNT = 2;
 
