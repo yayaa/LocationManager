@@ -44,7 +44,7 @@ public final class Configurations {
         return new LocationConfiguration.Builder()
               .askForPermission(new PermissionConfiguration.Builder().rationaleMessage(rationalMessage).build())
               .useGooglePlayServices(new GooglePlayServicesConfiguration.Builder().build())
-              .useDefaultProviders(new DefaultProviderConfiguration.Builder().useAlternativeDefaultProvider(true).gpsMessage(gpsMessage).build())
+              .useDefaultProviders(new DefaultProviderConfiguration.Builder().useAlternativeDefaultProvider(false).gpsMessage(gpsMessage).build())
               .build();
     }
 }
