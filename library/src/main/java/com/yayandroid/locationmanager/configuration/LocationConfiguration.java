@@ -9,14 +9,12 @@ import com.yayandroid.locationmanager.providers.permissionprovider.StubPermissio
 public class LocationConfiguration {
 
     private final boolean keepTracking;
-    private final boolean fallbackToDefault;
     private final PermissionConfiguration permissionConfiguration;
     private final GooglePlayServicesConfiguration googlePlayServicesConfiguration;
     private final DefaultProviderConfiguration defaultProviderConfiguration;
 
     private LocationConfiguration(Builder builder) {
         this.keepTracking = builder.keepTracking;
-        this.fallbackToDefault = builder.fallbackToDefault;
         this.permissionConfiguration = builder.permissionConfiguration;
         this.googlePlayServicesConfiguration = builder.googlePlayServicesConfiguration;
         this.defaultProviderConfiguration = builder.defaultProviderConfiguration;
@@ -25,7 +23,6 @@ public class LocationConfiguration {
     public LocationConfiguration.Builder newBuilder() {
         return new LocationConfiguration.Builder()
               .keepTracking(keepTracking)
-              .fallbackToDefault(fallbackToDefault)
               .askForPermission(permissionConfiguration)
               .useGooglePlayServices(googlePlayServicesConfiguration)
               .useDefaultProviders(defaultProviderConfiguration);
@@ -34,10 +31,6 @@ public class LocationConfiguration {
     // region Getters
     public boolean keepTracking() {
         return keepTracking;
-    }
-
-    public boolean fallbackToDefault() {
-        return fallbackToDefault;
     }
 
     public PermissionConfiguration permissionConfiguration() {
@@ -56,7 +49,6 @@ public class LocationConfiguration {
     public static class Builder {
 
         private boolean keepTracking = Defaults.KEEP_TRACKING;
-        private boolean fallbackToDefault = Defaults.FALLBACK_TO_DEFAULT;
         private PermissionConfiguration permissionConfiguration;
         private GooglePlayServicesConfiguration googlePlayServicesConfiguration;
         private DefaultProviderConfiguration defaultProviderConfiguration;
@@ -68,16 +60,6 @@ public class LocationConfiguration {
          */
         public Builder keepTracking(boolean keepTracking) {
             this.keepTracking = keepTracking;
-            return this;
-        }
-
-        /**
-         * In case of getting location from {@linkplain GooglePlayServicesLocationProvider} fails,
-         * library will fallback to {@linkplain DefaultLocationProvider} as a default behaviour.
-         * If you set this to false, then library will notify to fail as soon as GooglePlayServicesLocationProvider fails.
-         */
-        public Builder fallbackToDefault(boolean fallbackToDefault) {
-            this.fallbackToDefault = fallbackToDefault;
             return this;
         }
 

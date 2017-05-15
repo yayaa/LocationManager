@@ -25,7 +25,6 @@ public class LocationConfigurationTest {
     @Test public void checkDefaultValues() {
         LocationConfiguration configuration = getConfiguration();
         assertThat(configuration.keepTracking()).isFalse();
-        assertThat(configuration.fallbackToDefault()).isTrue();
     }
 
     @Test public void whenNoPermissionConfigurationIsSetDefaultConfigurationShouldContainStubProvider() {

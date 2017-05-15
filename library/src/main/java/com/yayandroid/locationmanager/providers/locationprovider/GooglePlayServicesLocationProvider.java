@@ -252,7 +252,7 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
     }
 
     void failed(@FailType int type) {
-        if (getConfiguration().fallbackToDefault() && fallbackListener.get() != null) {
+        if (getConfiguration().googlePlayServicesConfiguration().fallbackToDefault() && fallbackListener.get() != null) {
             fallbackListener.get().onFallback();
         } else {
             if (getListener() != null) {
