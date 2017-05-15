@@ -4,8 +4,6 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import com.yayandroid.locationmanager.helper.UpdateRequest;
 import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask;
@@ -63,14 +61,6 @@ class DefaultLocationSource {
 
     UpdateRequest getUpdateRequest() {
         return updateRequest;
-    }
-
-    boolean isNetworkAvailable(Context context) {
-        if (context == null) return false;
-
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = cm.getActiveNetworkInfo();
-        return activeNetworkInfo != null;
     }
 
     boolean isLocationSufficient(Location location, long acceptableTimePeriod, float acceptableAccuracy) {
