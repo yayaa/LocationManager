@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask;
 import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask.ContinuousTaskRunner;
+import com.yayandroid.locationmanager.providers.locationprovider.GooglePlayServicesLocationProvider.FallbackProviderListener;
 
 class DispatcherLocationSource {
 
@@ -20,8 +21,12 @@ class DispatcherLocationSource {
         return new DefaultLocationProvider();
     }
 
-    GooglePlayServicesLocationProvider createGooglePlayServicesLocationProvider() {
-        return new GooglePlayServicesLocationProvider();
+    AlternativeDefaultLocationProvider createAlternativeDefaultLocationProvider(){
+        return new AlternativeDefaultLocationProvider();
+    }
+
+    GooglePlayServicesLocationProvider createGooglePlayServicesLocationProvider(FallbackProviderListener fallbackProviderListener) {
+        return new GooglePlayServicesLocationProvider(fallbackProviderListener);
     }
 
     void createSwitchTask(ContinuousTaskRunner continuousTaskRunner) {

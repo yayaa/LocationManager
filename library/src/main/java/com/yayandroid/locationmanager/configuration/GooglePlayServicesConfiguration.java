@@ -11,6 +11,7 @@ public class GooglePlayServicesConfiguration {
     private final boolean askForSettingsApi;
     private final boolean failOnConnectionSuspended;
     private final boolean failOnSettingsApiSuspended;
+    private final boolean useFallbackProviderAfterConnectionFailed;
     private final boolean ignoreLastKnowLocation;
     private final long googlePlayServicesWaitPeriod;
     private final int suspendedConnectionRetryCount;
@@ -21,6 +22,7 @@ public class GooglePlayServicesConfiguration {
         this.askForSettingsApi = builder.askForSettingsApi;
         this.failOnConnectionSuspended = builder.failOnConnectionSuspended;
         this.failOnSettingsApiSuspended = builder.failOnSettingsApiSuspended;
+        this.useFallbackProviderAfterConnectionFailed = builder.useFallbackProviderAfterConnectionFailed;
         this.ignoreLastKnowLocation = builder.ignoreLastKnowLocation;
         this.googlePlayServicesWaitPeriod = builder.googlePlayServicesWaitPeriod;
         this.suspendedConnectionRetryCount = builder.suspendedConnectionRetryCount;
@@ -33,6 +35,7 @@ public class GooglePlayServicesConfiguration {
               .askForSettingsApi(askForSettingsApi)
               .failOnConnectionSuspended(failOnConnectionSuspended)
               .failOnSettingsApiSuspended(failOnSettingsApiSuspended)
+              .useFallbackProviderAfterConnectionFailed(useFallbackProviderAfterConnectionFailed)
               .ignoreLastKnowLocation(ignoreLastKnowLocation)
               .setWaitPeriod(googlePlayServicesWaitPeriod)
               .suspendedConnectionRetryCount(suspendedConnectionRetryCount);
@@ -59,6 +62,8 @@ public class GooglePlayServicesConfiguration {
         return failOnSettingsApiSuspended;
     }
 
+    public boolean useFallbackProviderAfterConnectionFailed() {return useFallbackProviderAfterConnectionFailed; }
+
     public boolean ignoreLastKnowLocation() {
         return ignoreLastKnowLocation;
     }
@@ -79,6 +84,7 @@ public class GooglePlayServicesConfiguration {
         private boolean askForSettingsApi = Defaults.ASK_FOR_SETTINGS_API;
         private boolean failOnConnectionSuspended = Defaults.FAIL_ON_CONNECTION_SUSPENDED;
         private boolean failOnSettingsApiSuspended = Defaults.FAIL_ON_SETTINGS_API_SUSPENDED;
+        private boolean useFallbackProviderAfterConnectionFailed = Defaults.USE_FALLBACK_PROVIDER_AFTER_CONNECTION_FAILED;
         private boolean ignoreLastKnowLocation = Defaults.IGNORE_LAST_KNOW_LOCATION;
         private long googlePlayServicesWaitPeriod = Defaults.WAIT_PERIOD;
         private int suspendedConnectionRetryCount = Defaults.SUSPENDED_CONNECTION_RETRY_COUNT;
@@ -144,6 +150,15 @@ public class GooglePlayServicesConfiguration {
          */
         public Builder failOnSettingsApiSuspended(boolean failOnSettingsApiSuspended) {
             this.failOnSettingsApiSuspended = failOnSettingsApiSuspended;
+            return this;
+        }
+
+        /**
+         * Determine if fallback provider can start after Google Api Client's connection is suspended or failed
+         * Default is {@linkplain Defaults#USE_FALLBACK_PROVIDER_AFTER_CONNECTION_FAILED}
+         */
+        public Builder useFallbackProviderAfterConnectionFailed(boolean useFallbackProviderAfterConnectionFailed){
+            this.useFallbackProviderAfterConnectionFailed = useFallbackProviderAfterConnectionFailed;
             return this;
         }
 
