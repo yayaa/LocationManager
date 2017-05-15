@@ -23,7 +23,7 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.yayandroid.locationmanager.constants.RequestCode;
 
 class GooglePlayServicesLocationSource implements LocationListener, ConnectionCallbacks, OnConnectionFailedListener,
-      ResultCallback<LocationSettingsResult> {
+        ResultCallback<LocationSettingsResult> {
 
     private final GoogleApiClient googleApiClient;
     private final LocationRequest locationRequest;
@@ -45,41 +45,45 @@ class GooglePlayServicesLocationSource implements LocationListener, ConnectionCa
         this.sourceListener = sourceListener;
         this.locationRequest = locationRequest;
         this.googleApiClient = new Builder(context)
-              .addApi(LocationServices.API)
-              .addConnectionCallbacks(this)
-              .addOnConnectionFailedListener(this)
-              .build();
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
     }
 
     boolean isGoogleApiClientConnected() {
-        return googleApiClient.isConnected();
+        return googleApiClient != null && googleApiClient.isConnected();
     }
 
     void connectGoogleApiClient() {
-        googleApiClient.connect();
+        if(googleApiClient != null) googleApiClient.connect();
     }
 
     void disconnectGoogleApiClient() {
-        googleApiClient.disconnect();
+        if(googleApiClient != null) googleApiClient.disconnect();
     }
 
     void clearGoogleApiClient() {
-        googleApiClient.unregisterConnectionCallbacks(this);
-        googleApiClient.unregisterConnectionFailedListener(this);
+        if(googleApiClient != null) {
+            googleApiClient.unregisterConnectionCallbacks(this);
+            googleApiClient.unregisterConnectionFailedListener(this);
 
-        if (googleApiClient.isConnected()) {
-            removeLocationUpdates();
+            if (googleApiClient.isConnected()) {
+                removeLocationUpdates();
+            }
+
+            googleApiClient.disconnect();
         }
-
-        googleApiClient.disconnect();
     }
 
     void checkLocationSettings() {
-        LocationServices.SettingsApi
-              .checkLocationSettings(googleApiClient, new LocationSettingsRequest.Builder()
-                    .addLocationRequest(locationRequest)
-                    .build())
-              .setResultCallback(this);
+        if(googleApiClient != null) {
+            LocationServices.SettingsApi
+                    .checkLocationSettings(googleApiClient, new LocationSettingsRequest.Builder()
+                            .addLocationRequest(locationRequest)
+                            .build())
+                    .setResultCallback(this);
+        }
     }
 
     void startSettingsApiResolutionForResult(Status status, Activity activity) throws SendIntentException {
@@ -88,21 +92,21 @@ class GooglePlayServicesLocationSource implements LocationListener, ConnectionCa
 
     @SuppressWarnings("ResourceType")
     void requestLocationUpdate() {
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+        if(googleApiClient != null) LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
     }
 
     void removeLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+        if(googleApiClient != null) LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
     }
 
     @SuppressWarnings("ResourceType")
     boolean getLocationAvailability() {
-        return LocationServices.FusedLocationApi.getLocationAvailability(googleApiClient).isLocationAvailable();
+        return googleApiClient != null && LocationServices.FusedLocationApi.getLocationAvailability(googleApiClient).isLocationAvailable();
     }
 
     @SuppressWarnings("ResourceType")
     Location getLastLocation() {
-        return LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        return googleApiClient != null ? LocationServices.FusedLocationApi.getLastLocation(googleApiClient) : null;
     }
 
     @Override
