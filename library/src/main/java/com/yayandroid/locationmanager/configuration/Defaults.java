@@ -18,6 +18,7 @@ public final class Defaults {
     static final float MIN_ACCURACY = 5.0f;
 
     static final boolean KEEP_TRACKING = false;
+    static final boolean FALLBACK_TO_DEFAULT = true;
     static final boolean ASK_FOR_GP_SERVICES = false;
     static final boolean ASK_FOR_SETTINGS_API = true;
     static final boolean FAIL_ON_CONNECTION_SUSPENDED = true;

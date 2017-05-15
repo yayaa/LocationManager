@@ -3,10 +3,13 @@ package com.yayandroid.locationmanager.configuration;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.location.LocationRequest;
+import com.yayandroid.locationmanager.providers.locationprovider.DefaultLocationProvider;
+import com.yayandroid.locationmanager.providers.locationprovider.GooglePlayServicesLocationProvider;
 
 public class GooglePlayServicesConfiguration {
 
     private final LocationRequest locationRequest;
+    private final boolean fallbackToDefault;
     private final boolean askForGooglePlayServices;
     private final boolean askForSettingsApi;
     private final boolean failOnConnectionSuspended;
@@ -17,6 +20,7 @@ public class GooglePlayServicesConfiguration {
 
     private GooglePlayServicesConfiguration(Builder builder) {
         this.locationRequest = builder.locationRequest;
+        this.fallbackToDefault = builder.fallbackToDefault;
         this.askForGooglePlayServices = builder.askForGooglePlayServices;
         this.askForSettingsApi = builder.askForSettingsApi;
         this.failOnConnectionSuspended = builder.failOnConnectionSuspended;
@@ -29,6 +33,7 @@ public class GooglePlayServicesConfiguration {
     public GooglePlayServicesConfiguration.Builder newBuilder() {
         return new GooglePlayServicesConfiguration.Builder()
               .locationRequest(locationRequest)
+              .fallbackToDefault(fallbackToDefault)
               .askForGooglePlayServices(askForGooglePlayServices)
               .askForSettingsApi(askForSettingsApi)
               .failOnConnectionSuspended(failOnConnectionSuspended)
@@ -41,6 +46,10 @@ public class GooglePlayServicesConfiguration {
     // region Getters
     public LocationRequest locationRequest() {
         return locationRequest;
+    }
+
+    public boolean fallbackToDefault() {
+        return fallbackToDefault;
     }
 
     public boolean askForGooglePlayServices() {
@@ -75,6 +84,7 @@ public class GooglePlayServicesConfiguration {
     public static class Builder {
 
         private LocationRequest locationRequest = Defaults.createDefaultLocationRequest();
+        private boolean fallbackToDefault = Defaults.FALLBACK_TO_DEFAULT;
         private boolean askForGooglePlayServices = Defaults.ASK_FOR_GP_SERVICES;
         private boolean askForSettingsApi = Defaults.ASK_FOR_SETTINGS_API;
         private boolean failOnConnectionSuspended = Defaults.FAIL_ON_CONNECTION_SUSPENDED;
@@ -89,6 +99,16 @@ public class GooglePlayServicesConfiguration {
          */
         public Builder locationRequest(@NonNull LocationRequest locationRequest) {
             this.locationRequest = locationRequest;
+            return this;
+        }
+
+        /**
+         * In case of getting location from {@linkplain GooglePlayServicesLocationProvider} fails,
+         * library will fallback to {@linkplain DefaultLocationProvider} as a default behaviour.
+         * If you set this to false, then library will notify fail as soon as GooglePlayServicesLocationProvider fails.
+         */
+        public Builder fallbackToDefault(boolean fallbackToDefault) {
+            this.fallbackToDefault = fallbackToDefault;
             return this;
         }
 

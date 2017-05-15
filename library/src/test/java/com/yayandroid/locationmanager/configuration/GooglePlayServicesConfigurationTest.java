@@ -20,6 +20,7 @@ public class GooglePlayServicesConfigurationTest {
     @Test public void checkDefaultValues() {
         GooglePlayServicesConfiguration configuration = new GooglePlayServicesConfiguration.Builder().build();
         assertThat(configuration.locationRequest()).isEqualTo(createDefaultLocationRequest());
+        assertThat(configuration.fallbackToDefault()).isTrue();
         assertThat(configuration.askForGooglePlayServices()).isFalse();
         assertThat(configuration.askForSettingsApi()).isTrue();
         assertThat(configuration.failOnConnectionSuspended()).isTrue();

@@ -2,6 +2,8 @@ package com.yayandroid.locationmanager.configuration;
 
 import android.support.annotation.Nullable;
 
+import com.yayandroid.locationmanager.providers.locationprovider.DefaultLocationProvider;
+import com.yayandroid.locationmanager.providers.locationprovider.GooglePlayServicesLocationProvider;
 import com.yayandroid.locationmanager.providers.permissionprovider.StubPermissionProvider;
 
 public class LocationConfiguration {
