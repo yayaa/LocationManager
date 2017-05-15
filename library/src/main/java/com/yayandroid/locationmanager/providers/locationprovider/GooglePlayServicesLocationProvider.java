@@ -15,13 +15,22 @@ import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.ProcessType;
 import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.helper.LogUtils;
+import com.yayandroid.locationmanager.listener.FallbackListener;
 import com.yayandroid.locationmanager.providers.locationprovider.GooglePlayServicesLocationSource.SourceListener;
 
+import java.lang.ref.WeakReference;
+
 public class GooglePlayServicesLocationProvider extends LocationProvider implements SourceListener {
+
+    private final WeakReference<FallbackListener> fallbackListener;
 
     private boolean settingsDialogIsOn = false;
     private int suspendedConnectionIteration = 0;
     private GooglePlayServicesLocationSource googlePlayServicesLocationSource;
+
+    GooglePlayServicesLocationProvider(FallbackListener fallbackListener) {
+        this.fallbackListener = new WeakReference<>(fallbackListener);
+    }
 
     @Override
     public void onResume() {
@@ -243,8 +252,12 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
     }
 
     void failed(@FailType int type) {
-        if (getListener() != null) {
-            getListener().onLocationFailed(type);
+        if (getConfiguration().fallbackToDefault() && fallbackListener.get() != null) {
+            fallbackListener.get().onFallback();
+        } else {
+            if (getListener() != null) {
+                getListener().onLocationFailed(type);
+            }
         }
         setWaiting(false);
     }

@@ -10,8 +10,9 @@ import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.helper.LogUtils;
 import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask.ContinuousTaskRunner;
+import com.yayandroid.locationmanager.listener.FallbackListener;
 
-public class DispatcherLocationProvider extends LocationProvider implements ContinuousTaskRunner {
+public class DispatcherLocationProvider extends LocationProvider implements ContinuousTaskRunner, FallbackListener {
 
     private Dialog gpServicesDialog;
     private LocationProvider activeProvider;
@@ -117,6 +118,13 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
         }
     }
 
+    @Override
+    public void onFallback() {
+        // This is called from GooglePlayServicesLocationProvider when it fails to before its scheduled time
+        cancel();
+        continueWithDefaultProviders();
+    }
+
     void checkGooglePlayServicesAvailability(boolean askForGooglePlayServices) {
         int gpServicesAvailability = getSourceProvider().isGoogleApiAvailable(getContext());
 
@@ -173,7 +181,7 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
 
     void getLocationFromGooglePlayServices() {
         LogUtils.logI("Attempting to get location from Google Play Services providers...");
-        setLocationProvider(getSourceProvider().createGooglePlayServicesLocationProvider());
+        setLocationProvider(getSourceProvider().createGooglePlayServicesLocationProvider(this));
         getSourceProvider().gpServicesSwitchTask().delayed(getConfiguration()
               .googlePlayServicesConfiguration().googlePlayServicesWaitPeriod());
         activeProvider.get();
