@@ -66,8 +66,8 @@ public class DispatcherLocationProviderTest {
         when(googlePlayServicesConfiguration.googlePlayServicesWaitPeriod()).thenReturn(GOOGLE_PLAY_SERVICES_SWITCH_PERIOD);
 
         when(dispatcherLocationSource.createDefaultLocationProvider()).thenReturn(defaultLocationProvider);
-        when(dispatcherLocationSource.createGooglePlayServicesLocationProvider()).thenReturn(
-              googlePlayServicesLocationProvider);
+        when(dispatcherLocationSource.createGooglePlayServicesLocationProvider(dispatcherLocationProvider))
+              .thenReturn(googlePlayServicesLocationProvider);
         when(dispatcherLocationSource.gpServicesSwitchTask()).thenReturn(continuousTask);
 
         when(contextProcessor.getContext()).thenReturn(context);
@@ -218,6 +218,14 @@ public class DispatcherLocationProviderTest {
         dispatcherLocationProvider.get();
 
         verify(dispatcherLocationProvider).checkGooglePlayServicesAvailability(eq(true));
+    }
+
+    @Test
+    public void onFallbackShouldCallCancelAndContinueWithDefaultProviders() {
+        dispatcherLocationProvider.onFallback();
+
+        verify(dispatcherLocationProvider).cancel();
+        verify(dispatcherLocationProvider).continueWithDefaultProviders();
     }
 
     @Test

@@ -14,6 +14,7 @@ import com.yayandroid.locationmanager.configuration.LocationConfiguration;
 import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.ProcessType;
 import com.yayandroid.locationmanager.constants.RequestCode;
+import com.yayandroid.locationmanager.listener.FallbackListener;
 import com.yayandroid.locationmanager.listener.LocationListener;
 import com.yayandroid.locationmanager.view.ContextProcessor;
 
@@ -43,6 +44,7 @@ public class GooglePlayServicesLocationProviderTest {
 
     @Mock LocationConfiguration locationConfiguration;
     @Mock GooglePlayServicesConfiguration googlePlayServicesConfiguration;
+    @Mock FallbackListener fallbackListener;
 
     private GooglePlayServicesLocationProvider googlePlayServicesLocationProvider;
 
@@ -50,7 +52,7 @@ public class GooglePlayServicesLocationProviderTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        googlePlayServicesLocationProvider = spy(new GooglePlayServicesLocationProvider());
+        googlePlayServicesLocationProvider = spy(new GooglePlayServicesLocationProvider(fallbackListener));
         googlePlayServicesLocationProvider.configure(contextProcessor, locationConfiguration, locationListener);
         googlePlayServicesLocationProvider.setDispatcherLocationSource(mockedSource);
 
@@ -450,10 +452,21 @@ public class GooglePlayServicesLocationProviderTest {
     }
 
     @Test
-    public void failedShouldRedirectToListener() {
+    public void failedShouldRedirectToListenerWhenFallbackToDefaultIsFalse() {
+        when(googlePlayServicesConfiguration.fallbackToDefault()).thenReturn(false);
+
         googlePlayServicesLocationProvider.failed(FailType.UNKNOWN);
 
         verify(locationListener).onLocationFailed(FailType.UNKNOWN);
+    }
+
+    @Test
+    public void failedShouldCallFallbackWhenFallbackToDefaultIsTrue() {
+        when(googlePlayServicesConfiguration.fallbackToDefault()).thenReturn(true);
+
+        googlePlayServicesLocationProvider.failed(FailType.UNKNOWN);
+
+        verify(fallbackListener).onFallback();
     }
 
     @Test
