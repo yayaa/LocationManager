@@ -15,6 +15,7 @@ import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -97,7 +98,9 @@ class GooglePlayServicesLocationSource implements LocationListener, ConnectionCa
 
     @SuppressWarnings("ResourceType")
     boolean getLocationAvailability() {
-        return LocationServices.FusedLocationApi.getLocationAvailability(googleApiClient).isLocationAvailable();
+        LocationAvailability locationAvailability =
+              LocationServices.FusedLocationApi.getLocationAvailability(googleApiClient);
+        return locationAvailability != null && locationAvailability.isLocationAvailable();
     }
 
     @SuppressWarnings("ResourceType")
