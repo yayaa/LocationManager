@@ -241,16 +241,6 @@ public class DefaultLocationProviderTest {
     }
 
     @Test
-    public void getLocationByNetworkShouldAskForLocationWhenNetworkIsAvailable() {
-        enableLocationProvider();
-        when(defaultLocationSource.isNetworkAvailable(context)).thenReturn(true);
-
-        defaultLocationProvider.getLocationByNetwork();
-
-        verify(defaultLocationProvider).askForLocation(NETWORK_PROVIDER);
-    }
-
-    @Test
     public void getLocationByNetworkShouldFailWhenNetworkIsNotAvailable() {
         disableLocationProvider();
 

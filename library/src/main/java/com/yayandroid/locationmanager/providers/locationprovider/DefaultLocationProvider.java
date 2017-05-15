@@ -130,7 +130,7 @@ public class DefaultLocationProvider extends LocationProvider
     }
 
     void getLocationByNetwork() {
-        if (isNetworkProviderEnabled() && getSourceProvider().isNetworkAvailable(getContext())) {
+        if (isNetworkProviderEnabled()) {
             LogUtils.logI("Network is enabled, getting location...");
             askForLocation(LocationManager.NETWORK_PROVIDER);
         } else {
