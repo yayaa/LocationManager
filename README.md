@@ -155,6 +155,7 @@ Library requires 3 permission;
 <uses-permission android:name="android.permission.INTERNET" />
 
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 ```
 
 You might also need to consider information below from [the location guide page.][17]
