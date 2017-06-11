@@ -26,7 +26,8 @@ public class PermissionConfigurationTest {
         assertThat(configuration.permissionProvider().getDialogProvider()).isNull();
         assertThat(configuration.permissionProvider().getRequiredPermissions())
               .isNotEmpty()
-              .isEqualTo(new String[] { Manifest.permission.ACCESS_FINE_LOCATION });
+              .isEqualTo(new String[] { Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION });
     }
 
     @Test public void requiredPermissionsShouldThrowExceptionWhenSetToNull() {
