@@ -1,5 +1,9 @@
 language: android
 
+# installing Java 8 JDK is required to prevent getting "Unsupported major.minor version 52.0" error
+jdk:
+  - oraclejdk8
+
 android:
   components:
     - tools
@@ -14,12 +18,12 @@ android:
   licenses:
     - 'android-sdk-license-.+'
 
-# installing Java 8 JDK is required to prevent getting "Unsupported major.minor version 52.0" error
-jdk:
-  - oraclejdk8
-
 script:
-  ./gradlew clean check --stacktrace --no-daemon
+  - ./gradlew clean check --stacktrace --no-daemon
+  - ./gradlew build jacocoTestReport assembleAndroidTest
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 
 sudo:
   false
