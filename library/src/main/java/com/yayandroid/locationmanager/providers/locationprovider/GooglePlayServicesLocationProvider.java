@@ -150,7 +150,7 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
         // Set waiting as false because we got at least one, even though we keep tracking user's location
         setWaiting(false);
 
-        if (!getConfiguration().keepTracking()) {
+        if (!getConfiguration().keepTracking() && getSourceProvider().isGoogleApiClientConnected()) {
             LogUtils.logI("We got location and no need to keep tracking, so location update is removed.");
             getSourceProvider().removeLocationUpdates();
         }
