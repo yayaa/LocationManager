@@ -91,14 +91,10 @@ class GooglePlayServicesLocationSource implements LocationListener, ConnectionCa
     void requestLocationUpdate() {
         if (isGoogleApiClientConnected()) {
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-        } else {
-            connectGoogleApiClient();
-            requestLocationUpdate();
         }
     }
 
     void removeLocationUpdates() {
-        if (isGoogleApiClientConnected())
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
     }
 
