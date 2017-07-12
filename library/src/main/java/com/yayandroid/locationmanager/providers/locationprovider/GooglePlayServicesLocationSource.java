@@ -89,9 +89,7 @@ class GooglePlayServicesLocationSource implements LocationListener, ConnectionCa
 
     @SuppressWarnings("ResourceType")
     void requestLocationUpdate() {
-        if (isGoogleApiClientConnected()) {
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-        }
     }
 
     void removeLocationUpdates() {
