@@ -233,7 +233,8 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
             getListener().onProcessTypeChanged(ProcessType.GETTING_LOCATION_FROM_GOOGLE_PLAY_SERVICES);
         }
 
-        getSourceProvider().requestLocationUpdate();
+        if (getSourceProvider().isGoogleApiClientConnected())
+            getSourceProvider().requestLocationUpdate();
     }
 
     void settingsApiFail(@FailType int failType) {
