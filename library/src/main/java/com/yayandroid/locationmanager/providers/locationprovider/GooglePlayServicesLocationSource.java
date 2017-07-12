@@ -24,7 +24,7 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.yayandroid.locationmanager.constants.RequestCode;
 
 class GooglePlayServicesLocationSource implements LocationListener, ConnectionCallbacks, OnConnectionFailedListener,
-      ResultCallback<LocationSettingsResult> {
+        ResultCallback<LocationSettingsResult> {
 
     private final GoogleApiClient googleApiClient;
     private final LocationRequest locationRequest;
@@ -46,10 +46,10 @@ class GooglePlayServicesLocationSource implements LocationListener, ConnectionCa
         this.sourceListener = sourceListener;
         this.locationRequest = locationRequest;
         this.googleApiClient = new Builder(context)
-              .addApi(LocationServices.API)
-              .addConnectionCallbacks(this)
-              .addOnConnectionFailedListener(this)
-              .build();
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
     }
 
     boolean isGoogleApiClientConnected() {
@@ -77,10 +77,10 @@ class GooglePlayServicesLocationSource implements LocationListener, ConnectionCa
 
     void checkLocationSettings() {
         LocationServices.SettingsApi
-              .checkLocationSettings(googleApiClient, new LocationSettingsRequest.Builder()
-                    .addLocationRequest(locationRequest)
-                    .build())
-              .setResultCallback(this);
+                .checkLocationSettings(googleApiClient, new LocationSettingsRequest.Builder()
+                        .addLocationRequest(locationRequest)
+                        .build())
+                .setResultCallback(this);
     }
 
     void startSettingsApiResolutionForResult(Status status, Activity activity) throws SendIntentException {
@@ -89,17 +89,17 @@ class GooglePlayServicesLocationSource implements LocationListener, ConnectionCa
 
     @SuppressWarnings("ResourceType")
     void requestLocationUpdate() {
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
     }
 
     void removeLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
     }
 
     @SuppressWarnings("ResourceType")
     boolean getLocationAvailability() {
         LocationAvailability locationAvailability =
-              LocationServices.FusedLocationApi.getLocationAvailability(googleApiClient);
+                LocationServices.FusedLocationApi.getLocationAvailability(googleApiClient);
         return locationAvailability != null && locationAvailability.isLocationAvailable();
     }
 
