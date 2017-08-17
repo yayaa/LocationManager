@@ -392,7 +392,18 @@ public class DefaultLocationProviderTest {
     }
 
     @Test
+    public void onLocationChangedShouldRemoveUpdatesWhenRequiredImmediately() {
+        when(locationConfiguration.keepTracking()).thenReturn(true);
+        when(updateRequest.isRequiredImmediately()).thenReturn(true);
+
+        defaultLocationProvider.onLocationChanged(DUMMY_LOCATION);
+
+        verify(defaultLocationSource).removeLocationUpdates(defaultLocationProvider);
+    }
+
+    @Test
     public void onLocationChangedShouldRemoveUpdatesWhenKeepTrackingIsFalse() {
+        when(updateRequest.isRequiredImmediately()).thenReturn(false);
         when(locationConfiguration.keepTracking()).thenReturn(false);
 
         defaultLocationProvider.onLocationChanged(DUMMY_LOCATION);
