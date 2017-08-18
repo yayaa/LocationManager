@@ -225,9 +225,28 @@ public class GooglePlayServicesLocationProviderTest {
         when(mockedSource.getLastLocation()).thenReturn(new Location(""));
         when(locationConfiguration.keepTracking()).thenReturn(false);
 
+        googlePlayServicesLocationProvider.waitingForConnectionToRequestLocationUpdate(false);
         googlePlayServicesLocationProvider.onConnected(null);
 
         verify(googlePlayServicesLocationProvider, never()).locationRequired();
+    }
+
+    @Test
+    public void onConnectedShouldSwitchWaitingForConnectionToRequestLocationUpdateOff() {
+        // Have first condition false
+        when(locationConfiguration.keepTracking()).thenReturn(false);
+
+        // Have second condition false
+        when(googlePlayServicesConfiguration.ignoreLastKnowLocation()).thenReturn(false);
+        when(mockedSource.getLocationAvailability()).thenReturn(true);
+        when(mockedSource.getLastLocation()).thenReturn(location);
+
+        // waitingForConnectionToRequestLocationUpdate is true by default
+
+        googlePlayServicesLocationProvider.onConnected(null);
+
+        verify(googlePlayServicesLocationProvider).waitingForConnectionToRequestLocationUpdate(false);
+        verify(googlePlayServicesLocationProvider).locationRequired();
     }
 
     @Test
@@ -307,10 +326,21 @@ public class GooglePlayServicesLocationProviderTest {
     @Test
     public void onLocationChangedShouldRemoveUpdateLocationWhenKeepTrackingIsNotRequired() {
         when(locationConfiguration.keepTracking()).thenReturn(false);
+        when(mockedSource.isGoogleApiClientConnected()).thenReturn(true);
 
         googlePlayServicesLocationProvider.onLocationChanged(location);
 
         verify(mockedSource).removeLocationUpdates();
+    }
+
+    @Test
+    public void onLocationChangedShouldNotRemoveUpdateLocationWhenGoogleApiClientIsNotConnected() {
+        when(locationConfiguration.keepTracking()).thenReturn(false);
+        when(mockedSource.isGoogleApiClientConnected()).thenReturn(false);
+
+        googlePlayServicesLocationProvider.onLocationChanged(location);
+
+        verify(mockedSource, never()).removeLocationUpdates();
     }
 
     @Test
@@ -418,10 +448,22 @@ public class GooglePlayServicesLocationProviderTest {
     }
 
     @Test
-    public void requestLocationUpdateShouldRedirectToSource() {
+    public void requestLocationUpdateShouldRequestIfGoogleApiClientIsConnected() {
+        when(mockedSource.isGoogleApiClientConnected()).thenReturn(true);
+
         googlePlayServicesLocationProvider.requestLocationUpdate();
 
         verify(mockedSource).requestLocationUpdate();
+    }
+
+    @Test
+    public void requestLocationUpdateShouldTryToConnectIfGoogleApiClientIsNotConnected() {
+        when(mockedSource.isGoogleApiClientConnected()).thenReturn(false);
+
+        googlePlayServicesLocationProvider.requestLocationUpdate();
+
+        verify(googlePlayServicesLocationProvider).waitingForConnectionToRequestLocationUpdate(true);
+        verify(mockedSource).connectGoogleApiClient();
     }
 
     @Test

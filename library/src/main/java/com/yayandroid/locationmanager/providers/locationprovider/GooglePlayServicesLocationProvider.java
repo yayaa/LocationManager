@@ -25,6 +25,7 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
     private final WeakReference<FallbackListener> fallbackListener;
 
     private boolean settingsDialogIsOn = false;
+    private boolean waitingForConnectionToRequestLocationUpdate = true;
     private int suspendedConnectionIteration = 0;
     private GooglePlayServicesLocationSource googlePlayServicesLocationSource;
 
@@ -114,7 +115,9 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
             locationIsAlreadyAvailable = checkLastKnowLocation();
         }
 
-        if (getConfiguration().keepTracking() || !locationIsAlreadyAvailable) {
+        if (getConfiguration().keepTracking() || !locationIsAlreadyAvailable
+              || waitingForConnectionToRequestLocationUpdate) {
+            waitingForConnectionToRequestLocationUpdate(false);
             locationRequired();
         } else {
             LogUtils.logI("We got location, no need to ask for location updates.");
@@ -150,7 +153,7 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
         // Set waiting as false because we got at least one, even though we keep tracking user's location
         setWaiting(false);
 
-        if (!getConfiguration().keepTracking()) {
+        if (!getConfiguration().keepTracking() && getSourceProvider().isGoogleApiClientConnected()) {
             LogUtils.logI("We got location and no need to keep tracking, so location update is removed.");
             getSourceProvider().removeLocationUpdates();
         }
@@ -233,7 +236,14 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
             getListener().onProcessTypeChanged(ProcessType.GETTING_LOCATION_FROM_GOOGLE_PLAY_SERVICES);
         }
 
-        getSourceProvider().requestLocationUpdate();
+        if (getSourceProvider().isGoogleApiClientConnected()) {
+            LogUtils.logI("Requesting location update...");
+            getSourceProvider().requestLocationUpdate();
+        } else {
+            LogUtils.logI("Tried to requestLocationUpdate, but GoogleApiClient wasn't connected. Trying to connect...");
+            waitingForConnectionToRequestLocationUpdate(true);
+            getSourceProvider().connectGoogleApiClient();
+        }
     }
 
     void settingsApiFail(@FailType int failType) {
@@ -260,6 +270,10 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
             }
         }
         setWaiting(false);
+    }
+
+    void waitingForConnectionToRequestLocationUpdate(boolean isWaiting) {
+        waitingForConnectionToRequestLocationUpdate = isWaiting;
     }
 
     // For test purposes
