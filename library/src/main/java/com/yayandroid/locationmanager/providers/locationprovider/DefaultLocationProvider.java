@@ -221,6 +221,9 @@ public class DefaultLocationProvider extends LocationProvider
 
     @Override
     public void onLocationChanged(Location location) {
+        if (getSourceProvider() == null) {
+            return;
+        }
         onLocationReceived(location);
 
         // Remove cancelLocationTask because we have already find location,
