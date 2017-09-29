@@ -392,6 +392,22 @@ public class DefaultLocationProviderTest {
     }
 
     @Test
+    public void onLocationChangedShouldReurnIfSwitchTaskIsRemoved() {
+        when(defaultLocationSource.switchTaskIsRemoved()).thenReturn(true);
+
+        defaultLocationProvider.onLocationChanged(DUMMY_LOCATION);
+        verify(defaultLocationProvider, never()).onLocationReceived(DUMMY_LOCATION);
+    }
+
+    @Test
+    public void onLocationChangedShouldReturnIfUpdateRequestIsRemoved() {
+        when(defaultLocationSource.updateRequestIsRemoved()).thenReturn(true);
+
+        defaultLocationProvider.onLocationChanged(DUMMY_LOCATION);
+        verify(defaultLocationProvider, never()).onLocationReceived(DUMMY_LOCATION);
+    }
+
+    @Test
     public void onLocationChangedShouldRemoveUpdatesWhenRequiredImmediately() {
         when(locationConfiguration.keepTracking()).thenReturn(true);
         when(updateRequest.isRequiredImmediately()).thenReturn(true);
