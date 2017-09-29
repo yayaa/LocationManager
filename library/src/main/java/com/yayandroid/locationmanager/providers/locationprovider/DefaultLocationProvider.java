@@ -221,7 +221,7 @@ public class DefaultLocationProvider extends LocationProvider
 
     @Override
     public void onLocationChanged(Location location) {
-        if (getSourceProvider() == null) {
+        if (getSourceProvider().switchTaskIsRemoved() || getSourceProvider().updateRequestIsRemoved()) {
             return;
         }
         onLocationReceived(location);
