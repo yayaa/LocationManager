@@ -392,11 +392,11 @@ public class DefaultLocationProviderTest {
     }
 
     @Test
-    public void onLocationChangedShouldReurnIfSwitchTaskIsRemoved() {
+    public void onLocationChangedShouldNotStopSwitchTaskIfSwitchTaskIsRemoved() {
         when(defaultLocationSource.switchTaskIsRemoved()).thenReturn(true);
 
         defaultLocationProvider.onLocationChanged(DUMMY_LOCATION);
-        verify(defaultLocationProvider, never()).onLocationReceived(DUMMY_LOCATION);
+        verify(continuousTask, never()).stop();
     }
 
     @Test
