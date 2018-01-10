@@ -1,5 +1,8 @@
 apply plugin: 'com.android.library'
 apply plugin: 'jacoco-android'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group='com.github.bartbergmans'
 
 android {
     compileSdkVersion versions.compileSdkVersion
