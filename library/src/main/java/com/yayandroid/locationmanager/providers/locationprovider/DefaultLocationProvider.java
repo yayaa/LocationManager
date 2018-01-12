@@ -221,11 +221,16 @@ public class DefaultLocationProvider extends LocationProvider
 
     @Override
     public void onLocationChanged(Location location) {
+        if (getSourceProvider().updateRequestIsRemoved()) {
+            return;
+        }
         onLocationReceived(location);
 
         // Remove cancelLocationTask because we have already find location,
         // no need to switch or call fail
-        getSourceProvider().getProviderSwitchTask().stop();
+        if (!getSourceProvider().switchTaskIsRemoved()) {
+            getSourceProvider().getProviderSwitchTask().stop();
+        }
 
         // Remove update requests if it is running for immediate request
         if (getSourceProvider().getUpdateRequest().isRequiredImmediately() || !getConfiguration().keepTracking()) {
