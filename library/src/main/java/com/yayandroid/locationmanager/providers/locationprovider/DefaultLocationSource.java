@@ -55,6 +55,14 @@ class DefaultLocationSource {
         cancelTask = null;
     }
 
+    boolean switchTaskIsRemoved() {
+        return cancelTask == null;
+    }
+
+    boolean updateRequestIsRemoved() {
+        return updateRequest == null;
+    }
+
     ContinuousTask getProviderSwitchTask() {
         return cancelTask;
     }
