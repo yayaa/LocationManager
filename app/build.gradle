@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion versions.compileSdkVersion
-    buildToolsVersion versions.buildToolsVersion
 
     defaultConfig {
         applicationId "com.yayandroid.locationmanager.sample"
@@ -14,6 +13,6 @@ android {
 }
 
 dependencies {
-    compile project(':library')
-    compile libraries.appCompat
+    implementation project(':library')
+    implementation libraries.appCompat
 }

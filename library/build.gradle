@@ -3,7 +3,6 @@ apply plugin: 'jacoco-android'
 
 android {
     compileSdkVersion versions.compileSdkVersion
-    buildToolsVersion versions.buildToolsVersion
 
     defaultConfig {
         minSdkVersion versions.minSdkVersion
@@ -23,14 +22,14 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile libraries.appCompat
-    compile libraries.googlePlayServices
+    implementation libraries.appCompat
+    implementation libraries.googlePlayServices
 
-    testCompile libraries.junit
-    testCompile libraries.assertJ
-    testCompile libraries.mockito
+    testImplementation libraries.junit
+    testImplementation libraries.assertJ
+    testImplementation libraries.mockito
 }
 
 apply from: 'maven_push.gradle'
