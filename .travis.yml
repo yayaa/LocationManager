@@ -4,6 +4,10 @@ language: android
 jdk:
   - oraclejdk8
 
+# Travis now has Xenial builds as default -> https://blog.travis-ci.com/2019-04-15-xenial-default-build-environment
+# Though, Android builds are not yet supported on Xenial
+dist: trusty
+
 android:
   components:
     - tools
