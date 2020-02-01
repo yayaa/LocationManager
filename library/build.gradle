@@ -23,14 +23,12 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation libraries.appCompat
+    implementation libraries.googlePlayServices
 
-    compile libraries.appCompat
-    compile libraries.googlePlayServices
-
-    testCompile libraries.junit
-    testCompile libraries.assertJ
-    testCompile libraries.mockito
+    testImplementation libraries.junit
+    testImplementation libraries.assertJ
+    testImplementation libraries.mockito
 }
 
 apply from: 'maven_push.gradle'

@@ -2,11 +2,12 @@
 
 buildscript {
     repositories {
+        google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
-        classpath 'com.dicedmelon.gradle:jacoco-android:0.1.1'
+        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath 'com.dicedmelon.gradle:jacoco-android:0.1.4'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -20,6 +21,7 @@ task clean(type: Delete) {
 
 allprojects {
     repositories {
+        google()
         jcenter()
     }
 
@@ -28,7 +30,7 @@ allprojects {
               minSdkVersion    : 14,
               compileSdkVersion: 25,
               targetSdkVersion : 25,
-              buildToolsVersion: '25.0.0'
+              buildToolsVersion: '28.0.3'
         ]
 
         libraries = [

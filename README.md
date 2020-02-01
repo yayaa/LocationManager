@@ -169,7 +169,7 @@ Add library dependency to your `build.gradle` file:
 
 ```groovy
 dependencies {    
-     compile 'com.yayandroid:LocationManager:x.y.z'
+     implementation 'com.yayandroid:LocationManager:x.y.z'
 }
 ```
 
