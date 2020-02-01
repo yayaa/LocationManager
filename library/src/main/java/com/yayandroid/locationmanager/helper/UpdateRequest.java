@@ -37,7 +37,7 @@ public class UpdateRequest {
 
     @SuppressWarnings("ResourceType")
     public void release() {
-        locationManager.removeUpdates(locationListener);
+        if (locationManager != null) locationManager.removeUpdates(locationListener);
     }
 
 }
