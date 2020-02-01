@@ -17,10 +17,6 @@ public class UpdateRequest {
         this.locationListener = locationListener;
     }
 
-    public boolean isRequiredImmediately() {
-        return minTime == 0;
-    }
-
     public void run(String provider, long minTime, float minDistance) {
         this.provider = provider;
         this.minTime = minTime;

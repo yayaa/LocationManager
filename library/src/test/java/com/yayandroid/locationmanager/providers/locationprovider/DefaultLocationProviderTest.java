@@ -56,7 +56,7 @@ public class DefaultLocationProviderTest {
     private DefaultLocationProvider defaultLocationProvider;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
 
         when(locationConfiguration.defaultProviderConfiguration()).thenReturn(defaultProviderConfiguration);
@@ -400,19 +400,8 @@ public class DefaultLocationProviderTest {
     }
 
     @Test
-    public void onLocationChangedShouldRemoveUpdatesWhenRequiredImmediately() {
+    public void onLocationChangedShouldRemoveUpdates() {
         when(locationConfiguration.keepTracking()).thenReturn(true);
-        when(updateRequest.isRequiredImmediately()).thenReturn(true);
-
-        defaultLocationProvider.onLocationChanged(DUMMY_LOCATION);
-
-        verify(defaultLocationSource).removeLocationUpdates(defaultLocationProvider);
-    }
-
-    @Test
-    public void onLocationChangedShouldRemoveUpdatesWhenKeepTrackingIsFalse() {
-        when(updateRequest.isRequiredImmediately()).thenReturn(false);
-        when(locationConfiguration.keepTracking()).thenReturn(false);
 
         defaultLocationProvider.onLocationChanged(DUMMY_LOCATION);
 

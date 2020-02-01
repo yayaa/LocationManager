@@ -223,10 +223,7 @@ public class DefaultLocationProvider extends LocationProvider
             getSourceProvider().getProviderSwitchTask().stop();
         }
 
-        // Remove update requests if it is running for immediate request
-        if (getSourceProvider().getUpdateRequest().isRequiredImmediately() || !getConfiguration().keepTracking()) {
-            getSourceProvider().removeLocationUpdates(this);
-        }
+        getSourceProvider().removeLocationUpdates(this);
 
         if (getConfiguration().keepTracking()) {
             requestUpdateLocation(getConfiguration().defaultProviderConfiguration().requiredTimeInterval(),
