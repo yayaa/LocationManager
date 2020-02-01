@@ -19,13 +19,6 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
     private DispatcherLocationSource dispatcherLocationSource;
 
     @Override
-    public void initialize() {
-        super.initialize();
-
-        getSourceProvider().createSwitchTask(this);
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
 
@@ -216,7 +209,7 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
 
     private DispatcherLocationSource getSourceProvider() {
         if (dispatcherLocationSource == null) {
-            dispatcherLocationSource = new DispatcherLocationSource();
+            dispatcherLocationSource = new DispatcherLocationSource(this);
         }
         return dispatcherLocationSource;
     }

@@ -54,7 +54,7 @@ public class DispatcherLocationProviderTest {
     private DispatcherLocationProvider dispatcherLocationProvider;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
 
         dispatcherLocationProvider = spy(new DispatcherLocationProvider());

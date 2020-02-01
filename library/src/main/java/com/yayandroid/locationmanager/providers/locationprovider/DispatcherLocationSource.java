@@ -17,16 +17,16 @@ class DispatcherLocationSource {
 
     private ContinuousTask gpServicesSwitchTask;
 
+    DispatcherLocationSource(ContinuousTaskRunner continuousTaskRunner) {
+        this.gpServicesSwitchTask = new ContinuousTask(GOOGLE_PLAY_SERVICE_SWITCH_TASK, continuousTaskRunner);
+    }
+
     DefaultLocationProvider createDefaultLocationProvider() {
         return new DefaultLocationProvider();
     }
 
     GooglePlayServicesLocationProvider createGooglePlayServicesLocationProvider(FallbackListener fallbackListener) {
         return new GooglePlayServicesLocationProvider(fallbackListener);
-    }
-
-    void createSwitchTask(ContinuousTaskRunner continuousTaskRunner) {
-        this.gpServicesSwitchTask = new ContinuousTask(GOOGLE_PLAY_SERVICE_SWITCH_TASK, continuousTaskRunner);
     }
 
     ContinuousTask gpServicesSwitchTask() {
