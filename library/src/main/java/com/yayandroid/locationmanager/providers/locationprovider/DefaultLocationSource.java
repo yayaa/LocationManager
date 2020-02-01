@@ -19,16 +19,13 @@ class DefaultLocationSource {
     private UpdateRequest updateRequest;
     private ContinuousTask cancelTask;
 
-    void createLocationManager(Context context) {
+    DefaultLocationSource(
+            Context context,
+            ContinuousTaskRunner continuousTaskRunner,
+            LocationListener locationListener) {
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-    }
-
-    void createUpdateRequest(LocationListener locationListener) {
         updateRequest = new UpdateRequest(locationManager, locationListener);
-    }
-
-    void createProviderSwitchTask(ContinuousTaskRunner continuousTaskRunner) {
-        this.cancelTask = new ContinuousTask(PROVIDER_SWITCH_TASK, continuousTaskRunner);
+        cancelTask = new ContinuousTask(PROVIDER_SWITCH_TASK, continuousTaskRunner);
     }
 
     boolean isProviderEnabled(String provider) {

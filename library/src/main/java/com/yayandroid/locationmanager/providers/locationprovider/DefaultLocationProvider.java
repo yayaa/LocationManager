@@ -27,15 +27,6 @@ public class DefaultLocationProvider extends LocationProvider
     private Dialog gpsDialog;
 
     @Override
-    public void initialize() {
-        super.initialize();
-
-        getSourceProvider().createLocationManager(getContext());
-        getSourceProvider().createProviderSwitchTask(this);
-        getSourceProvider().createUpdateRequest(this);
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
 
@@ -301,7 +292,7 @@ public class DefaultLocationProvider extends LocationProvider
 
     private DefaultLocationSource getSourceProvider() {
         if (defaultLocationSource == null) {
-            defaultLocationSource = new DefaultLocationSource();
+            defaultLocationSource = new DefaultLocationSource(getContext(), this, this);
         }
         return defaultLocationSource;
     }

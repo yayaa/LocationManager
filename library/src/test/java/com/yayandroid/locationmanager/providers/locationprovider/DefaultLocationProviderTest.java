@@ -75,14 +75,6 @@ public class DefaultLocationProviderTest {
     }
 
     @Test
-    public void initializeShouldCreateInstances() {
-        // configure in setUp method will call initialize right after itself, no need to call again
-        verify(defaultLocationSource).createProviderSwitchTask(defaultLocationProvider);
-        verify(defaultLocationSource).createLocationManager(context);
-        verify(defaultLocationSource).createUpdateRequest(defaultLocationProvider);
-    }
-
-    @Test
     public void onDestroyShouldRemoveInstances() {
         defaultLocationProvider.onDestroy();
 
