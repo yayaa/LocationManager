@@ -1,7 +1,8 @@
 package com.yayandroid.locationmanager.helper.continuoustask;
 
 import android.os.Handler;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 public class ContinuousTask extends Handler implements Runnable {
 

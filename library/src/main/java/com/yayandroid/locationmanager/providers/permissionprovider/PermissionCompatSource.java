@@ -1,8 +1,9 @@
 package com.yayandroid.locationmanager.providers.permissionprovider;
 
 import android.app.Activity;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
+
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 
 class PermissionCompatSource {
 

@@ -3,7 +3,8 @@ package com.yayandroid.locationmanager.sample.service;
 import android.content.Intent;
 import android.location.Location;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 import com.yayandroid.locationmanager.base.LocationBaseService;
 import com.yayandroid.locationmanager.configuration.Configurations;

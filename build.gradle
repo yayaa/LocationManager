@@ -28,14 +28,14 @@ allprojects {
     project.ext {
         versions = [
               minSdkVersion    : 14,
-              compileSdkVersion: 25,
-              targetSdkVersion : 25,
-              buildToolsVersion: '28.0.3'
+              compileSdkVersion: 29,
+              targetSdkVersion : 29,
+              buildToolsVersion: '29.0.0'
         ]
 
         libraries = [
-              appCompat         : 'com.android.support:appcompat-v7:24.2.1',
-              googlePlayServices: 'com.google.android.gms:play-services-location:9.6.1',
+              appCompat         : 'androidx.appcompat:appcompat:1.1.0',
+              googlePlayServices: 'com.google.android.gms:play-services-location:17.0.0',
 
               junit             : 'junit:junit:4.12',
               assertJ           : 'com.squareup.assertj:assertj-android:1.1.1',

@@ -3,7 +3,8 @@ package com.yayandroid.locationmanager.base;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.CallSuper;
+
+import androidx.annotation.CallSuper;
 
 import com.yayandroid.locationmanager.LocationManager;
 import com.yayandroid.locationmanager.configuration.LocationConfiguration;

@@ -2,7 +2,8 @@ package com.yayandroid.locationmanager.providers.permissionprovider;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.support.v4.app.Fragment;
+
+import androidx.fragment.app.Fragment;
 
 import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.listener.PermissionListener;

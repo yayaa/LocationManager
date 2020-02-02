@@ -3,12 +3,13 @@ package com.yayandroid.locationmanager.sample.fragment;
 import android.app.ProgressDialog;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.yayandroid.locationmanager.base.LocationBaseFragment;
 import com.yayandroid.locationmanager.configuration.Configurations;

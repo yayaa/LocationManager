@@ -1,6 +1,6 @@
 package com.yayandroid.locationmanager.providers.permissionprovider;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.yayandroid.locationmanager.configuration.Defaults;
 

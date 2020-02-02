@@ -1,5 +1,6 @@
 <manifest package="com.yayandroid.locationmanager.sample"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Required to check whether user has network connection or not -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -14,7 +15,8 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning" >
 
         <activity android:name=".MainActivity">
             <intent-filter>

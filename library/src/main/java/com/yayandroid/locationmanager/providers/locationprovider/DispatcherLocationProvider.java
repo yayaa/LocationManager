@@ -3,7 +3,8 @@ package com.yayandroid.locationmanager.providers.locationprovider;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.yayandroid.locationmanager.constants.FailType;

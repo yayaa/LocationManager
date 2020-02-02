@@ -2,7 +2,8 @@ package com.yayandroid.locationmanager.mocks;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import com.yayandroid.locationmanager.providers.dialogprovider.DialogProvider;
 
