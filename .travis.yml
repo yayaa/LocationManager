@@ -12,8 +12,8 @@ android:
   components:
     - tools
     - platform-tools
-    - build-tools-25.0.0
-    - android-25
+    - build-tools-29.0.0
+    - android-29
 
     - extra-google-google_play_services
     - extra-google-m2repository
@@ -21,6 +21,9 @@ android:
 
   licenses:
     - 'android-sdk-license-.+'
+
+before_install:
+  - yes | sdkmanager "platforms;android-29"
 
 script:
   - ./gradlew clean check --stacktrace --no-daemon
