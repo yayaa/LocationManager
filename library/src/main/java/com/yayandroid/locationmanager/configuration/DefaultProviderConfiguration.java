@@ -1,6 +1,6 @@
 package com.yayandroid.locationmanager.configuration;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.yayandroid.locationmanager.constants.ProviderType;
 import com.yayandroid.locationmanager.helper.StringUtils;
@@ -59,7 +59,8 @@ public class DefaultProviderConfiguration {
         return gpsDialogProvider != null;
     }
 
-    @Nullable public DialogProvider gpsDialogProvider() {
+    @Nullable
+    public DialogProvider gpsDialogProvider() {
         return gpsDialogProvider;
     }
 
@@ -87,7 +88,7 @@ public class DefaultProviderConfiguration {
         /**
          * TimeInterval will be used while getting location from default location providers
          * It will define in which period updates need to be delivered and will be used only when
-         * {@linkplain LocationConfiguration#keepTracking} is set to true.
+         * {@linkplain LocationConfiguration#keepTracking()} is set to true.
          * Default is {@linkplain Defaults#LOCATION_INTERVAL}
          */
         public Builder requiredTimeInterval(long requiredTimeInterval) {
@@ -102,7 +103,7 @@ public class DefaultProviderConfiguration {
         /**
          * DistanceInterval will be used while getting location from default location providers
          * It will define in which distance changes that we should receive an update and will be used only when
-         * {@linkplain LocationConfiguration#keepTracking} is set to true.
+         * {@linkplain LocationConfiguration#keepTracking()} is set to true.
          * Default is {@linkplain Defaults#LOCATION_DISTANCE_INTERVAL}
          */
         public Builder requiredDistanceInterval(long requiredDistanceInterval) {

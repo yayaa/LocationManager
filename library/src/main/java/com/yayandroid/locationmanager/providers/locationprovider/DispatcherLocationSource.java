@@ -4,7 +4,8 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface.OnCancelListener;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.yayandroid.locationmanager.helper.continuoustask.ContinuousTask;

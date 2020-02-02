@@ -1,6 +1,6 @@
 package com.yayandroid.locationmanager.configuration;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.yayandroid.locationmanager.listener.LocationListener;
 

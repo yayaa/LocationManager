@@ -1,8 +1,9 @@
 package com.yayandroid.locationmanager.mocks;
 
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.yayandroid.locationmanager.providers.dialogprovider.DialogProvider;
 import com.yayandroid.locationmanager.providers.permissionprovider.PermissionProvider;

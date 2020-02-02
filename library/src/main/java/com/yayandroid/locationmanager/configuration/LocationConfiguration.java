@@ -1,9 +1,7 @@
 package com.yayandroid.locationmanager.configuration;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
-import com.yayandroid.locationmanager.providers.locationprovider.DefaultLocationProvider;
-import com.yayandroid.locationmanager.providers.locationprovider.GooglePlayServicesLocationProvider;
 import com.yayandroid.locationmanager.providers.permissionprovider.StubPermissionProvider;
 
 public class LocationConfiguration {
@@ -37,7 +35,8 @@ public class LocationConfiguration {
         return permissionConfiguration;
     }
 
-    @Nullable public GooglePlayServicesConfiguration googlePlayServicesConfiguration() {
+    @Nullable
+    public GooglePlayServicesConfiguration googlePlayServicesConfiguration() {
         return googlePlayServicesConfiguration;
     }
 

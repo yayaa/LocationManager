@@ -1,6 +1,6 @@
 package com.yayandroid.locationmanager.helper;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 public final class StringUtils {
 
