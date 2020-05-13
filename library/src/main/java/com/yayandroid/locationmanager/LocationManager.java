@@ -11,6 +11,8 @@ import com.yayandroid.locationmanager.configuration.LocationConfiguration;
 import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.ProcessType;
 import com.yayandroid.locationmanager.helper.LogUtils;
+import com.yayandroid.locationmanager.helper.logging.DefaultLogger;
+import com.yayandroid.locationmanager.helper.logging.Logger;
 import com.yayandroid.locationmanager.listener.LocationListener;
 import com.yayandroid.locationmanager.listener.PermissionListener;
 import com.yayandroid.locationmanager.providers.locationprovider.DispatcherLocationProvider;
@@ -33,6 +35,14 @@ public class LocationManager implements PermissionListener {
      */
     public static void enableLog(boolean enable) {
         LogUtils.enable(enable);
+    }
+
+    /**
+     * The Logger specifies how this Library is logging debug information. By default {@link DefaultLogger}
+     * is used and it can be replaces by your own custom implementation of {@link Logger}.
+     */
+    public static void setLogger(Logger logger) {
+        LogUtils.setLogger(logger);
     }
 
     /**

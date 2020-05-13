@@ -1,10 +1,13 @@
 package com.yayandroid.locationmanager.helper;
 
-import android.util.Log;
+import com.yayandroid.locationmanager.helper.logging.DefaultLogger;
+import com.yayandroid.locationmanager.helper.logging.Logger;
 
 public final class LogUtils {
 
     private static boolean isEnabled = false;
+
+    private static Logger activeLogger = new DefaultLogger();
 
     private LogUtils() {
         // No instance
@@ -14,24 +17,28 @@ public final class LogUtils {
         LogUtils.isEnabled = isEnabled;
     }
 
+    public static void setLogger(Logger logger) {
+        if (logger != null) activeLogger = logger;
+    }
+
     public static void logD(String message) {
-        if (isEnabled) Log.d(getClassName(), message);
+        if (isEnabled) activeLogger.logD(getClassName(), message);
     }
 
     public static void logE(String message) {
-        if (isEnabled) Log.e(getClassName(), message);
+        if (isEnabled) activeLogger.logE(getClassName(), message);
     }
 
     public static void logI(String message) {
-        if (isEnabled) Log.i(getClassName(), message);
+        if (isEnabled) activeLogger.logI(getClassName(), message);
     }
 
     public static void logV(String message) {
-        if (isEnabled) Log.v(getClassName(), message);
+        if (isEnabled) activeLogger.logV(getClassName(), message);
     }
 
     public static void logW(String message) {
-        if (isEnabled) Log.w(getClassName(), message);
+        if (isEnabled) activeLogger.logW(getClassName(), message);
     }
 
     private static String getClassName() {
