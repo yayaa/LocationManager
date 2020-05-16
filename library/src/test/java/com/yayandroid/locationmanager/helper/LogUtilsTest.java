@@ -11,6 +11,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 public class LogUtilsTest {
@@ -34,11 +35,7 @@ public class LogUtilsTest {
         LogUtils.logV("Vmessage");
         LogUtils.logW("Wmessage");
 
-        verify(mockLogger, times(0)).logD(anyString(), anyString());
-        verify(mockLogger, times(0)).logE(anyString(), anyString());
-        verify(mockLogger, times(0)).logI(anyString(), anyString());
-        verify(mockLogger, times(0)).logV(anyString(), anyString());
-        verify(mockLogger, times(0)).logW(anyString(), anyString());
+        verifyZeroInteractions(mockLogger);
     }
 
     @Test
