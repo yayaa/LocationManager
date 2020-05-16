@@ -139,6 +139,13 @@ It is highly recommended to disable in release mode.
 LocationManager.enableLog(false);
 ```
 
+For a more fine tuned logging, you can provide a custom Logger implementation to filter and delegate logs as you need it.
+
+```java
+Logger myCustomLoggerImplementation = new MyCustomLoggerImplementation();
+LocationManager.setLogger(myCustomLoggerImplementation);
+```
+
 ## Restrictions
 If you are using LocationManager in a
 - Fragment, you need to redirect your `onActivityResult` to fragment manually, because GooglePlayServices Api and SettingsApi calls `startActivityForResult` from activity. For the sample implementation please see [SampleFragmentActivity][15].
