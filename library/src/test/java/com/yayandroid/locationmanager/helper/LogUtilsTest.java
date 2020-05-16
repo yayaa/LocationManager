@@ -66,14 +66,4 @@ public class LogUtilsTest {
         verify(newLogger, times(1)).logD(anyString(), eq("Dmessage"));
         verify(mockLogger, times(0)).logD(anyString(), anyString());
     }
-
-    @Test
-    public void whenLoggerIsNullDoNothing() {
-        LogUtils.enable(true);
-
-        LogUtils.setLogger(null);
-        LogUtils.logD("Dmessage");
-
-        verify(mockLogger, times(1)).logD(anyString(), eq("Dmessage"));
-    }
 }
