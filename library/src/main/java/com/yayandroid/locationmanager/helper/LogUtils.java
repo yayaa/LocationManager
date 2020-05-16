@@ -1,5 +1,7 @@
 package com.yayandroid.locationmanager.helper;
 
+import androidx.annotation.NonNull;
+
 import com.yayandroid.locationmanager.helper.logging.DefaultLogger;
 import com.yayandroid.locationmanager.helper.logging.Logger;
 
@@ -17,8 +19,8 @@ public final class LogUtils {
         LogUtils.isEnabled = isEnabled;
     }
 
-    public static void setLogger(Logger logger) {
-        if (logger != null) activeLogger = logger;
+    public static void setLogger(@NonNull Logger logger) {
+        activeLogger = logger;
     }
 
     public static void logD(String message) {
