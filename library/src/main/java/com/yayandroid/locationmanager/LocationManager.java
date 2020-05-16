@@ -41,7 +41,7 @@ public class LocationManager implements PermissionListener {
      * The Logger specifies how this Library is logging debug information. By default {@link DefaultLogger}
      * is used and it can be replaced by your own custom implementation of {@link Logger}.
      */
-    public static void setLogger(Logger logger) {
+    public static void setLogger(@NonNull Logger logger) {
         LogUtils.setLogger(logger);
     }
 
