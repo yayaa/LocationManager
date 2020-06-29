@@ -8,7 +8,7 @@ To get location on Android Devices, there are 'some' steps you need to go throug
 What are those? Let's see...
 
 <ul>
-<li>Check whether the application has required permission or now</li>
+<li>Check whether the application has required permission or not</li>
 <li>If not, ask runtime permissions from user</li>
 <li>Check whether user granted the permissions or not</li>
 </ul>
