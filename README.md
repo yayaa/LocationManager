@@ -14,7 +14,7 @@ What are those? Let's see...
 </ul>
 
 Let's assume we got the permission, now what?
-We have this cool Google Play Services optimised location provider [FusedLocationProviderApi][1] which provides a common location pool that any application use this api can retrieve location in which interval they require. It reduces battery usage, and decreases waiting time (most of the time) for location.
+We have this cool Google Play Services optimised location provider [FusedLocationProviderClient][1] which provides a common location pool that any application use this api can retrieve location in which interval they require. It reduces battery usage, and decreases waiting time (most of the time) for location.
 YES, we want that! Right?
 
 <ul>
@@ -197,7 +197,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-[1]: https://developers.google.com/android/reference/com/google/android/gms/location/FusedLocationProviderApi
+[1]: https://developers.google.com/android/reference/com/google/android/gms/location/FusedLocationProviderClient
 [2]: https://github.com/yayaa/LocationManager/blob/master/library/src/main/java/com/yayandroid/locationmanager/base/LocationBaseActivity.java
 [3]: https://github.com/yayaa/LocationManager/blob/master/library/src/main/java/com/yayandroid/locationmanager/base/LocationBaseFragment.java
 [4]: https://github.com/yayaa/LocationManager/blob/master/library/src/main/java/com/yayandroid/locationmanager/base/LocationBaseService.java
