@@ -43,10 +43,6 @@ public class SamplePresenter {
                 sampleView.setText("Couldn't get location, because Google Play Services not available!");
                 break;
             }
-            case FailType.GOOGLE_PLAY_SERVICES_CONNECTION_FAIL: {
-                sampleView.setText("Couldn't get location, because Google Play Services connection failed!");
-                break;
-            }
             case FailType.GOOGLE_PLAY_SERVICES_SETTINGS_DIALOG: {
                 sampleView.setText("Couldn't display settingsApi dialog!");
                 break;
