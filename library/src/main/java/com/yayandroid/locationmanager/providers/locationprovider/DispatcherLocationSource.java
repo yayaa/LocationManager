@@ -43,11 +43,10 @@ class DispatcherLocationSource {
         return GoogleApiAvailability.getInstance().isUserResolvableError(gpServicesAvailability);
     }
 
-    @Nullable Dialog getGoogleApiErrorDialog(Activity activity, int gpServicesAvailability, int requestCode,
-          OnCancelListener onCancelListener) {
+    @Nullable Dialog getGoogleApiErrorDialog(Activity activity, int gpServicesAvailability, int requestCode) {
         if (activity == null) return null;
         return GoogleApiAvailability.getInstance()
-              .getErrorDialog(activity, gpServicesAvailability, requestCode, onCancelListener);
+              .getErrorDialog(activity, gpServicesAvailability, requestCode);
     }
 
 }
