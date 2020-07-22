@@ -21,7 +21,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.yayandroid.locationmanager.constants.RequestCode;
 
-class GooglePlayServicesLocationSource extends LocationCallback implements OnCompleteListener<LocationSettingsResponse> {
+class GooglePlayServicesLocationSource extends LocationCallback {
 
     private final FusedLocationProviderClient googleApiClient;
     private final LocationRequest locationRequest;
@@ -48,7 +48,12 @@ class GooglePlayServicesLocationSource extends LocationCallback implements OnCom
                                 .addLocationRequest(locationRequest)
                                 .build()
                 )
-                .addOnCompleteListener(this);
+                .addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
+                    @Override
+                    public void onComplete(@NonNull Task<LocationSettingsResponse> resultTask) {
+                        if (sourceListener != null) sourceListener.onResult(resultTask);
+                    }
+                });
     }
 
     void startSettingsApiResolutionForResult(@NonNull ResolvableApiException resolvable, Activity activity) throws SendIntentException {
@@ -76,11 +81,6 @@ class GooglePlayServicesLocationSource extends LocationCallback implements OnCom
     @NonNull
     Task<Location> getLastLocation() {
         return googleApiClient.getLastLocation();
-    }
-
-    @Override
-    public void onComplete(@NonNull Task<LocationSettingsResponse> resultTask) {
-        if (sourceListener != null) sourceListener.onResult(resultTask);
     }
 
     @Override
