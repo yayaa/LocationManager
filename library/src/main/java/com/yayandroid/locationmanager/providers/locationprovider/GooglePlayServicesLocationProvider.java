@@ -236,24 +236,21 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
                                             /*
                                              * Returns the best most recent location currently available.
                                              *
-                                             * If a location is not available, which should happen very rarely, null will be returned. The best accuracy available while respecting the location permissions will be returned.
+                                             * If a location is not available, which should happen very rarely, null will be returned.
+                                             * The best accuracy available while respecting the location permissions will be returned.
                                              *
-                                             * This method provides a simplified way to get location. It is particularly well suited for applications that do not require an accurate location and that do not want to maintain extra logic for location updates.
+                                             * This method provides a simplified way to get location.
+                                             * It is particularly well suited for applications that do not require an accurate location and that do not want to maintain extra logic for location updates.
+                                             *
+                                             * GPS location can be null if GPS is switched off
                                              */
                                             if (task.isSuccessful() && task.getResult() != null) {
                                                 Location lastKnownLocation = task.getResult();
 
-                                                // GPS location can be null if GPS is switched off
-                                                if (lastKnownLocation != null) {
-                                                    LogUtils.logI("LastKnowLocation is available.");
-                                                    onLocationChanged(lastKnownLocation);
+                                                LogUtils.logI("LastKnowLocation is available.");
+                                                onLocationChanged(lastKnownLocation);
 
-                                                    requestLocation(true);
-                                                } else {
-                                                    LogUtils.logI("LastKnowLocation is not available.");
-
-                                                    requestLocation(false);
-                                                }
+                                                requestLocation(true);
                                             } else {
                                                 LogUtils.logI("LastKnowLocation is not available.");
 
