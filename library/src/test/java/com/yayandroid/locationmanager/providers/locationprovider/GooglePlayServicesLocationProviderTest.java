@@ -7,9 +7,11 @@ import android.location.Location;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Helper;
+import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.Task;
@@ -30,6 +32,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -331,7 +334,7 @@ public class GooglePlayServicesLocationProviderTest {
 
     @Test
     public void onResultShouldCallRequestLocationUpdateWhenSuccess() {
-        googlePlayServicesLocationProvider.onResult(getSettingsResultWith(LocationSettingsStatusCodes.SUCCESS));
+        googlePlayServicesLocationProvider.onResult(getSettingsResultWith(LocationSettingsStatusCodes.SUCCESS, false));
 
         verify(googlePlayServicesLocationProvider).requestLocationUpdate();
     }
@@ -339,17 +342,46 @@ public class GooglePlayServicesLocationProviderTest {
     @Test
     public void onResultShouldCallSettingsApiFailWhenChangeUnavailable() {
         googlePlayServicesLocationProvider
-                .onResult(getSettingsResultWith(LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE));
+                .onResult(getSettingsResultWith(LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE, true));
 
         verify(googlePlayServicesLocationProvider).settingsApiFail(FailType.GOOGLE_PLAY_SERVICES_SETTINGS_DIALOG);
     }
 
     @Test
     public void onResultShouldCallResolveSettingsApiWhenResolutionRequired() {
-        Task<LocationSettingsResponse> settingsResultWith = getSettingsResultWith(LocationSettingsStatusCodes.RESOLUTION_REQUIRED);
+        Task<LocationSettingsResponse> settingsResultWith = getSettingsResultWith(LocationSettingsStatusCodes.RESOLUTION_REQUIRED, true);
         googlePlayServicesLocationProvider.onResult(settingsResultWith);
 
-        verify(googlePlayServicesLocationProvider).resolveSettingsApi(((ResolvableApiException) settingsResultWith.getException()));
+        verify(googlePlayServicesLocationProvider).resolveSettingsApi((any(ResolvableApiException.class)));
+    }
+
+    @Test
+    public void onResultShouldCallSettingsApiFailWithSettingsDeniedWhenOtherCase() {
+        Task<LocationSettingsResponse> settingsResultWith = getSettingsResultWith(LocationSettingsStatusCodes.CANCELED, true);
+        googlePlayServicesLocationProvider.onResult(settingsResultWith);
+
+        verify(googlePlayServicesLocationProvider).settingsApiFail(FailType.GOOGLE_PLAY_SERVICES_SETTINGS_DENIED);
+    }
+
+    @Test
+    public void onResultShouldDoNothingWhenClassCastExceptionThrows() {
+        Status status = new Status(LocationSettingsStatusCodes.RESOLUTION_REQUIRED, null, null);
+
+        ApiException error = new ApiException(status);
+
+        Task<LocationSettingsResponse> settingsResultWith = new MockLocationSettingsResponseTask(error);
+
+        googlePlayServicesLocationProvider.onResult(settingsResultWith);
+
+        verify(googlePlayServicesLocationProvider, never()).requestLocationUpdate();
+
+        verify(googlePlayServicesLocationProvider, never()).resolveSettingsApi(any(ResolvableApiException.class));
+
+        verify(googlePlayServicesLocationProvider, never()).getSourceProvider();
+        verify(googlePlayServicesLocationProvider, never()).settingsApiFail(FailType.VIEW_NOT_REQUIRED_TYPE);
+        verify(googlePlayServicesLocationProvider, never()).settingsApiFail(FailType.GOOGLE_PLAY_SERVICES_SETTINGS_DIALOG);
+
+        verify(googlePlayServicesLocationProvider, never()).settingsApiFail(FailType.GOOGLE_PLAY_SERVICES_SETTINGS_DENIED);
     }
 
     @Test
@@ -410,6 +442,25 @@ public class GooglePlayServicesLocationProviderTest {
         googlePlayServicesLocationProvider.checkLastKnowLocation();
 
         verify(mockedSource).getLastLocation();
+    }
+
+    @Test
+    public void checkLastKnowLocationShouldInvokeRequestLocationFalseWhenLastKnownLocationIsNull() {
+        when(mockedSource.getLocationAvailability()).thenReturn(new MockSimpleTask<>(Helper.getLocationAvailability(true)));
+        when(mockedSource.getLastLocation()).thenReturn(new MockSimpleTask<>(((Location) null)));
+
+        googlePlayServicesLocationProvider.checkLastKnowLocation();
+
+        verify(googlePlayServicesLocationProvider).requestLocation(false);
+    }
+
+    @Test
+    public void checkLastKnowLocationShouldInvokeRequestLocationFalseWhenGetLocationAvailabilityFail() {
+        when(mockedSource.getLocationAvailability()).thenReturn(new MockSimpleTask<LocationAvailability>(new NullPointerException("test fail")));
+
+        googlePlayServicesLocationProvider.checkLastKnowLocation();
+
+        verify(googlePlayServicesLocationProvider).requestLocation(false);
     }
 
     @Test
@@ -488,12 +539,22 @@ public class GooglePlayServicesLocationProviderTest {
         assertThat(googlePlayServicesLocationProvider.isWaiting()).isFalse();
     }
 
+    @Test
+    public void onConnectedShouldNotRequestLocationWhenRequestingLocationUpdatesTrue() {
+        googlePlayServicesLocationProvider.mRequestingLocationUpdates = true;
+
+        googlePlayServicesLocationProvider.onConnected();
+
+        verify(googlePlayServicesLocationProvider, never()).requestLocation(false);
+        verify(googlePlayServicesLocationProvider, never()).checkLastKnowLocation();
+    }
+
     private void makeSettingsDialogIsOnTrue() {
-        googlePlayServicesLocationProvider.onResult(getSettingsResultWith(LocationSettingsStatusCodes.RESOLUTION_REQUIRED));
+        googlePlayServicesLocationProvider.onResult(getSettingsResultWith(LocationSettingsStatusCodes.RESOLUTION_REQUIRED, true));
     }
 
     @NonNull
-    private Task<LocationSettingsResponse> getSettingsResultWith(int statusCode) {
-        return new MockLocationSettingsResponseTask(statusCode);
+    private Task<LocationSettingsResponse> getSettingsResultWith(int statusCode, boolean isError) {
+        return new MockLocationSettingsResponseTask(statusCode, isError);
     }
 }

@@ -22,6 +22,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -328,6 +329,16 @@ public class DispatcherLocationProviderTest {
 
         verify(defaultLocationProvider).configure(dispatcherLocationProvider);
         verify(defaultLocationProvider).get();
+    }
+
+    @Test
+    public void continueWithDefaultProvidersShouldNotCallSetLocationProviderIfItAlreadyDefaultLocationProvider() {
+        dispatcherLocationProvider.setLocationProvider(new DefaultLocationProvider());
+
+        dispatcherLocationProvider.continueWithDefaultProviders();
+
+        verify(defaultLocationProvider, never()).configure(dispatcherLocationProvider);
+        verify(defaultLocationProvider, never()).get();
     }
 
     @Test

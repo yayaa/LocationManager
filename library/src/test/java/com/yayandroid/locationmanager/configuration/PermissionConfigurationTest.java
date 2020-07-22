@@ -11,6 +11,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.Arrays;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PermissionConfigurationTest {
@@ -42,6 +44,12 @@ public class PermissionConfigurationTest {
         expectedException.expectMessage(CoreMatchers.startsWith("requiredPermissions"));
 
         new PermissionConfiguration.Builder().requiredPermissions(new String[]{});
+    }
+
+    @Test public void requiredPermissionsShouldSetPermissionsWhenSetNotEmpty() {
+        PermissionConfiguration permissionConfiguration = new PermissionConfiguration.Builder().requiredPermissions(Defaults.LOCATION_PERMISSIONS).build();
+
+        assertThat(permissionConfiguration.permissionProvider().getRequiredPermissions()).containsAll(Arrays.asList(Defaults.LOCATION_PERMISSIONS));
     }
 
     @Test public void whenRationaleMessageIsNotEmptyDefaultDialogProviderShouldBeSimple() {

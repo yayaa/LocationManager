@@ -75,6 +75,14 @@ public class DefaultLocationProviderTest {
     }
 
     @Test
+    public void configureShouldInvokeInitialize() {
+        DefaultLocationProvider provider = spy(new DefaultLocationProvider());
+        provider.configure(defaultLocationProvider);
+
+        verify(provider).initialize();
+    }
+
+    @Test
     public void onDestroyShouldRemoveInstances() {
         defaultLocationProvider.onDestroy();
 
@@ -230,6 +238,15 @@ public class DefaultLocationProviderTest {
         defaultLocationProvider.onGPSActivated();
 
         verify(defaultLocationProvider).askForLocation(GPS_PROVIDER);
+    }
+
+    @Test
+    public void getLocationByNetworkShouldAskForLocationWhenNetworkIsAvailable() {
+        enableLocationProvider();
+
+        defaultLocationProvider.getLocationByNetwork();
+
+        verify(defaultLocationProvider).askForLocation(LocationManager.NETWORK_PROVIDER);
     }
 
     @Test
