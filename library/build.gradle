@@ -24,7 +24,7 @@ android {
 
 dependencies {
     implementation libraries.appCompat
-    api libraries.googlePlayServices
+    implementation libraries.googlePlayServices
 
     testImplementation libraries.junit
     testImplementation libraries.assertJ
