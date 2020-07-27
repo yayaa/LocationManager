@@ -232,12 +232,6 @@ public class DefaultLocationProvider extends LocationProvider
         }
     }
 
-    /**
-     * This callback will never be invoked on Android Q and above, and providers can be considered as always in the LocationProvider#AVAILABLE state.
-     *
-     * @see <a href="https://developer.android.com/reference/android/location/LocationListener#onStatusChanged(java.lang.String,%20int,%20android.os.Bundle)">LocationListener#onStatusChanged</a>
-     */
-    @Deprecated
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         if (getListener() != null) {
