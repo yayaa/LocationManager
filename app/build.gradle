@@ -16,6 +16,4 @@ android {
 dependencies {
     implementation project(':library')
     implementation libraries.appCompat
-
-    debugImplementation libraries.leakcanary
 }
