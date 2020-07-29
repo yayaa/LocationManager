@@ -6,17 +6,13 @@ import android.content.IntentSender;
 import android.location.Location;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.ProcessType;
@@ -212,61 +208,33 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
     }
 
     void checkLastKnowLocation() {
-        getSourceProvider().getLocationAvailability()
-                .addOnSuccessListener(new OnSuccessListener<LocationAvailability>() {
-                    /**
-                     * Returns the availability of location data. When isLocationAvailable() returns true, then the location returned by getLastLocation() will be reasonably up to date within the hints specified by the active LocationRequests.
-                     *
-                     * If the client isn't connected to Google Play services and the request times out, null is returned.
-                     *
-                     * Note it's always possible for getLastLocation() to return null even when this method returns true (e.g. location settings were disabled between calls).
-                     */
+        getSourceProvider().getLastLocation()
+                .addOnCompleteListener(new OnCompleteListener<Location>() {
                     @Override
-                    public void onSuccess(@Nullable LocationAvailability locationAvailability) {
-                        if (locationAvailability != null && locationAvailability.isLocationAvailable()) {
-                            getSourceProvider().getLastLocation()
-                                    .addOnCompleteListener(new OnCompleteListener<Location>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Location> task) {
-                                            /*
-                                             * Returns the best most recent location currently available.
-                                             *
-                                             * If a location is not available, which should happen very rarely, null will be returned.
-                                             * The best accuracy available while respecting the location permissions will be returned.
-                                             *
-                                             * This method provides a simplified way to get location.
-                                             * It is particularly well suited for applications that do not require an accurate location and that do not want to maintain extra logic for location updates.
-                                             *
-                                             * GPS location can be null if GPS is switched off
-                                             */
-                                            if (task.isSuccessful() && task.getResult() != null) {
-                                                Location lastKnownLocation = task.getResult();
+                    public void onComplete(@NonNull Task<Location> task) {
+                        /*
+                         * Returns the best most recent location currently available.
+                         *
+                         * If a location is not available, which should happen very rarely, null will be returned.
+                         * The best accuracy available while respecting the location permissions will be returned.
+                         *
+                         * This method provides a simplified way to get location.
+                         * It is particularly well suited for applications that do not require an accurate location and that do not want to maintain extra logic for location updates.
+                         *
+                         * GPS location can be null if GPS is switched off
+                         */
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            Location lastKnownLocation = task.getResult();
 
-                                                LogUtils.logI("LastKnowLocation is available.");
-                                                onLocationChanged(lastKnownLocation);
+                            LogUtils.logI("LastKnowLocation is available.");
+                            onLocationChanged(lastKnownLocation);
 
-                                                requestLocation(true);
-                                            } else {
-                                                LogUtils.logI("LastKnowLocation is not available.");
-
-                                                requestLocation(false);
-                                            }
-                                        }
-                                    });
-
+                            requestLocation(true);
                         } else {
                             LogUtils.logI("LastKnowLocation is not available.");
 
                             requestLocation(false);
                         }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        LogUtils.logI("LastKnowLocation is not available.");
-
-                        requestLocation(false);
                     }
                 });
     }
