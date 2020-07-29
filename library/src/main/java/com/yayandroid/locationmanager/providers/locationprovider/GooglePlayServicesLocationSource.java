@@ -87,10 +87,6 @@ class GooglePlayServicesLocationSource extends LocationCallback {
 
     @Override
     public void onLocationResult(LocationResult locationResult) {
-        if (locationResult == null) {
-            return;
-        }
-
         for (Location location : locationResult.getLocations()) {
             if (sourceListener != null) sourceListener.onLocationChanged(location);
         }
