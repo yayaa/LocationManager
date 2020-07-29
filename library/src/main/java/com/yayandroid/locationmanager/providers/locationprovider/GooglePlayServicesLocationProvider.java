@@ -110,8 +110,10 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
         if (getConfiguration().googlePlayServicesConfiguration().ignoreLastKnowLocation()) {
             LogUtils.logI("Configuration requires to ignore last know location from GooglePlayServices Api.");
 
+            // Request fresh location
             requestLocation(false);
         } else {
+            // Try to get last location, if failed then request fresh location
             checkLastKnowLocation();
         }
     }
