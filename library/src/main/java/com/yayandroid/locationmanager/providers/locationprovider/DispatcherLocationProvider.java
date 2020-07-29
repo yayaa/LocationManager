@@ -192,14 +192,9 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
                 getListener().onLocationFailed(FailType.GOOGLE_PLAY_SERVICES_NOT_AVAILABLE);
             }
         } else {
-            // check if activeProvider is already DefaultLocationProvider
-            if (activeProvider instanceof DefaultLocationProvider) {
-                LogUtils.logI("The default provider was already installed");
-            } else {
-                LogUtils.logI("Attempting to get location from default providers...");
-                setLocationProvider(getSourceProvider().createDefaultLocationProvider());
-                activeProvider.get();
-            }
+            LogUtils.logI("Attempting to get location from default providers...");
+            setLocationProvider(getSourceProvider().createDefaultLocationProvider());
+            activeProvider.get();
         }
     }
 

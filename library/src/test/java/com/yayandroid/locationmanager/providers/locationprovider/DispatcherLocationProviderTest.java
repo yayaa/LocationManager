@@ -334,16 +334,6 @@ public class DispatcherLocationProviderTest {
     }
 
     @Test
-    public void continueWithDefaultProvidersShouldNotCallSetLocationProviderIfItAlreadyDefaultLocationProvider() {
-        dispatcherLocationProvider.setLocationProvider(new DefaultLocationProvider());
-
-        dispatcherLocationProvider.continueWithDefaultProviders();
-
-        verify(defaultLocationProvider, never()).configure(dispatcherLocationProvider);
-        verify(defaultLocationProvider, never()).get();
-    }
-
-    @Test
     public void setLocationProviderShouldConfigureGivenProvider() {
         dispatcherLocationProvider.setLocationProvider(defaultLocationProvider);
         verify(defaultLocationProvider).configure(dispatcherLocationProvider);
