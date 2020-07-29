@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -77,12 +76,6 @@ class GooglePlayServicesLocationSource extends LocationCallback {
 
     @NonNull
     Task<Void> removeLocationUpdates() {
-    }
-
-    @SuppressWarnings("ResourceType")
-    @NonNull
-    Task<LocationAvailability> getLocationAvailability() {
-        return googleApiClient.getLocationAvailability();
         return fusedLocationProviderClient.removeLocationUpdates(this);
     }
 
