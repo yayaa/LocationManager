@@ -279,7 +279,7 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
         this.googlePlayServicesLocationSource = googlePlayServicesLocationSource;
     }
 
-    GooglePlayServicesLocationSource getSourceProvider() {
+    private GooglePlayServicesLocationSource getSourceProvider() {
         if (googlePlayServicesLocationSource == null) {
             googlePlayServicesLocationSource = new GooglePlayServicesLocationSource(getContext(),
                   getConfiguration().googlePlayServicesConfiguration().locationRequest(), this);
