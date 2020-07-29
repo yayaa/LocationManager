@@ -17,7 +17,8 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.yayandroid.locationmanager.constants.RequestCode;
 
@@ -27,10 +28,12 @@ class GooglePlayServicesLocationSource extends LocationCallback {
     private final LocationRequest locationRequest;
     private final SourceListener sourceListener;
 
-    interface SourceListener {
+    interface SourceListener extends OnSuccessListener<LocationSettingsResponse>, OnFailureListener {
         void onConnected();
 
-        void onResult(@NonNull Task<LocationSettingsResponse> resultTask);
+        void onSuccess(LocationSettingsResponse locationSettingsResponse);
+
+        void onFailure(@NonNull Exception exception);
 
         void onLocationChanged(@NonNull Location location);
     }
@@ -48,10 +51,16 @@ class GooglePlayServicesLocationSource extends LocationCallback {
                                 .addLocationRequest(locationRequest)
                                 .build()
                 )
-                .addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
+                .addOnSuccessListener(new OnSuccessListener<LocationSettingsResponse>() {
                     @Override
-                    public void onComplete(@NonNull Task<LocationSettingsResponse> resultTask) {
-                        if (sourceListener != null) sourceListener.onResult(resultTask);
+                    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                        if (sourceListener != null) sourceListener.onSuccess(locationSettingsResponse);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        if (sourceListener != null) sourceListener.onFailure(exception);
                     }
                 });
     }

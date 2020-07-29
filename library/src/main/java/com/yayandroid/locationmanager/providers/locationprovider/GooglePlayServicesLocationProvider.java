@@ -154,46 +154,41 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
     }
 
     @Override
-    public void onResult(@NonNull Task<LocationSettingsResponse> resultTask) {
+    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+        // All location settings are satisfied. The client can initialize location
+        // requests here.
+        LogUtils.logI("We got GPS, Wifi and/or Cell network providers enabled enough "
+                + "to receive location as we needed. Requesting location update...");
+        requestLocationUpdate();
+    }
 
-        try {
-            //noinspection unused
-            LocationSettingsResponse response = resultTask.getResult(ApiException.class);
-            // All location settings are satisfied. The client can initialize location
-            // requests here.
-            LogUtils.logI("We got GPS, Wifi and/or Cell network providers enabled enough "
-                    + "to receive location as we needed. Requesting location update...");
-            requestLocationUpdate();
-        } catch (ApiException exception) {
-            switch (exception.getStatusCode()) {
-                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                    mRequestingLocationUpdates = false;
-                    // Location settings are not satisfied.
-                    // However, we have no way to fix the settings so we won't show the dialog.
-                    LogUtils.logE("Settings change is not available, SettingsApi failing...");
-                    settingsApiFail(FailType.GOOGLE_PLAY_SERVICES_SETTINGS_DIALOG);
+    @Override
+    public void onFailure(@NonNull Exception exception) {
+        int statusCode = ((ApiException) exception).getStatusCode();
 
-                    break;
-                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                    // Location settings are not satisfied. But could be fixed by showing the user
-                    // a dialog.
-                    try {
-                        // Cast to a resolvable exception.
-                        resolveSettingsApi((ResolvableApiException) exception);
+        switch (statusCode) {
+            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                setWaiting(false);
+                // Location settings are not satisfied.
+                // However, we have no way to fix the settings so we won't show the dialog.
+                LogUtils.logE("Settings change is not available, SettingsApi failing...");
+                settingsApiFail(FailType.GOOGLE_PLAY_SERVICES_SETTINGS_DIALOG);
 
-                        break;
-                    } catch (ClassCastException e) {
-                        // Ignore, should be an impossible error.
-                    }
+                break;
+            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                // Location settings are not satisfied. But could be fixed by showing the user
+                // a dialog.
+                // Cast to a resolvable exception.
+                resolveSettingsApi((ResolvableApiException) exception);
 
-                    break;
-                default:
-                    mRequestingLocationUpdates = false;
-                    LogUtils.logE("LocationSettings failing, status: " + CommonStatusCodes.getStatusCodeString(exception.getStatusCode()));
-                    settingsApiFail(FailType.GOOGLE_PLAY_SERVICES_SETTINGS_DENIED);
+                break;
+            default:
+                // for other CommonStatusCodes values
+                setWaiting(false);
+                LogUtils.logE("LocationSettings failing, status: " + CommonStatusCodes.getStatusCodeString(statusCode));
+                settingsApiFail(FailType.GOOGLE_PLAY_SERVICES_SETTINGS_DENIED);
 
-                    break;
-            }
+                break;
         }
     }
 
