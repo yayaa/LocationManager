@@ -10,11 +10,9 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.Helper;
-import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.tasks.Task;
 import com.yayandroid.locationmanager.configuration.GooglePlayServicesConfiguration;
 import com.yayandroid.locationmanager.configuration.LocationConfiguration;
 import com.yayandroid.locationmanager.constants.FailType;
@@ -22,7 +20,6 @@ import com.yayandroid.locationmanager.constants.ProcessType;
 import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.listener.FallbackListener;
 import com.yayandroid.locationmanager.listener.LocationListener;
-import com.yayandroid.locationmanager.mocks.MockLocationSettingsResponseTask;
 import com.yayandroid.locationmanager.mocks.MockSimpleTask;
 import com.yayandroid.locationmanager.view.ContextProcessor;
 
@@ -98,7 +95,7 @@ public class GooglePlayServicesLocationProviderTest {
 
     @Test
     public void onResumeShouldRequestLocationUpdateWhenLocationIsNotYetProvided() {
-        when(mockedSource.getLocationAvailability()).thenReturn(new MockSimpleTask<>(Helper.getLocationAvailability(false)));
+        when(mockedSource.getLastLocation()).thenReturn(new MockSimpleTask<>(((Location) null)));
 
         googlePlayServicesLocationProvider.setWaiting(true);
 
@@ -112,7 +109,7 @@ public class GooglePlayServicesLocationProviderTest {
         googlePlayServicesLocationProvider.setWaiting(true);
         when(locationConfiguration.keepTracking()).thenReturn(true);
 
-        when(mockedSource.getLocationAvailability()).thenReturn(new MockSimpleTask<>(Helper.getLocationAvailability(false)));
+        when(mockedSource.getLastLocation()).thenReturn(new MockSimpleTask<>(((Location) null)));
 
         googlePlayServicesLocationProvider.onResume();
 
@@ -163,7 +160,7 @@ public class GooglePlayServicesLocationProviderTest {
     public void getShouldSetWaitingTrue() {
         assertThat(googlePlayServicesLocationProvider.isWaiting()).isFalse();
 
-        when(mockedSource.getLocationAvailability()).thenReturn(new MockSimpleTask<>(Helper.getLocationAvailability(false)));
+        when(mockedSource.getLastLocation()).thenReturn(new MockSimpleTask<>(((Location) null)));
 
         googlePlayServicesLocationProvider.get();
 
@@ -181,7 +178,7 @@ public class GooglePlayServicesLocationProviderTest {
 
     @Test
     public void getShouldRequestLocationUpdate() {
-        when(mockedSource.getLocationAvailability()).thenReturn(new MockSimpleTask<>(Helper.getLocationAvailability(false)));
+        when(mockedSource.getLastLocation()).thenReturn(new MockSimpleTask<>(((Location) null)));
 
         googlePlayServicesLocationProvider.get();
 
@@ -232,7 +229,6 @@ public class GooglePlayServicesLocationProviderTest {
 
     @Test
     public void onConnectedShouldCheckLastKnowLocation() {
-        when(mockedSource.getLocationAvailability()).thenReturn(new MockSimpleTask<>(Helper.getLocationAvailability(true)));
         when(mockedSource.getLastLocation()).thenReturn(new MockSimpleTask<>(new Location("")));
         when(mockedSource.removeLocationUpdates()).thenReturn(new MockSimpleTask<>(((Void) null)));
 
@@ -243,7 +239,6 @@ public class GooglePlayServicesLocationProviderTest {
 
     @Test
     public void onConnectedShouldNotCallLocationRequiredWhenLastKnowIsReadyAndNoNeedToKeepTracking() {
-        when(mockedSource.getLocationAvailability()).thenReturn(new MockSimpleTask<>(Helper.getLocationAvailability(true)));
         when(mockedSource.getLastLocation()).thenReturn(new MockSimpleTask<>(new Location("")));
         when(mockedSource.removeLocationUpdates()).thenReturn(new MockSimpleTask<>(((Void) null)));
         when(locationConfiguration.keepTracking()).thenReturn(false);
@@ -254,26 +249,25 @@ public class GooglePlayServicesLocationProviderTest {
     }
 
     @Test
-    public void onConnectedShouldSwitchMRequestingLocationUpdatesToTrue() {
+    public void onConnectedShouldSwitchIsWaitingToTrue() {
         // Have first condition false
         when(locationConfiguration.keepTracking()).thenReturn(false);
 
         // Have second condition false
         when(googlePlayServicesConfiguration.ignoreLastKnowLocation()).thenReturn(false);
-        when(mockedSource.getLocationAvailability()).thenReturn(new MockSimpleTask<>(Helper.getLocationAvailability(true)));
         when(mockedSource.getLastLocation()).thenReturn(new MockSimpleTask<>(((Location) null)));
 
-        // mRequestingLocationUpdates is false on start
+        // isWaiting is false on start
 
         googlePlayServicesLocationProvider.onConnected();
 
         verify(googlePlayServicesLocationProvider).locationRequired();
-        assertThat(googlePlayServicesLocationProvider.mRequestingLocationUpdates).isTrue();
+        assertThat(googlePlayServicesLocationProvider.isWaiting()).isTrue();
     }
 
     @Test
     public void onConnectedShouldCallLocationRequiredWhenLastKnowIsNotAvailable() {
-        when(mockedSource.getLocationAvailability()).thenReturn(new MockSimpleTask<>(Helper.getLocationAvailability(false)));
+        when(mockedSource.getLastLocation()).thenReturn(new MockSimpleTask<>(((Location) null)));
 
         googlePlayServicesLocationProvider.onConnected();
 
@@ -282,7 +276,6 @@ public class GooglePlayServicesLocationProviderTest {
 
     @Test
     public void onConnectedShouldCallLocationRequiredWhenConfigurationRequiresKeepTracking() {
-        when(mockedSource.getLocationAvailability()).thenReturn(new MockSimpleTask<>(Helper.getLocationAvailability(true)));
         when(mockedSource.getLastLocation()).thenReturn(new MockSimpleTask<>(location));
         when(locationConfiguration.keepTracking()).thenReturn(true);
 
@@ -334,7 +327,7 @@ public class GooglePlayServicesLocationProviderTest {
 
     @Test
     public void onResultShouldCallRequestLocationUpdateWhenSuccess() {
-        googlePlayServicesLocationProvider.onResult(getSettingsResultWith(LocationSettingsStatusCodes.SUCCESS, false));
+        googlePlayServicesLocationProvider.onSuccess(getSettingsResultWithSuccess(LocationSettingsStatusCodes.SUCCESS));
 
         verify(googlePlayServicesLocationProvider).requestLocationUpdate();
     }
@@ -342,46 +335,25 @@ public class GooglePlayServicesLocationProviderTest {
     @Test
     public void onResultShouldCallSettingsApiFailWhenChangeUnavailable() {
         googlePlayServicesLocationProvider
-                .onResult(getSettingsResultWith(LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE, true));
+                .onFailure(getSettingsResultWithError(LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE));
 
         verify(googlePlayServicesLocationProvider).settingsApiFail(FailType.GOOGLE_PLAY_SERVICES_SETTINGS_DIALOG);
     }
 
     @Test
     public void onResultShouldCallResolveSettingsApiWhenResolutionRequired() {
-        Task<LocationSettingsResponse> settingsResultWith = getSettingsResultWith(LocationSettingsStatusCodes.RESOLUTION_REQUIRED, true);
-        googlePlayServicesLocationProvider.onResult(settingsResultWith);
+        Exception settingsResultWith = getSettingsResultWithError(LocationSettingsStatusCodes.RESOLUTION_REQUIRED);
+        googlePlayServicesLocationProvider.onFailure(settingsResultWith);
 
         verify(googlePlayServicesLocationProvider).resolveSettingsApi((any(ResolvableApiException.class)));
     }
 
     @Test
     public void onResultShouldCallSettingsApiFailWithSettingsDeniedWhenOtherCase() {
-        Task<LocationSettingsResponse> settingsResultWith = getSettingsResultWith(LocationSettingsStatusCodes.CANCELED, true);
-        googlePlayServicesLocationProvider.onResult(settingsResultWith);
+        Exception settingsResultWith = getSettingsResultWithError(LocationSettingsStatusCodes.CANCELED);
+        googlePlayServicesLocationProvider.onFailure(settingsResultWith);
 
         verify(googlePlayServicesLocationProvider).settingsApiFail(FailType.GOOGLE_PLAY_SERVICES_SETTINGS_DENIED);
-    }
-
-    @Test
-    public void onResultShouldDoNothingWhenClassCastExceptionThrows() {
-        Status status = new Status(LocationSettingsStatusCodes.RESOLUTION_REQUIRED, null, null);
-
-        ApiException error = new ApiException(status);
-
-        Task<LocationSettingsResponse> settingsResultWith = new MockLocationSettingsResponseTask(error);
-
-        googlePlayServicesLocationProvider.onResult(settingsResultWith);
-
-        verify(googlePlayServicesLocationProvider, never()).requestLocationUpdate();
-
-        verify(googlePlayServicesLocationProvider, never()).resolveSettingsApi(any(ResolvableApiException.class));
-
-        verify(googlePlayServicesLocationProvider, never()).getSourceProvider();
-        verify(googlePlayServicesLocationProvider, never()).settingsApiFail(FailType.VIEW_NOT_REQUIRED_TYPE);
-        verify(googlePlayServicesLocationProvider, never()).settingsApiFail(FailType.GOOGLE_PLAY_SERVICES_SETTINGS_DIALOG);
-
-        verify(googlePlayServicesLocationProvider, never()).settingsApiFail(FailType.GOOGLE_PLAY_SERVICES_SETTINGS_DENIED);
     }
 
     @Test
@@ -416,50 +388,25 @@ public class GooglePlayServicesLocationProviderTest {
     }
 
     @Test
-    public void checkLastKnowLocationShouldReturnFalseWhenLocationIsNotAvailable() {
-        when(mockedSource.getLocationAvailability()).thenReturn(new MockSimpleTask<>(Helper.getLocationAvailability(false)));
-
-        googlePlayServicesLocationProvider.checkLastKnowLocation();
-
-        verify(mockedSource, never()).getLastLocation();
-    }
-
-    @Test
-    public void checkLastKnowLocationShouldReturnFalseWhenLocationIsNull() {
-        when(mockedSource.getLocationAvailability()).thenReturn(new MockSimpleTask<>(Helper.getLocationAvailability(false)));
-
-        googlePlayServicesLocationProvider.checkLastKnowLocation();
-
-        verify(mockedSource, never()).getLastLocation();
-    }
-
-    @Test
-    public void checkLastKnowLocationShouldReturnTrueWhenLocationIsAvailable() {
-        when(mockedSource.getLocationAvailability()).thenReturn(new MockSimpleTask<>(Helper.getLocationAvailability(true)));
+    public void checkLastKnowLocationInvokeRequestLocationTrueWhenLocationIsAvailable() {
         when(mockedSource.getLastLocation()).thenReturn(new MockSimpleTask<>(location));
         when(mockedSource.removeLocationUpdates()).thenReturn(new MockSimpleTask<>(((Void) null)));
 
         googlePlayServicesLocationProvider.checkLastKnowLocation();
 
         verify(mockedSource).getLastLocation();
+
+        verify(googlePlayServicesLocationProvider).onLocationChanged(location);
+        verify(googlePlayServicesLocationProvider).requestLocation(true);
     }
 
     @Test
     public void checkLastKnowLocationShouldInvokeRequestLocationFalseWhenLastKnownLocationIsNull() {
-        when(mockedSource.getLocationAvailability()).thenReturn(new MockSimpleTask<>(Helper.getLocationAvailability(true)));
         when(mockedSource.getLastLocation()).thenReturn(new MockSimpleTask<>(((Location) null)));
 
         googlePlayServicesLocationProvider.checkLastKnowLocation();
 
-        verify(googlePlayServicesLocationProvider).requestLocation(false);
-    }
-
-    @Test
-    public void checkLastKnowLocationShouldInvokeRequestLocationFalseWhenGetLocationAvailabilityFail() {
-        when(mockedSource.getLocationAvailability()).thenReturn(new MockSimpleTask<LocationAvailability>(new NullPointerException("test fail")));
-
-        googlePlayServicesLocationProvider.checkLastKnowLocation();
-
+        verify(mockedSource).getLastLocation();
         verify(googlePlayServicesLocationProvider).requestLocation(false);
     }
 
@@ -539,22 +486,29 @@ public class GooglePlayServicesLocationProviderTest {
         assertThat(googlePlayServicesLocationProvider.isWaiting()).isFalse();
     }
 
-    @Test
-    public void onConnectedShouldNotRequestLocationWhenRequestingLocationUpdatesTrue() {
-        googlePlayServicesLocationProvider.mRequestingLocationUpdates = true;
-
-        googlePlayServicesLocationProvider.onConnected();
-
-        verify(googlePlayServicesLocationProvider, never()).requestLocation(false);
-        verify(googlePlayServicesLocationProvider, never()).checkLastKnowLocation();
-    }
-
     private void makeSettingsDialogIsOnTrue() {
-        googlePlayServicesLocationProvider.onResult(getSettingsResultWith(LocationSettingsStatusCodes.RESOLUTION_REQUIRED, true));
+        googlePlayServicesLocationProvider.onFailure(getSettingsResultWithError(LocationSettingsStatusCodes.RESOLUTION_REQUIRED));
     }
 
     @NonNull
-    private Task<LocationSettingsResponse> getSettingsResultWith(int statusCode, boolean isError) {
-        return new MockLocationSettingsResponseTask(statusCode, isError);
+    private static LocationSettingsResponse getSettingsResultWithSuccess(int statusCode) {
+        Status status = new Status(statusCode, null, null);
+
+        LocationSettingsResponse result = new LocationSettingsResponse();
+
+        result.setResult(new LocationSettingsResult(status));
+
+        return result;
+    }
+
+    @NonNull
+    private static Exception getSettingsResultWithError(int statusCode) {
+        Status status = new Status(statusCode, null, null);
+
+        if (statusCode == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
+            return new ResolvableApiException(status);
+        } else {
+            return new ApiException(status);
+        }
     }
 }
