@@ -24,7 +24,7 @@ import com.yayandroid.locationmanager.constants.RequestCode;
 
 class GooglePlayServicesLocationSource extends LocationCallback {
 
-    private final FusedLocationProviderClient googleApiClient;
+    private final FusedLocationProviderClient fusedLocationProviderClient;
     private final LocationRequest locationRequest;
     private final SourceListener sourceListener;
 
@@ -41,11 +41,11 @@ class GooglePlayServicesLocationSource extends LocationCallback {
     GooglePlayServicesLocationSource(Context context, LocationRequest locationRequest, SourceListener sourceListener) {
         this.sourceListener = sourceListener;
         this.locationRequest = locationRequest;
-        this.googleApiClient = LocationServices.getFusedLocationProviderClient(context);
+        this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
     }
 
     void checkLocationSettings() {
-        LocationServices.getSettingsClient(googleApiClient.getApplicationContext())
+        LocationServices.getSettingsClient(fusedLocationProviderClient.getApplicationContext())
                 .checkLocationSettings(
                         new LocationSettingsRequest.Builder()
                                 .addLocationRequest(locationRequest)
@@ -72,24 +72,24 @@ class GooglePlayServicesLocationSource extends LocationCallback {
     @SuppressWarnings("ResourceType")
     void requestLocationUpdate() {
         // This method is suited for the foreground use cases
-        googleApiClient.requestLocationUpdates(locationRequest, this, Looper.myLooper());
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, this, Looper.myLooper());
     }
 
     @NonNull
     Task<Void> removeLocationUpdates() {
-        return googleApiClient.removeLocationUpdates(this);
     }
 
     @SuppressWarnings("ResourceType")
     @NonNull
     Task<LocationAvailability> getLocationAvailability() {
         return googleApiClient.getLocationAvailability();
+        return fusedLocationProviderClient.removeLocationUpdates(this);
     }
 
     @SuppressWarnings("ResourceType")
     @NonNull
     Task<Location> getLastLocation() {
-        return googleApiClient.getLastLocation();
+        return fusedLocationProviderClient.getLastLocation();
     }
 
     @Override
