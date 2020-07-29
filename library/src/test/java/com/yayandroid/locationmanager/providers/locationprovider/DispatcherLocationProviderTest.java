@@ -3,6 +3,7 @@ package com.yayandroid.locationmanager.providers.locationprovider;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -21,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -287,7 +289,7 @@ public class DispatcherLocationProviderTest {
     @Test
     public void resolveGooglePlayServicesShouldContinueWithDefaultWhenResolveDialogIsNull() {
         when(dispatcherLocationSource.getGoogleApiErrorDialog(eq(activity), eq(RESOLVABLE_ERROR),
-              eq(RequestCode.GOOGLE_PLAY_SERVICES))).thenReturn(null);
+              eq(RequestCode.GOOGLE_PLAY_SERVICES), any(OnCancelListener.class))).thenReturn(null);
 
         dispatcherLocationProvider.resolveGooglePlayServices(RESOLVABLE_ERROR);
 
@@ -297,7 +299,7 @@ public class DispatcherLocationProviderTest {
     @Test
     public void resolveGooglePlayServicesShouldShowDialogWhenResolveDialogNotNull() {
         when(dispatcherLocationSource.getGoogleApiErrorDialog(eq(activity), eq(RESOLVABLE_ERROR),
-              eq(RequestCode.GOOGLE_PLAY_SERVICES))).thenReturn(dialog);
+              eq(RequestCode.GOOGLE_PLAY_SERVICES), any(OnCancelListener.class))).thenReturn(dialog);
 
         dispatcherLocationProvider.resolveGooglePlayServices(RESOLVABLE_ERROR);
 
@@ -354,7 +356,7 @@ public class DispatcherLocationProviderTest {
         when(dispatcherLocationSource.isGoogleApiAvailable(context)).thenReturn(RESOLVABLE_ERROR);
         when(dispatcherLocationSource.isGoogleApiErrorUserResolvable(RESOLVABLE_ERROR)).thenReturn(true);
         when(dispatcherLocationSource.getGoogleApiErrorDialog(eq(activity), eq(RESOLVABLE_ERROR),
-              eq(RequestCode.GOOGLE_PLAY_SERVICES))).thenReturn(dialog);
+              eq(RequestCode.GOOGLE_PLAY_SERVICES), any(OnCancelListener.class))).thenReturn(dialog);
 
         dispatcherLocationProvider.checkGooglePlayServicesAvailability(true);
 

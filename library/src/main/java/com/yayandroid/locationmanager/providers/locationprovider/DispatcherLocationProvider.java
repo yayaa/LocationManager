@@ -154,39 +154,17 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
 
     void resolveGooglePlayServices(int gpServicesAvailability) {
         LogUtils.logI("Asking user to handle GooglePlayServices error...");
-        gpServicesDialog = getSourceProvider().getGoogleApiErrorDialog(
-                getActivity(),
-                gpServicesAvailability,
-                RequestCode.GOOGLE_PLAY_SERVICES
-        );
+        gpServicesDialog = getSourceProvider().getGoogleApiErrorDialog(getActivity(), gpServicesAvailability,
+                RequestCode.GOOGLE_PLAY_SERVICES, new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        LogUtils.logI("GooglePlayServices error could've been resolved, "
+                                + "but user canceled it.");
+                        continueWithDefaultProviders();
+                    }
+                });
 
         if (gpServicesDialog != null) {
-            gpServicesDialog.setCancelable(false);
-
-            gpServicesDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    LogUtils.logI("GooglePlayServices error could've been resolved, "
-                            + "but user canceled it.");
-
-                    // We process event here, clear onDismiss listener
-                    gpServicesDialog.setOnDismissListener(null);
-
-                    continueWithDefaultProviders();
-                }
-            });
-
-            // Cancel events alone will not capture all ways that the dialog might be dismissed.
-            // Example: GoogleApiAvailability: Google Play services is invalid. Cannot recover.
-            gpServicesDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    LogUtils.logI("GooglePlayServices error could not have been resolved");
-
-                    continueWithDefaultProviders();
-                }
-            });
-
             gpServicesDialog.show();
         } else {
             LogUtils.logI("GooglePlayServices error could've been resolved, but since LocationManager "
