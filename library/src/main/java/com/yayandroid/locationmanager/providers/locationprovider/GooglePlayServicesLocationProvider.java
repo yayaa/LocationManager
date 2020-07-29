@@ -29,11 +29,6 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
 
     private boolean settingsDialogIsOn = false;
 
-    /**
-     * Tracks the status of the location updates request.
-     */
-    boolean mRequestingLocationUpdates = false;
-
     private GooglePlayServicesLocationSource googlePlayServicesLocationSource;
 
     GooglePlayServicesLocationProvider(FallbackListener fallbackListener) {
@@ -101,7 +96,6 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
                 LogUtils.logI("We got settings changed, requesting location update...");
                 requestLocationUpdate();
             } else {
-                mRequestingLocationUpdates = false;
                 LogUtils.logI("User denied settingsApi dialog, GooglePlayServices SettingsApi failing...");
                 settingsApiFail(FailType.GOOGLE_PLAY_SERVICES_SETTINGS_DENIED);
             }
@@ -112,16 +106,6 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
     @Override
     public void onConnected() {
         LogUtils.logI("Start request location updates.");
-
-        if (mRequestingLocationUpdates) {
-            LogUtils.logI("Update already started, wait for result...");
-
-            return;
-        }
-
-        mRequestingLocationUpdates = true;
-
-        LogUtils.logI("Request location.");
 
         if (getConfiguration().googlePlayServicesConfiguration().ignoreLastKnowLocation()) {
             LogUtils.logI("Configuration requires to ignore last know location from GooglePlayServices Api.");
@@ -264,7 +248,7 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
         }
 
         LogUtils.logI("Requesting location update...");
-        mRequestingLocationUpdates = true;
+        setWaiting(true);
         getSourceProvider().requestLocationUpdate();
     }
 
@@ -312,7 +296,7 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            mRequestingLocationUpdates = false;
+                            setWaiting(false);
                         }
                     });
         }
