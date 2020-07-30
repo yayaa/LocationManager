@@ -156,13 +156,13 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
         LogUtils.logI("Asking user to handle GooglePlayServices error...");
         gpServicesDialog = getSourceProvider().getGoogleApiErrorDialog(getActivity(), gpServicesAvailability,
               RequestCode.GOOGLE_PLAY_SERVICES, new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        LogUtils.logI("GooglePlayServices error could've been resolved, "
-                                + "but user canceled it.");
-                        continueWithDefaultProviders();
-                    }
-                });
+                  @Override
+                  public void onCancel(DialogInterface dialog) {
+                      LogUtils.logI("GooglePlayServices error could've been resolved, "
+                            + "but user canceled it.");
+                      continueWithDefaultProviders();
+                  }
+              });
 
         if (gpServicesDialog != null) {
             gpServicesDialog.show();
