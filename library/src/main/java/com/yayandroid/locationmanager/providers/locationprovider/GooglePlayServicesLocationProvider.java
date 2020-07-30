@@ -6,10 +6,12 @@ import android.content.IntentSender;
 import android.location.Location;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -118,7 +120,6 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
         }
     }
 
-    @Override
     public void onLocationChanged(@NonNull Location location) {
         if (getListener() != null) {
             getListener().onLocationChanged(location);
@@ -132,6 +133,18 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
             LogUtils.logI("We got location and no need to keep tracking, so location update is removed.");
 
             removeLocationUpdates();
+        }
+    }
+
+    @Override
+    public void onLocationResult(@Nullable LocationResult locationResult) {
+        if (locationResult == null) {
+            // Do nothing, wait for other result
+            return;
+        }
+
+        for (Location location : locationResult.getLocations()) {
+            onLocationChanged(location);
         }
     }
 

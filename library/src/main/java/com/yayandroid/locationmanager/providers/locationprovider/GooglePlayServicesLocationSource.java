@@ -7,6 +7,7 @@ import android.location.Location;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -34,7 +35,7 @@ class GooglePlayServicesLocationSource extends LocationCallback {
 
         void onFailure(@NonNull Exception exception);
 
-        void onLocationChanged(@NonNull Location location);
+        void onLocationResult(@Nullable LocationResult locationResult);
     }
 
     GooglePlayServicesLocationSource(Context context, LocationRequest locationRequest, SourceListener sourceListener) {
@@ -86,10 +87,8 @@ class GooglePlayServicesLocationSource extends LocationCallback {
     }
 
     @Override
-    public void onLocationResult(LocationResult locationResult) {
-        for (Location location : locationResult.getLocations()) {
-            if (sourceListener != null) sourceListener.onLocationChanged(location);
-        }
+    public void onLocationResult(@Nullable LocationResult locationResult) {
+        if (sourceListener != null) sourceListener.onLocationResult(locationResult);
     }
 
 }
