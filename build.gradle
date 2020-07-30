@@ -39,7 +39,9 @@ allprojects {
 
               junit             : 'junit:junit:4.12',
               assertJ           : 'com.squareup.assertj:assertj-android:1.1.1',
-              mockito           : 'org.mockito:mockito-core:2.7.2'
+              mockito           : 'org.mockito:mockito-core:2.7.2',
+
+              leakcanary        : 'com.squareup.leakcanary:leakcanary-android:2.4'
         ]
     }
 }
