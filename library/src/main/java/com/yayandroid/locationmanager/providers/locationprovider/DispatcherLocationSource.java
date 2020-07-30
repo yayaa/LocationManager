@@ -44,7 +44,7 @@ class DispatcherLocationSource {
     }
 
     @Nullable Dialog getGoogleApiErrorDialog(Activity activity, int gpServicesAvailability, int requestCode,
-                                             OnCancelListener onCancelListener) {
+          OnCancelListener onCancelListener) {
         if (activity == null) return null;
         return GoogleApiAvailability.getInstance()
               .getErrorDialog(activity, gpServicesAvailability, requestCode, onCancelListener);
