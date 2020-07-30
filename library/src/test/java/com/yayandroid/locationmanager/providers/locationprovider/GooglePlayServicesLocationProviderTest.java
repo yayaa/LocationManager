@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
@@ -28,8 +29,12 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -323,6 +328,42 @@ public class GooglePlayServicesLocationProviderTest {
         googlePlayServicesLocationProvider.onLocationChanged(location);
 
         verify(mockedSource, never()).removeLocationUpdates();
+    }
+
+    @Test
+    public void onLocationResultShouldCallOnLocationChangedWhenLocationListIsNotEmpty() {
+        when(mockedSource.removeLocationUpdates()).thenReturn(new MockSimpleTask<>(((Void) null)));
+
+        List<Location> locations = new ArrayList<>();
+
+        locations.add(new Location("1"));
+        locations.add(new Location("2"));
+
+        LocationResult locationResult = LocationResult.create(locations);
+
+        googlePlayServicesLocationProvider.onLocationResult(locationResult);
+
+        verify(googlePlayServicesLocationProvider, atLeastOnce()).onLocationChanged(any(Location.class));
+
+        verify(locationListener, atLeastOnce()).onLocationChanged(any(Location.class));
+    }
+
+    @Test
+    public void onLocationResultShouldNotCallOnLocationChangedWhenLocationListIsEmpty() {
+        List<Location> locations = new ArrayList<>();
+
+        LocationResult locationResult = LocationResult.create(locations);
+
+        googlePlayServicesLocationProvider.onLocationResult(locationResult);
+
+        verify(googlePlayServicesLocationProvider, never()).onLocationChanged(any(Location.class));
+    }
+
+    @Test
+    public void onLocationResultShouldNotCallOnLocationChangedWhenLocationResultIsNull() {
+        googlePlayServicesLocationProvider.onLocationResult(null);
+
+        verify(googlePlayServicesLocationProvider, never()).onLocationChanged(any(Location.class));
     }
 
     @Test
