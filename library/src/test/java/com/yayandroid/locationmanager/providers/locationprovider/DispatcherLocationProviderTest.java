@@ -3,6 +3,7 @@ package com.yayandroid.locationmanager.providers.locationprovider;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 
@@ -20,10 +21,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -291,6 +295,32 @@ public class DispatcherLocationProviderTest {
               eq(RequestCode.GOOGLE_PLAY_SERVICES), any(OnCancelListener.class))).thenReturn(null);
 
         dispatcherLocationProvider.resolveGooglePlayServices(RESOLVABLE_ERROR);
+
+        verify(dispatcherLocationProvider).continueWithDefaultProviders();
+    }
+
+    @Test
+    public void resolveGooglePlayServicesShouldContinueWithDefaultWhenErrorCannotBeResolved() {
+        when(dispatcherLocationSource.getGoogleApiErrorDialog(eq(activity), eq(NOT_RESOLVABLE_ERROR),
+                eq(RequestCode.GOOGLE_PLAY_SERVICES), any(OnCancelListener.class))).thenReturn(dialog);
+
+        // simulate dialog dismiss event
+        doAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) {
+                dispatcherLocationProvider.continueWithDefaultProviders();
+
+                return null;
+            }
+        }).when(dialog).dismiss();
+
+        dispatcherLocationProvider.resolveGooglePlayServices(NOT_RESOLVABLE_ERROR);
+
+        verify(dialog).setOnDismissListener(any(DialogInterface.OnDismissListener.class));
+
+        verify(dialog).show();
+
+        dialog.dismiss();
 
         verify(dispatcherLocationProvider).continueWithDefaultProviders();
     }
