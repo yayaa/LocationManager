@@ -254,7 +254,7 @@ public class GooglePlayServicesLocationProviderTest {
     }
 
     @Test
-    public void onConnectedShouldSwitchIsWaitingToTrue() {
+    public void onConnectedShouldCallRequestLocationUpdateWhenLastLocationIsNull() {
         // Have first condition false
         when(locationConfiguration.keepTracking()).thenReturn(false);
 
@@ -262,12 +262,13 @@ public class GooglePlayServicesLocationProviderTest {
         when(googlePlayServicesConfiguration.ignoreLastKnowLocation()).thenReturn(false);
         when(mockedSource.getLastLocation()).thenReturn(new MockSimpleTask<>(((Location) null)));
 
-        // isWaiting is false on start
+        // isWaiting is false on start, onConnected don't changes it
 
         googlePlayServicesLocationProvider.onConnected();
 
         verify(googlePlayServicesLocationProvider).locationRequired();
-        assertThat(googlePlayServicesLocationProvider.isWaiting()).isTrue();
+        verify(googlePlayServicesLocationProvider).requestLocationUpdate();
+        assertThat(googlePlayServicesLocationProvider.isWaiting()).isFalse();
     }
 
     @Test
