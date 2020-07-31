@@ -178,8 +178,10 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
                 case ConnectionResult.SERVICE_MISSING:
                 case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
                 case ConnectionResult.SERVICE_DISABLED:
+                    // These errors can be resolved, wait for user action...
                     break;
                 default:
+                    // These errors cannot be resolved, listen for dialog close event and call continueWithDefaultProviders()
                     gpServicesDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
