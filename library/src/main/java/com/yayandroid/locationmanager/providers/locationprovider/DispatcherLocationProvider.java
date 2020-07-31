@@ -154,17 +154,42 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
 
     void resolveGooglePlayServices(int gpServicesAvailability) {
         LogUtils.logI("Asking user to handle GooglePlayServices error...");
+
+        final DialogInterface.OnCancelListener onCancelListener = new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                LogUtils.logI("GooglePlayServices error could've been resolved, "
+                        + "but user canceled it.");
+                continueWithDefaultProviders();
+            }
+        };
+
         gpServicesDialog = getSourceProvider().getGoogleApiErrorDialog(getActivity(), gpServicesAvailability,
-              RequestCode.GOOGLE_PLAY_SERVICES, new DialogInterface.OnCancelListener() {
-                  @Override
-                  public void onCancel(DialogInterface dialog) {
-                      LogUtils.logI("GooglePlayServices error could've been resolved, "
-                            + "but user canceled it.");
-                      continueWithDefaultProviders();
-                  }
-              });
+              RequestCode.GOOGLE_PLAY_SERVICES, onCancelListener);
 
         if (gpServicesDialog != null) {
+
+            /* Or
+            Intent intent = GoogleApiAvailability.getInstance().getErrorResolutionIntent(getActivity(), gpServicesAvailability, "d");
+
+            if (intent == null)
+            */
+            switch (gpServicesAvailability) {
+                case ConnectionResult.SERVICE_MISSING:
+                case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
+                case ConnectionResult.SERVICE_DISABLED:
+                    break;
+                default:
+                    gpServicesDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            onCancelListener.onCancel(dialog);
+                        }
+                    });
+
+                    break;
+            }
+
             gpServicesDialog.show();
         } else {
             LogUtils.logI("GooglePlayServices error could've been resolved, but since LocationManager "
