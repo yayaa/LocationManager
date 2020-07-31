@@ -163,7 +163,6 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
 
         switch (statusCode) {
             case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                setWaiting(false);
                 // Location settings are not satisfied.
                 // However, we have no way to fix the settings so we won't show the dialog.
                 LogUtils.logE("Settings change is not available, SettingsApi failing...");
@@ -179,7 +178,6 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
                 break;
             default:
                 // for other CommonStatusCodes values
-                setWaiting(false);
                 LogUtils.logE("LocationSettings failing, status: " + CommonStatusCodes.getStatusCodeString(statusCode));
                 settingsApiFail(FailType.GOOGLE_PLAY_SERVICES_SETTINGS_DENIED);
 
@@ -263,7 +261,6 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
         }
 
         LogUtils.logI("Requesting location update...");
-        setWaiting(true);
         getSourceProvider().requestLocationUpdate();
     }
 
