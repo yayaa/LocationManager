@@ -304,13 +304,8 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
 
         // not getSourceProvider, because we don't want to create if it doesn't already exist
         if (googlePlayServicesLocationSource != null) {
-            googlePlayServicesLocationSource.removeLocationUpdates()
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            setWaiting(false);
-                        }
-                    });
+            setWaiting(false);
+            googlePlayServicesLocationSource.removeLocationUpdates();
         }
     }
 
