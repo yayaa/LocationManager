@@ -301,26 +301,74 @@ public class DispatcherLocationProviderTest {
 
     @Test
     public void resolveGooglePlayServicesShouldContinueWithDefaultWhenErrorCannotBeResolved() {
-        when(dispatcherLocationSource.getGoogleApiErrorDialog(eq(activity), eq(NOT_RESOLVABLE_ERROR),
+
+        int unresolvableError = ConnectionResult.SERVICE_INVALID;
+
+        final DialogInterface.OnDismissListener[] dismissListener = new DialogInterface.OnDismissListener[1];
+
+        when(dispatcherLocationSource.getGoogleApiErrorDialog(eq(activity), eq(unresolvableError),
                 eq(RequestCode.GOOGLE_PLAY_SERVICES), any(OnCancelListener.class))).thenReturn(dialog);
+
+        // catch and store real OnDismissListener listener
+        doAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) {
+                dismissListener[0] = invocation.getArgument(0);
+
+                return null;
+            }
+        }).when(dialog).setOnDismissListener(any(DialogInterface.OnDismissListener.class));
 
         // simulate dialog dismiss event
         doAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) {
-                dispatcherLocationProvider.continueWithDefaultProviders();
+                dismissListener[0].onDismiss(dialog);
 
                 return null;
             }
         }).when(dialog).dismiss();
 
-        dispatcherLocationProvider.resolveGooglePlayServices(NOT_RESOLVABLE_ERROR);
-
-        verify(dialog).setOnDismissListener(any(DialogInterface.OnDismissListener.class));
+        dispatcherLocationProvider.resolveGooglePlayServices(unresolvableError);
 
         verify(dialog).show();
 
-        dialog.dismiss();
+        dialog.dismiss(); // Simulate dismiss dialog (error cannot be resolved)
+
+        verify(dispatcherLocationProvider).continueWithDefaultProviders();
+    }
+
+    @Test
+    public void resolveGooglePlayServicesShouldContinueWithDefaultWhenWhenResolveDialogIsCancelled() {
+
+        final DialogInterface.OnCancelListener[] cancelListener = new OnCancelListener[1];
+
+        // catch and store real OnCancelListener listener
+        doAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) {
+                cancelListener[0] = invocation.getArgument(3);
+
+                return dialog;
+            }
+        }).when(dispatcherLocationSource).getGoogleApiErrorDialog(eq(activity), eq(RESOLVABLE_ERROR),
+                eq(RequestCode.GOOGLE_PLAY_SERVICES), any(OnCancelListener.class));
+
+        // simulate dialog cancel event
+        doAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) {
+                cancelListener[0].onCancel(dialog);
+
+                return null;
+            }
+        }).when(dialog).cancel();
+
+        dispatcherLocationProvider.resolveGooglePlayServices(RESOLVABLE_ERROR);
+
+        verify(dialog).show();
+
+        dialog.cancel(); // Simulate cancel dialog (user cancelled dialog)
 
         verify(dispatcherLocationProvider).continueWithDefaultProviders();
     }
