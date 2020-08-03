@@ -152,6 +152,15 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
         }
     }
 
+    /**
+     * Handle GooglePlayServices error. Try showing a dialog that maybe can fix the error by user action.
+     * If error cannot be resolved or user cancelled dialog or dialog cannot be displayed, then {@link #continueWithDefaultProviders()} is called.
+     * <p>
+     * The {@link com.google.android.gms.common.GoogleApiAvailability#isGooglePlayServicesAvailable(android.content.Context)} returns one of following in {@link ConnectionResult}:
+     * SUCCESS, SERVICE_MISSING, SERVICE_UPDATING, SERVICE_VERSION_UPDATE_REQUIRED, SERVICE_DISABLED, SERVICE_INVALID.
+     * <p>
+     * See https://developers.google.com/android/reference/com/google/android/gms/common/GoogleApiAvailability#public-int-isgoogleplayservicesavailable-context-context
+     */
     void resolveGooglePlayServices(int gpServicesAvailability) {
         LogUtils.logI("Asking user to handle GooglePlayServices error...");
         gpServicesDialog = getSourceProvider().getGoogleApiErrorDialog(getActivity(), gpServicesAvailability,
@@ -166,19 +175,16 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
 
         if (gpServicesDialog != null) {
 
-            /* Or
-            Intent intent = GoogleApiAvailability.getInstance().getErrorResolutionIntent(getActivity(), gpServicesAvailability, "d");
-
-            if (intent == null)
-            */
+            /*
+            The SERVICE_INVALID, SERVICE_UPDATING errors cannot be resolved via user action.
+            In these cases, when user closes dialog by clicking OK button, OnCancelListener is not called.
+            So, to handle these errors, we attach a dismiss event listener that calls continueWithDefaultProviders(), when dialog is closed.
+             */
             switch (gpServicesAvailability) {
-                case ConnectionResult.SERVICE_MISSING:
-                case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
-                case ConnectionResult.SERVICE_DISABLED:
-                    // These errors can be resolved, wait for user action...
-                    break;
-                default:
-                    // These errors cannot be resolved, listen for dialog close event and call continueWithDefaultProviders()
+                // The version of the Google Play services installed on this device is not authentic.
+                case ConnectionResult.SERVICE_INVALID:
+                // Google Play service is currently being updated on this device.
+                case ConnectionResult.SERVICE_UPDATING:
                     gpServicesDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
