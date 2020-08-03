@@ -11,6 +11,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.RuntimeExecutionException;
 import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executor;
 
 public class MockSimpleTask<TResult> extends Task<TResult> {
@@ -21,12 +23,37 @@ public class MockSimpleTask<TResult> extends Task<TResult> {
     @Nullable
     protected Exception error;
 
-    public MockSimpleTask(@Nullable TResult result) {
-        this.result = result;
+    private final List<OnSuccessListener<? super TResult>> onSuccessListeners = new ArrayList<>();
+
+    private final List<OnFailureListener> onFailureListeners = new ArrayList<>();
+
+    private final List<OnCompleteListener<TResult>> onCompleteListeners = new ArrayList<>();
+
+    public MockSimpleTask() {
     }
 
-    public MockSimpleTask(@NonNull Exception error) {
+    public void success(@Nullable TResult result) {
+        this.result = result;
+
+        for (OnSuccessListener<? super TResult> onSuccessListener : onSuccessListeners) {
+            onSuccessListener.onSuccess(result);
+        }
+
+        for (OnCompleteListener<TResult> completeListener : onCompleteListeners) {
+            completeListener.onComplete(this);
+        }
+    }
+
+    public void error(@NonNull Exception error) {
         this.error = error;
+
+        for (OnFailureListener onFailureListener : onFailureListeners) {
+            onFailureListener.onFailure(error);
+        }
+
+        for (OnCompleteListener<TResult> completeListener : onCompleteListeners) {
+            completeListener.onComplete(this);
+        }
     }
 
     @Override
@@ -73,9 +100,7 @@ public class MockSimpleTask<TResult> extends Task<TResult> {
     @NonNull
     @Override
     public Task<TResult> addOnSuccessListener(@NonNull OnSuccessListener<? super TResult> listener) {
-        if (isSuccessful()) {
-            listener.onSuccess(result);
-        }
+        onSuccessListeners.add(listener);
 
         return this;
     }
@@ -83,9 +108,7 @@ public class MockSimpleTask<TResult> extends Task<TResult> {
     @NonNull
     @Override
     public Task<TResult> addOnSuccessListener(@NonNull Executor executor, @NonNull OnSuccessListener<? super TResult> listener) {
-        if (isSuccessful()) {
-            listener.onSuccess(result);
-        }
+        onSuccessListeners.add(listener);
 
         return this;
     }
@@ -93,9 +116,7 @@ public class MockSimpleTask<TResult> extends Task<TResult> {
     @NonNull
     @Override
     public Task<TResult> addOnSuccessListener(@NonNull Activity activity, @NonNull OnSuccessListener<? super TResult> listener) {
-        if (isSuccessful()) {
-            listener.onSuccess(result);
-        }
+        onSuccessListeners.add(listener);
 
         return this;
     }
@@ -103,9 +124,7 @@ public class MockSimpleTask<TResult> extends Task<TResult> {
     @NonNull
     @Override
     public Task<TResult> addOnFailureListener(@NonNull OnFailureListener listener) {
-        if (error != null && !isSuccessful()) {
-            listener.onFailure(error);
-        }
+        onFailureListeners.add(listener);
 
         return this;
     }
@@ -113,9 +132,7 @@ public class MockSimpleTask<TResult> extends Task<TResult> {
     @NonNull
     @Override
     public Task<TResult> addOnFailureListener(@NonNull Executor executor, @NonNull OnFailureListener listener) {
-        if (error != null && !isSuccessful()) {
-            listener.onFailure(error);
-        }
+        onFailureListeners.add(listener);
 
         return this;
     }
@@ -123,9 +140,7 @@ public class MockSimpleTask<TResult> extends Task<TResult> {
     @NonNull
     @Override
     public Task<TResult> addOnFailureListener(@NonNull Activity activity, @NonNull OnFailureListener listener) {
-        if (error != null && !isSuccessful()) {
-            listener.onFailure(error);
-        }
+        onFailureListeners.add(listener);
 
         return this;
     }
@@ -133,9 +148,7 @@ public class MockSimpleTask<TResult> extends Task<TResult> {
     @NonNull
     @Override
     public Task<TResult> addOnCompleteListener(@NonNull OnCompleteListener<TResult> listener) {
-        if (isComplete()) {
-            listener.onComplete(this);
-        }
+        onCompleteListeners.add(listener);
 
         return this;
     }
