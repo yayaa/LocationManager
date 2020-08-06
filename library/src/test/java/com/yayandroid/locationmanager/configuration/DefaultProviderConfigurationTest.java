@@ -86,6 +86,13 @@ public class DefaultProviderConfigurationTest {
         new DefaultProviderConfiguration.Builder().setWaitPeriod(ProviderType.GOOGLE_PLAY_SERVICES, 1);
     }
 
+    @Test public void setWaitPeriodShouldSetPeriodsWhenDefaultProvidersIsSet() {
+        DefaultProviderConfiguration providerConfiguration = new DefaultProviderConfiguration.Builder().setWaitPeriod(ProviderType.DEFAULT_PROVIDERS, 1).build();
+
+        assertThat(providerConfiguration.gpsWaitPeriod()).isEqualTo(1);
+        assertThat(providerConfiguration.networkWaitPeriod()).isEqualTo(1);
+    }
+
     @Test public void whenGpsMessageAndDialogProviderNotSetAskForGPSEnableShouldReturnFalse() {
         DefaultProviderConfiguration configuration = new DefaultProviderConfiguration.Builder().build();
         assertThat(configuration.askForEnableGPS()).isFalse();

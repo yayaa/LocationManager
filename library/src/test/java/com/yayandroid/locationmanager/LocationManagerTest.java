@@ -43,6 +43,16 @@ public class LocationManagerTest {
         when(locationConfiguration.permissionConfiguration().permissionProvider()).thenReturn(permissionProvider);
     }
 
+    @Test public void buildingWithoutContextProcessorShouldThrowException() {
+        expectedException.expect(IllegalStateException.class);
+
+        //noinspection ConstantConditions
+        new Builder(((ContextProcessor) null))
+                .locationProvider(locationProvider)
+                .notify(locationListener)
+                .build();
+    }
+
     // region Build Tests
     @Test public void buildingWithoutConfigurationShouldThrowException() {
         expectedException.expect(IllegalStateException.class);

@@ -4,14 +4,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
-import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.ProcessType;
 import com.yayandroid.locationmanager.constants.RequestCode;
@@ -26,8 +30,7 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
     private final WeakReference<FallbackListener> fallbackListener;
 
     private boolean settingsDialogIsOn = false;
-    private boolean waitingForConnectionToRequestLocationUpdate = true;
-    private int suspendedConnectionIteration = 0;
+
     private GooglePlayServicesLocationSource googlePlayServicesLocationSource;
 
     GooglePlayServicesLocationProvider(FallbackListener fallbackListener) {
@@ -39,16 +42,15 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
         // not getSourceProvider, because we don't want to connect if it is not already attempt
         if (!settingsDialogIsOn && googlePlayServicesLocationSource != null &&
                 (isWaiting() || getConfiguration().keepTracking())) {
-            googlePlayServicesLocationSource.connectGoogleApiClient();
+            onConnected();
         }
     }
 
     @Override
     public void onPause() {
         // not getSourceProvider, because we don't want to create if it doesn't already exist
-        if (!settingsDialogIsOn && googlePlayServicesLocationSource != null
-              && googlePlayServicesLocationSource.isGoogleApiClientConnected()) {
-            googlePlayServicesLocationSource.disconnectGoogleApiClient();
+        if (!settingsDialogIsOn && googlePlayServicesLocationSource != null) {
+            removeLocationUpdates();
         }
     }
 
@@ -57,7 +59,7 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
         super.onDestroy();
 
         // not getSourceProvider, because we don't want to create if it doesn't already exist
-        if (googlePlayServicesLocationSource != null) googlePlayServicesLocationSource.clearGoogleApiClient();
+        if (googlePlayServicesLocationSource != null) removeLocationUpdates();
     }
 
     @Override
@@ -70,7 +72,7 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
         setWaiting(true);
 
         if (getContext() != null) {
-            getSourceProvider().connectGoogleApiClient();
+            onConnected();
         } else {
             failed(FailType.VIEW_DETACHED);
         }
@@ -80,10 +82,8 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
     public void cancel() {
         LogUtils.logI("Canceling GooglePlayServiceLocationProvider...");
         // not getSourceProvider, because we don't want to create if it doesn't already exist
-        if (googlePlayServicesLocationSource != null &&
-              googlePlayServicesLocationSource.isGoogleApiClientConnected()) {
-            googlePlayServicesLocationSource.removeLocationUpdates();
-            googlePlayServicesLocationSource.disconnectGoogleApiClient();
+        if (googlePlayServicesLocationSource != null) {
+            removeLocationUpdates();
         }
     }
 
@@ -106,47 +106,21 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
     }
 
     @Override
-    public void onConnected(Bundle bundle) {
-        LogUtils.logI("GoogleApiClient is connected.");
-        boolean locationIsAlreadyAvailable = false;
+    public void onConnected() {
+        LogUtils.logI("Start request location updates.");
 
         if (getConfiguration().googlePlayServicesConfiguration().ignoreLastKnowLocation()) {
             LogUtils.logI("Configuration requires to ignore last know location from GooglePlayServices Api.");
-        } else {
-            locationIsAlreadyAvailable = checkLastKnowLocation();
-        }
 
-        if (getConfiguration().keepTracking() || !locationIsAlreadyAvailable
-              || waitingForConnectionToRequestLocationUpdate) {
-            waitingForConnectionToRequestLocationUpdate(false);
-            locationRequired();
+            // Request fresh location
+            requestLocation(false);
         } else {
-            LogUtils.logI("We got location, no need to ask for location updates.");
+            // Try to get last location, if failed then request fresh location
+            checkLastKnowLocation();
         }
     }
 
-    @Override
-    public void onConnectionSuspended(int i) {
-        if (!getConfiguration().googlePlayServicesConfiguration().failOnConnectionSuspended()
-              && suspendedConnectionIteration < getConfiguration().googlePlayServicesConfiguration()
-              .suspendedConnectionRetryCount()) {
-            LogUtils.logI("GoogleApiClient connection is suspended, try to connect again.");
-            suspendedConnectionIteration++;
-            getSourceProvider().connectGoogleApiClient();
-        } else {
-            LogUtils.logI("GoogleApiClient connection is suspended, calling fail...");
-            failed(FailType.GOOGLE_PLAY_SERVICES_CONNECTION_FAIL);
-        }
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        LogUtils.logI("GoogleApiClient connection is failed.");
-        failed(FailType.GOOGLE_PLAY_SERVICES_CONNECTION_FAIL);
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(@NonNull Location location) {
         if (getListener() != null) {
             getListener().onLocationChanged(location);
         }
@@ -154,46 +128,71 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
         // Set waiting as false because we got at least one, even though we keep tracking user's location
         setWaiting(false);
 
-        if (!getConfiguration().keepTracking() && getSourceProvider().isGoogleApiClientConnected()) {
+        if (!getConfiguration().keepTracking()) {
+            // If need to update location once, clear the listener to prevent multiple call
             LogUtils.logI("We got location and no need to keep tracking, so location update is removed.");
-            getSourceProvider().removeLocationUpdates();
+
+            removeLocationUpdates();
         }
     }
 
     @Override
-    public void onResult(@NonNull LocationSettingsResult result) {
-        final Status status = result.getStatus();
+    public void onLocationResult(@Nullable LocationResult locationResult) {
+        if (locationResult == null) {
+            // Do nothing, wait for other result
+            return;
+        }
 
-        switch (status.getStatusCode()) {
-            case LocationSettingsStatusCodes.SUCCESS:
-                // All location settings are satisfied. The client can initialize location
-                // requests here.
-                LogUtils.logI("We got GPS, Wifi and/or Cell network providers enabled enough "
-                      + "to receive location as we needed. Requesting location update...");
-                requestLocationUpdate();
-                break;
+        for (Location location : locationResult.getLocations()) {
+            onLocationChanged(location);
+        }
+    }
+
+    @Override
+    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+        // All location settings are satisfied. The client can initialize location
+        // requests here.
+        LogUtils.logI("We got GPS, Wifi and/or Cell network providers enabled enough "
+                + "to receive location as we needed. Requesting location update...");
+        requestLocationUpdate();
+    }
+
+    @Override
+    public void onFailure(@NonNull Exception exception) {
+        int statusCode = ((ApiException) exception).getStatusCode();
+
+        switch (statusCode) {
             case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                 // Location settings are not satisfied.
                 // However, we have no way to fix the settings so we won't show the dialog.
                 LogUtils.logE("Settings change is not available, SettingsApi failing...");
                 settingsApiFail(FailType.GOOGLE_PLAY_SERVICES_SETTINGS_DIALOG);
+
                 break;
             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                 // Location settings are not satisfied. But could be fixed by showing the user
                 // a dialog.
-                resolveSettingsApi(status);
+                // Cast to a resolvable exception.
+                resolveSettingsApi((ResolvableApiException) exception);
+
+                break;
+            default:
+                // for other CommonStatusCodes values
+                LogUtils.logE("LocationSettings failing, status: " + CommonStatusCodes.getStatusCodeString(statusCode));
+                settingsApiFail(FailType.GOOGLE_PLAY_SERVICES_SETTINGS_DENIED);
+
                 break;
         }
     }
 
-    void resolveSettingsApi(Status status) {
+    void resolveSettingsApi(@NonNull ResolvableApiException resolvable) {
         try {
             // Show the dialog by calling startResolutionForResult(),
             // and check the result in onActivityResult().
             LogUtils.logI("We need settingsApi dialog to switch required settings on.");
             if (getActivity() != null) {
                 LogUtils.logI("Displaying the dialog...");
-                getSourceProvider().startSettingsApiResolutionForResult(status, getActivity());
+                getSourceProvider().startSettingsApiResolutionForResult(resolvable, getActivity());
                 settingsDialogIsOn = true;
             } else {
                 LogUtils.logI("Settings Api cannot show dialog if LocationManager is not running on an activity!");
@@ -205,20 +204,44 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
         }
     }
 
-    boolean checkLastKnowLocation() {
-        if (getSourceProvider().getLocationAvailability()) {
-            Location lastKnownLocation = getSourceProvider().getLastLocation();
-            if (lastKnownLocation != null) {
-                LogUtils.logI("LastKnowLocation is available.");
-                onLocationChanged(lastKnownLocation);
-                return true;
-            } else {
-                LogUtils.logI("LastKnowLocation is not available.");
-            }
+    void checkLastKnowLocation() {
+        getSourceProvider().getLastLocation()
+                .addOnCompleteListener(new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        /*
+                         * Returns the best most recent location currently available.
+                         *
+                         * If a location is not available, which should happen very rarely, null will be returned.
+                         * The best accuracy available while respecting the location permissions will be returned.
+                         *
+                         * This method provides a simplified way to get location.
+                         * It is particularly well suited for applications that do not require an accurate location and that do not want to maintain extra logic for location updates.
+                         *
+                         * GPS location can be null if GPS is switched off
+                         */
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            Location lastKnownLocation = task.getResult();
+
+                            LogUtils.logI("LastKnowLocation is available.");
+                            onLocationChanged(lastKnownLocation);
+
+                            requestLocation(true);
+                        } else {
+                            LogUtils.logI("LastKnowLocation is not available.");
+
+                            requestLocation(false);
+                        }
+                    }
+                });
+    }
+
+    void requestLocation(boolean locationIsAlreadyAvailable) {
+        if (getConfiguration().keepTracking() || !locationIsAlreadyAvailable) {
+            locationRequired();
         } else {
-            LogUtils.logI("LastKnowLocation is not available.");
+            LogUtils.logI("We got location, no need to ask for location updates.");
         }
-        return false;
     }
 
     void locationRequired() {
@@ -237,14 +260,8 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
             getListener().onProcessTypeChanged(ProcessType.GETTING_LOCATION_FROM_GOOGLE_PLAY_SERVICES);
         }
 
-        if (getSourceProvider().isGoogleApiClientConnected()) {
-            LogUtils.logI("Requesting location update...");
-            getSourceProvider().requestLocationUpdate();
-        } else {
-            LogUtils.logI("Tried to requestLocationUpdate, but GoogleApiClient wasn't connected. Trying to connect...");
-            waitingForConnectionToRequestLocationUpdate(true);
-            getSourceProvider().connectGoogleApiClient();
-        }
+        LogUtils.logI("Requesting location update...");
+        getSourceProvider().requestLocationUpdate();
     }
 
     void settingsApiFail(@FailType int failType) {
@@ -253,12 +270,8 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
         } else {
             LogUtils.logE("Even though settingsApi failed, configuration requires moving on. "
                   + "So requesting location update...");
-            if (getSourceProvider().isGoogleApiClientConnected()) {
-                requestLocationUpdate();
-            } else {
-                LogUtils.logE("GoogleApiClient is not connected. Aborting...");
-                failed(failType);
-            }
+
+            requestLocationUpdate();
         }
     }
 
@@ -273,10 +286,6 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
         setWaiting(false);
     }
 
-    void waitingForConnectionToRequestLocationUpdate(boolean isWaiting) {
-        waitingForConnectionToRequestLocationUpdate = isWaiting;
-    }
-
     // For test purposes
     void setDispatcherLocationSource(GooglePlayServicesLocationSource googlePlayServicesLocationSource) {
         this.googlePlayServicesLocationSource = googlePlayServicesLocationSource;
@@ -288,6 +297,16 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
                   getConfiguration().googlePlayServicesConfiguration().locationRequest(), this);
         }
         return googlePlayServicesLocationSource;
+    }
+
+    private void removeLocationUpdates() {
+        LogUtils.logI("Stop location updates...");
+
+        // not getSourceProvider, because we don't want to create if it doesn't already exist
+        if (googlePlayServicesLocationSource != null) {
+            setWaiting(false);
+            googlePlayServicesLocationSource.removeLocationUpdates();
+        }
     }
 
 }
