@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment;
 
 import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.listener.PermissionListener;
-import com.yayandroid.locationmanager.mocks.MockDialogProvider;
+import com.yayandroid.locationmanager.fakes.MockDialogProvider;
 import com.yayandroid.locationmanager.view.ContextProcessor;
 
 import org.junit.Before;

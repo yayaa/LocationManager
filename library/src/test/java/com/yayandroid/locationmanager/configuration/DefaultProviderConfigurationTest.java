@@ -2,7 +2,7 @@ package com.yayandroid.locationmanager.configuration;
 
 import com.yayandroid.locationmanager.constants.ProviderType;
 import com.yayandroid.locationmanager.providers.dialogprovider.SimpleMessageDialogProvider;
-import com.yayandroid.locationmanager.mocks.MockDialogProvider;
+import com.yayandroid.locationmanager.fakes.MockDialogProvider;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Rule;

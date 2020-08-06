@@ -1,4 +1,4 @@
-package com.yayandroid.locationmanager.mocks;
+package com.yayandroid.locationmanager.fakes;
 
 import android.app.Dialog;
 import android.content.Context;

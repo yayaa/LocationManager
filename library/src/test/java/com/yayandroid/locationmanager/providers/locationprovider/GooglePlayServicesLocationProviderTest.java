@@ -21,7 +21,7 @@ import com.yayandroid.locationmanager.constants.ProcessType;
 import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.listener.FallbackListener;
 import com.yayandroid.locationmanager.listener.LocationListener;
-import com.yayandroid.locationmanager.mocks.MockSimpleTask;
+import com.yayandroid.locationmanager.fakes.FakeSimpleTask;
 import com.yayandroid.locationmanager.view.ContextProcessor;
 
 import org.junit.Before;
@@ -100,7 +100,7 @@ public class GooglePlayServicesLocationProviderTest {
 
     @Test
     public void onResumeShouldRequestLocationUpdateWhenLocationIsNotYetProvided() {
-        MockSimpleTask<Location> getLocationTask = new MockSimpleTask<>();
+        FakeSimpleTask<Location> getLocationTask = new FakeSimpleTask<>();
 
         when(mockedSource.getLastLocation()).thenReturn(getLocationTask);
 
@@ -118,7 +118,7 @@ public class GooglePlayServicesLocationProviderTest {
         googlePlayServicesLocationProvider.setWaiting(true);
         when(locationConfiguration.keepTracking()).thenReturn(true);
 
-        MockSimpleTask<Location> getLocationTask = new MockSimpleTask<>();
+        FakeSimpleTask<Location> getLocationTask = new FakeSimpleTask<>();
 
         when(mockedSource.getLastLocation()).thenReturn(getLocationTask);
 
@@ -169,7 +169,7 @@ public class GooglePlayServicesLocationProviderTest {
     public void getShouldSetWaitingTrue() {
         assertThat(googlePlayServicesLocationProvider.isWaiting()).isFalse();
 
-        MockSimpleTask<Location> getLocationTask = new MockSimpleTask<>();
+        FakeSimpleTask<Location> getLocationTask = new FakeSimpleTask<>();
 
         when(mockedSource.getLastLocation()).thenReturn(getLocationTask);
 
@@ -191,7 +191,7 @@ public class GooglePlayServicesLocationProviderTest {
 
     @Test
     public void getShouldRequestLocationUpdate() {
-        MockSimpleTask<Location> getLocationTask = new MockSimpleTask<>();
+        FakeSimpleTask<Location> getLocationTask = new FakeSimpleTask<>();
 
         when(mockedSource.getLastLocation()).thenReturn(getLocationTask);
 
@@ -244,7 +244,7 @@ public class GooglePlayServicesLocationProviderTest {
 
     @Test
     public void onConnectedShouldCheckLastKnowLocation() {
-        MockSimpleTask<Location> getLocationTask = new MockSimpleTask<>();
+        FakeSimpleTask<Location> getLocationTask = new FakeSimpleTask<>();
 
         when(mockedSource.getLastLocation()).thenReturn(getLocationTask);
 
@@ -257,7 +257,7 @@ public class GooglePlayServicesLocationProviderTest {
 
     @Test
     public void onConnectedShouldNotCallLocationRequiredWhenLastKnowIsReadyAndNoNeedToKeepTracking() {
-        MockSimpleTask<Location> getLocationTask = new MockSimpleTask<>();
+        FakeSimpleTask<Location> getLocationTask = new FakeSimpleTask<>();
 
         when(mockedSource.getLastLocation()).thenReturn(getLocationTask);
         when(locationConfiguration.keepTracking()).thenReturn(false);
@@ -274,7 +274,7 @@ public class GooglePlayServicesLocationProviderTest {
         // Have first condition false
         when(locationConfiguration.keepTracking()).thenReturn(false);
 
-        MockSimpleTask<Location> getLocationTask = new MockSimpleTask<>();
+        FakeSimpleTask<Location> getLocationTask = new FakeSimpleTask<>();
 
         // Have second condition false
         when(googlePlayServicesConfiguration.ignoreLastKnowLocation()).thenReturn(false);
@@ -293,7 +293,7 @@ public class GooglePlayServicesLocationProviderTest {
 
     @Test
     public void onConnectedShouldCallLocationRequiredWhenLastKnowIsNotAvailable() {
-        MockSimpleTask<Location> getLocationTask = new MockSimpleTask<>();
+        FakeSimpleTask<Location> getLocationTask = new FakeSimpleTask<>();
 
         when(mockedSource.getLastLocation()).thenReturn(getLocationTask);
 
@@ -306,7 +306,7 @@ public class GooglePlayServicesLocationProviderTest {
 
     @Test
     public void onConnectedShouldCallLocationRequiredWhenConfigurationRequiresKeepTracking() {
-        MockSimpleTask<Location> getLocationTask = new MockSimpleTask<>();
+        FakeSimpleTask<Location> getLocationTask = new FakeSimpleTask<>();
 
         when(mockedSource.getLastLocation()).thenReturn(getLocationTask);
         when(locationConfiguration.keepTracking()).thenReturn(true);
@@ -452,7 +452,7 @@ public class GooglePlayServicesLocationProviderTest {
 
     @Test
     public void checkLastKnowLocationInvokeRequestLocationTrueWhenLocationIsAvailable() {
-        MockSimpleTask<Location> getLocationTask = new MockSimpleTask<>();
+        FakeSimpleTask<Location> getLocationTask = new FakeSimpleTask<>();
 
         when(mockedSource.getLastLocation()).thenReturn(getLocationTask);
 
@@ -468,7 +468,7 @@ public class GooglePlayServicesLocationProviderTest {
 
     @Test
     public void checkLastKnowLocationShouldInvokeRequestLocationFalseWhenLastKnownLocationIsNull() {
-        MockSimpleTask<Location> getLocationTask = new MockSimpleTask<>();
+        FakeSimpleTask<Location> getLocationTask = new FakeSimpleTask<>();
 
         when(mockedSource.getLastLocation()).thenReturn(getLocationTask);
 

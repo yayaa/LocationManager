@@ -2,7 +2,7 @@ package com.yayandroid.locationmanager.configuration;
 
 import android.Manifest;
 
-import com.yayandroid.locationmanager.mocks.MockDialogProvider;
+import com.yayandroid.locationmanager.fakes.MockDialogProvider;
 import com.yayandroid.locationmanager.providers.dialogprovider.SimpleMessageDialogProvider;
 import com.yayandroid.locationmanager.providers.permissionprovider.DefaultPermissionProvider;
 

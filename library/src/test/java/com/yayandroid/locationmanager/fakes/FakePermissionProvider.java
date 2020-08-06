@@ -1,4 +1,4 @@
-package com.yayandroid.locationmanager.mocks;
+package com.yayandroid.locationmanager.fakes;
 
 import android.content.pm.PackageManager;
 
@@ -8,12 +8,12 @@ import androidx.annotation.Nullable;
 import com.yayandroid.locationmanager.providers.dialogprovider.DialogProvider;
 import com.yayandroid.locationmanager.providers.permissionprovider.PermissionProvider;
 
-public class MockPermissionProvider extends PermissionProvider {
+public class FakePermissionProvider extends PermissionProvider {
 
     private boolean requestPermissions = false;
     private boolean isPermissionGranted = false;
 
-    public MockPermissionProvider(String[] requiredPermissions, @Nullable DialogProvider rationaleDialogProvider) {
+    public FakePermissionProvider(String[] requiredPermissions, @Nullable DialogProvider rationaleDialogProvider) {
         super(requiredPermissions, rationaleDialogProvider);
     }
 

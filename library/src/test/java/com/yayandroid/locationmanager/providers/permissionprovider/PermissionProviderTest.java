@@ -2,7 +2,7 @@ package com.yayandroid.locationmanager.providers.permissionprovider;
 
 import android.content.Context;
 
-import com.yayandroid.locationmanager.mocks.MockPermissionProvider;
+import com.yayandroid.locationmanager.fakes.FakePermissionProvider;
 import com.yayandroid.locationmanager.view.ContextProcessor;
 
 import org.junit.Before;
@@ -23,20 +23,20 @@ public class PermissionProviderTest {
     @Mock ContextProcessor contextProcessor;
     @Mock Context context;
 
-    private MockPermissionProvider permissionProvider;
+    private FakePermissionProvider permissionProvider;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        permissionProvider = new MockPermissionProvider(REQUIRED_PERMISSIONS, null);
+        permissionProvider = new FakePermissionProvider(REQUIRED_PERMISSIONS, null);
         permissionProvider.setContextProcessor(contextProcessor);
     }
 
     @Test
     public void creatingInstanceWithNoRequiredPermissionShouldThrowException() {
         expectedException.expect(IllegalStateException.class);
-        permissionProvider = new MockPermissionProvider(new String[]{}, null);
+        permissionProvider = new FakePermissionProvider(new String[]{}, null);
     }
 
     @Test

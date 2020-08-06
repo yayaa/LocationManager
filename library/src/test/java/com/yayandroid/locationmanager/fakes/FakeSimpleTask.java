@@ -1,4 +1,4 @@
-package com.yayandroid.locationmanager.mocks;
+package com.yayandroid.locationmanager.fakes;
 
 import android.app.Activity;
 
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-public class MockSimpleTask<TResult> extends Task<TResult> {
+public class FakeSimpleTask<TResult> extends Task<TResult> {
 
     @Nullable
     protected TResult result;
@@ -29,7 +29,7 @@ public class MockSimpleTask<TResult> extends Task<TResult> {
 
     private final List<OnCompleteListener<TResult>> onCompleteListeners = new ArrayList<>();
 
-    public MockSimpleTask() {
+    public FakeSimpleTask() {
     }
 
     public void success(@Nullable TResult result) {
