@@ -17,6 +17,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -29,13 +30,13 @@ class GooglePlayServicesLocationSource extends LocationCallback {
     private final SourceListener sourceListener;
 
     interface SourceListener extends OnSuccessListener<LocationSettingsResponse>, OnFailureListener {
-        void onConnected();
-
         void onSuccess(LocationSettingsResponse locationSettingsResponse);
 
         void onFailure(@NonNull Exception exception);
 
         void onLocationResult(@Nullable LocationResult locationResult);
+
+        void onLastKnowLocationTaskReceived(@NonNull Task<Location> task);
     }
 
     GooglePlayServicesLocationSource(Context context, LocationRequest locationRequest, SourceListener sourceListener) {
@@ -54,7 +55,8 @@ class GooglePlayServicesLocationSource extends LocationCallback {
                 .addOnSuccessListener(new OnSuccessListener<LocationSettingsResponse>() {
                     @Override
                     public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                        if (sourceListener != null) sourceListener.onSuccess(locationSettingsResponse);
+                        if (sourceListener != null)
+                            sourceListener.onSuccess(locationSettingsResponse);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -81,9 +83,15 @@ class GooglePlayServicesLocationSource extends LocationCallback {
     }
 
     @SuppressWarnings("ResourceType")
-    @NonNull
-    Task<Location> getLastLocation() {
-        return fusedLocationProviderClient.getLastLocation();
+    void requestLastLocation() {
+        fusedLocationProviderClient.getLastLocation()
+                .addOnCompleteListener(new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        if (sourceListener != null)
+                            sourceListener.onLastKnowLocationTaskReceived(task);
+                    }
+                });
     }
 
     @Override
