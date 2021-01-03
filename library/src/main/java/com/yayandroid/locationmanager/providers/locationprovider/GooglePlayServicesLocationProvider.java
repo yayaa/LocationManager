@@ -14,7 +14,6 @@ import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.ProcessType;
@@ -39,10 +38,8 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
 
     @Override
     public void onResume() {
-        // not getSourceProvider, because we don't want to connect if it is not already attempt
-        if (!settingsDialogIsOn && googlePlayServicesLocationSource != null &&
-                (isWaiting() || getConfiguration().keepTracking())) {
-            onConnected();
+        if (!settingsDialogIsOn && (isWaiting() || getConfiguration().keepTracking())) {
+            requestLocationUpdate();
         }
     }
 
@@ -72,7 +69,17 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
         setWaiting(true);
 
         if (getContext() != null) {
-            onConnected();
+            LogUtils.logI("Start request location updates.");
+
+            if (getConfiguration().googlePlayServicesConfiguration().ignoreLastKnowLocation()) {
+                LogUtils.logI("Configuration requires to ignore last know location from GooglePlayServices Api.");
+
+                // Request fresh location
+                locationRequired();
+            } else {
+                // Try to get last location, if failed then request fresh location
+                getSourceProvider().requestLastLocation();
+            }
         } else {
             failed(FailType.VIEW_DETACHED);
         }
@@ -103,21 +110,6 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
             }
         }
 
-    }
-
-    @Override
-    public void onConnected() {
-        LogUtils.logI("Start request location updates.");
-
-        if (getConfiguration().googlePlayServicesConfiguration().ignoreLastKnowLocation()) {
-            LogUtils.logI("Configuration requires to ignore last know location from GooglePlayServices Api.");
-
-            // Request fresh location
-            requestLocation(false);
-        } else {
-            // Try to get last location, if failed then request fresh location
-            checkLastKnowLocation();
-        }
     }
 
     public void onLocationChanged(@NonNull Location location) {
@@ -204,43 +196,25 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
         }
     }
 
-    void checkLastKnowLocation() {
-        getSourceProvider().getLastLocation()
-                .addOnCompleteListener(new OnCompleteListener<Location>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Location> task) {
-                        /*
-                         * Returns the best most recent location currently available.
-                         *
-                         * If a location is not available, which should happen very rarely, null will be returned.
-                         * The best accuracy available while respecting the location permissions will be returned.
-                         *
-                         * This method provides a simplified way to get location.
-                         * It is particularly well suited for applications that do not require an accurate location and that do not want to maintain extra logic for location updates.
-                         *
-                         * GPS location can be null if GPS is switched off
-                         */
-                        if (task.isSuccessful() && task.getResult() != null) {
-                            Location lastKnownLocation = task.getResult();
+    /**
+     * Task result can be null in certain conditions
+     * See: https://developers.google.com/android/reference/com/google/android/gms/location/FusedLocationProviderClient#getLastLocation()
+     */
+    @Override
+    public void onLastKnowLocationTaskReceived(@NonNull Task<Location> task) {
+        if (task.isSuccessful() && task.getResult() != null) {
+            Location lastKnownLocation = task.getResult();
 
-                            LogUtils.logI("LastKnowLocation is available.");
-                            onLocationChanged(lastKnownLocation);
+            LogUtils.logI("LastKnowLocation is available.");
+            onLocationChanged(lastKnownLocation);
 
-                            requestLocation(true);
-                        } else {
-                            LogUtils.logI("LastKnowLocation is not available.");
-
-                            requestLocation(false);
-                        }
-                    }
-                });
-    }
-
-    void requestLocation(boolean locationIsAlreadyAvailable) {
-        if (getConfiguration().keepTracking() || !locationIsAlreadyAvailable) {
-            locationRequired();
+            if (getConfiguration().keepTracking()) {
+                LogUtils.logI("Configuration requires keepTracking.");
+                locationRequired();
+            }
         } else {
-            LogUtils.logI("We got location, no need to ask for location updates.");
+            LogUtils.logI("LastKnowLocation is not available.");
+            locationRequired();
         }
     }
 
