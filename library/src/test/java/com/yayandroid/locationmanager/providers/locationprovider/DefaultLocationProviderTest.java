@@ -24,7 +24,6 @@ import org.mockito.MockitoAnnotations;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -273,11 +272,16 @@ public class DefaultLocationProviderTest {
     }
 
     @Test
-    public void askForLocationShouldNotifyProcessChangeAndRequestLocationUpdateWhenLastLocationIsNotSufficient() {
+    public void askForLocationShouldNotifyProcessChangeRequestLocationUpdateDelayTaskWhenLastLocationIsNotSufficient() {
+        final long ONE_SECOND = 1000;
+        when(defaultLocationSource.getProviderSwitchTask()).thenReturn(continuousTask);
+        when(defaultProviderConfiguration.gpsWaitPeriod()).thenReturn(ONE_SECOND);
+
         defaultLocationProvider.askForLocation(GPS_PROVIDER);
 
         verify(defaultLocationProvider).notifyProcessChange();
-        verify(defaultLocationProvider).requestUpdateLocation(0, 0, true);
+        verify(defaultLocationProvider).requestUpdateLocation();
+        verify(continuousTask).delayed(ONE_SECOND);
     }
 
     @Test
@@ -292,7 +296,7 @@ public class DefaultLocationProviderTest {
         defaultLocationProvider.askForLocation(GPS_PROVIDER);
 
         verify(defaultLocationProvider).notifyProcessChange();
-        verify(defaultLocationProvider).requestUpdateLocation(0, 0, false);
+        verify(defaultLocationProvider).requestUpdateLocation();
     }
 
     @Test
@@ -325,29 +329,14 @@ public class DefaultLocationProviderTest {
     }
 
     @Test
-    public void requestUpdateLocationShouldSetUpTaskWhenRequired() {
-        defaultLocationProvider.setCurrentProvider(GPS_PROVIDER);
-        when(defaultProviderConfiguration.gpsWaitPeriod()).thenReturn(100L);
-
-        defaultLocationProvider.requestUpdateLocation(0, 0, true);
-
-        verify(continuousTask).delayed(100);
-    }
-
-    @Test
-    public void requestUpdateLocationShouldNotSetUpTaskWhenNotRequired() {
-        defaultLocationProvider.requestUpdateLocation(0, 0, false);
-
-        verify(continuousTask, never()).delayed(anyLong());
-    }
-
-    @Test
     public void requestUpdateLocationShouldRunUpdateLocationTaskWithCurrentProvider() {
-        long timeInterval = 0;
-        long distanceInterval = 0;
+        long timeInterval = 100;
+        long distanceInterval = 200;
+        when(defaultProviderConfiguration.requiredTimeInterval()).thenReturn(timeInterval);
+        when(defaultProviderConfiguration.requiredDistanceInterval()).thenReturn(distanceInterval);
 
         defaultLocationProvider.setCurrentProvider(GPS_PROVIDER);
-        defaultLocationProvider.requestUpdateLocation(timeInterval, distanceInterval, false);
+        defaultLocationProvider.requestUpdateLocation();
 
         verify(updateRequest).run(GPS_PROVIDER, timeInterval, distanceInterval);
     }
@@ -413,30 +402,28 @@ public class DefaultLocationProviderTest {
         when(defaultLocationSource.updateRequestIsRemoved()).thenReturn(true);
 
         defaultLocationProvider.onLocationChanged(DUMMY_LOCATION);
+
         verify(defaultLocationProvider, never()).onLocationReceived(DUMMY_LOCATION);
     }
 
     @Test
-    public void onLocationChangedShouldRemoveUpdates() {
-        when(locationConfiguration.keepTracking()).thenReturn(true);
+    public void onLocationChangedShouldRemoveUpdatesWhenKeepTrackingFalse() {
+        when(locationConfiguration.keepTracking()).thenReturn(false);
 
         defaultLocationProvider.onLocationChanged(DUMMY_LOCATION);
 
         verify(defaultLocationSource).removeLocationUpdates(defaultLocationProvider);
+        verify(updateRequest).release();
     }
 
     @Test
-    public void onLocationChangedShouldRequireUpdatesWithIntervalsWhenKeepTrackingIsTrue() {
-        long timeInterval = 10;
-        long distanceInterval = 20;
-
+    public void onLocationChangedShouldNotRemoveUpdatesWhenKeepTrackingTrue() {
         when(locationConfiguration.keepTracking()).thenReturn(true);
-        when(defaultProviderConfiguration.requiredTimeInterval()).thenReturn(timeInterval);
-        when(defaultProviderConfiguration.requiredDistanceInterval()).thenReturn(distanceInterval);
 
         defaultLocationProvider.onLocationChanged(DUMMY_LOCATION);
 
-        verify(defaultLocationProvider).requestUpdateLocation(timeInterval, distanceInterval, false);
+        verify(defaultLocationSource, never()).removeLocationUpdates(defaultLocationProvider);
+        verify(updateRequest, never()).release();
     }
 
     @Test

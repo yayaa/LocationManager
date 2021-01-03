@@ -140,8 +140,12 @@ public class DefaultLocationProvider extends LocationProvider
         if (getConfiguration().keepTracking() || !locationIsAlreadyAvailable) {
             LogUtils.logI("Ask for location update...");
             notifyProcessChange();
-            // Ask for immediate location update
-            requestUpdateLocation(0, 0, !locationIsAlreadyAvailable);
+
+            if (!locationIsAlreadyAvailable) {
+                getSourceProvider().getProviderSwitchTask().delayed(getWaitPeriod());
+            }
+
+            requestUpdateLocation();
         } else {
             LogUtils.logI("We got location, no need to ask for location updates.");
         }
@@ -175,11 +179,9 @@ public class DefaultLocationProvider extends LocationProvider
         }
     }
 
-    void requestUpdateLocation(long timeInterval, long distanceInterval, boolean setCancelTask) {
-        if (setCancelTask) {
-            getSourceProvider().getProviderSwitchTask().delayed(getWaitPeriod());
-        }
-
+    void requestUpdateLocation() {
+        long timeInterval = getConfiguration().defaultProviderConfiguration().requiredTimeInterval();
+        long distanceInterval = getConfiguration().defaultProviderConfiguration().requiredDistanceInterval();
         getSourceProvider().getUpdateRequest().run(provider, timeInterval, distanceInterval);
     }
 
@@ -216,6 +218,7 @@ public class DefaultLocationProvider extends LocationProvider
         if (getSourceProvider().updateRequestIsRemoved()) {
             return;
         }
+
         onLocationReceived(location);
 
         // Remove cancelLocationTask because we have already find location,
@@ -224,11 +227,9 @@ public class DefaultLocationProvider extends LocationProvider
             getSourceProvider().getProviderSwitchTask().stop();
         }
 
-        getSourceProvider().removeLocationUpdates(this);
-
-        if (getConfiguration().keepTracking()) {
-            requestUpdateLocation(getConfiguration().defaultProviderConfiguration().requiredTimeInterval(),
-                  getConfiguration().defaultProviderConfiguration().requiredDistanceInterval(), false);
+        if (!getConfiguration().keepTracking()) {
+            getSourceProvider().getUpdateRequest().release();
+            getSourceProvider().removeLocationUpdates(this);
         }
     }
 
