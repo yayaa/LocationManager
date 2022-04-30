@@ -26,7 +26,7 @@ before_install:
   - yes | sdkmanager "platforms;android-29"
 
 script:
-  - ./gradlew clean check --stacktrace --no-daemon
+  - ./gradlew clean check --stacktrace
   - ./gradlew build jacocoTestReport assembleAndroidTest
 
 after_success:
