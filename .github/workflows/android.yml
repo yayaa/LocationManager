@@ -22,6 +22,6 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build jacocoTestReport assembleAndroidTest
     - name: Codecov
-      uses: codecov/codecov-action@v1.0.7
+      uses: codecov/codecov-action@v3.1.4
 
     
