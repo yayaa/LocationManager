@@ -128,11 +128,11 @@ public abstract class LocationProvider {
         return contextProcessor.getFragment();
     }
 
-    protected boolean startActivityForResult(Intent intent, int requestCode) {
+    protected boolean startActivityForResult(Intent intent) {
         if (getFragment() != null) {
-            getFragment().startActivityForResult(intent, requestCode);
+            getFragment().startActivityForResult(intent, com.yayandroid.locationmanager.constants.RequestCode.GPS_ENABLE);
         } else if (getActivity() != null) {
-            getActivity().startActivityForResult(intent, requestCode);
+            getActivity().startActivityForResult(intent, com.yayandroid.locationmanager.constants.RequestCode.GPS_ENABLE);
         } else {
             LogUtils.logE("Cannot startActivityForResult because host is neither Activity nor Fragment.");
             return false;

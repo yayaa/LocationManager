@@ -3,45 +3,44 @@
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
-        classpath 'com.dicedmelon.gradle:jacoco-android:0.1.4'
+        classpath 'com.android.tools.build:gradle:8.1.1'
+        classpath 'org.jacoco:org.jacoco.core:0.8.3'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
 }
 
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }
-
 
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 
     project.ext {
         versions = [
               minSdkVersion    : 14,
-              compileSdkVersion: 29,
-              targetSdkVersion : 29,
-              buildToolsVersion: '29.0.0'
+              compileSdkVersion: 33,
+              targetSdkVersion : 33,
+              buildToolsVersion: '33.0.2'
         ]
 
         libraries = [
-              appCompat         : 'androidx.appcompat:appcompat:1.1.0',
-              googlePlayServices: 'com.google.android.gms:play-services-location:17.0.0',
+              appCompat         : 'androidx.appcompat:appcompat:1.6.1',
+              googlePlayServices: 'com.google.android.gms:play-services-location:21.0.1',
 
               junit             : 'junit:junit:4.12',
               assertJ           : 'com.squareup.assertj:assertj-android:1.1.1',
-              mockito           : 'org.mockito:mockito-core:2.7.2',
+              mockito           : 'org.mockito:mockito-core:4.2.0',
 
-              leakcanary        : 'com.squareup.leakcanary:leakcanary-android:2.4'
+              leakcanary        : 'com.squareup.leakcanary:leakcanary-android:2.12'
         ]
     }
 }

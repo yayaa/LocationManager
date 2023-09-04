@@ -16,7 +16,7 @@ class DispatcherLocationSource {
 
     static final String GOOGLE_PLAY_SERVICE_SWITCH_TASK = "googlePlayServiceSwitchTask";
 
-    private ContinuousTask gpServicesSwitchTask;
+    private final ContinuousTask gpServicesSwitchTask;
 
     DispatcherLocationSource(ContinuousTaskRunner continuousTaskRunner) {
         this.gpServicesSwitchTask = new ContinuousTask(GOOGLE_PLAY_SERVICE_SWITCH_TASK, continuousTaskRunner);

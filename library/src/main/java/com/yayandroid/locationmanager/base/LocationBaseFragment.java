@@ -1,5 +1,6 @@
 package com.yayandroid.locationmanager.base;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -35,11 +36,14 @@ public abstract class LocationBaseFragment extends Fragment implements LocationL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        locationManager = new LocationManager.Builder(getContext().getApplicationContext())
-              .configuration(getLocationConfiguration())
-              .fragment(this)
-              .notify(this)
-              .build();
+        Context context = getContext();
+        if (context != null) {
+            locationManager = new LocationManager.Builder(context.getApplicationContext())
+                    .configuration(getLocationConfiguration())
+                    .fragment(this)
+                    .notify(this)
+                    .build();
+        }
     }
 
     @CallSuper

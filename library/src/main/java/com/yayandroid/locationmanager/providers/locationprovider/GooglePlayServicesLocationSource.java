@@ -25,6 +25,7 @@ import com.yayandroid.locationmanager.constants.RequestCode;
 
 class GooglePlayServicesLocationSource extends LocationCallback {
 
+    private final Context context;
     private final FusedLocationProviderClient fusedLocationProviderClient;
     private final LocationRequest locationRequest;
     private final SourceListener sourceListener;
@@ -40,13 +41,14 @@ class GooglePlayServicesLocationSource extends LocationCallback {
     }
 
     GooglePlayServicesLocationSource(Context context, LocationRequest locationRequest, SourceListener sourceListener) {
+        this.context = context;
         this.sourceListener = sourceListener;
         this.locationRequest = locationRequest;
         this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
     }
 
     void checkLocationSettings() {
-        LocationServices.getSettingsClient(fusedLocationProviderClient.getApplicationContext())
+        LocationServices.getSettingsClient(context.getApplicationContext())
                 .checkLocationSettings(
                         new LocationSettingsRequest.Builder()
                                 .addLocationRequest(locationRequest)

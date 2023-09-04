@@ -28,7 +28,7 @@ public class PermissionConfiguration {
         /**
          * Indicates what to display when user needs to see a rational dialog for RuntimePermission.
          * There is no default value, so if you do not set this, user will not see any rationale dialog.
-         *
+         * <p>
          * And if you set {@linkplain PermissionConfiguration.Builder#rationaleDialogProvider(DialogProvider)} then this
          * field will be ignored. Please make sure you handled in your custom dialogProvider implementation.
          */
@@ -56,7 +56,7 @@ public class PermissionConfiguration {
          * implementation of {@linkplain DialogProvider} and manager will use that implementation to display the dialog.
          * Important, if you set your own implementation, please make sure to handle rationaleMessage as well.
          * Because {@linkplain PermissionConfiguration.Builder#rationaleMessage} will be ignored in that case.
-         *
+         * <p>
          * If you don't specify any dialogProvider implementation {@linkplain SimpleMessageDialogProvider} will be used with
          * given {@linkplain PermissionConfiguration.Builder#rationaleMessage}
          */
@@ -70,7 +70,7 @@ public class PermissionConfiguration {
          * {@linkplain PermissionProvider} and manager will use that implementation to ask required permissions.
          * Important, if you set your own implementation, please make sure to handle dialogProvider as well.
          * Because {@linkplain PermissionConfiguration.Builder#rationaleDialogProvider} will be ignored in that case.
-         *
+         * <p>
          * If you don't specify any permissionProvider implementation {@linkplain DefaultPermissionProvider} will be used
          * with given {@linkplain PermissionConfiguration.Builder#rationaleDialogProvider}
          */

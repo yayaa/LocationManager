@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
+    namespace 'com.yayandroid.locationmanager.sample'
+
     compileSdkVersion versions.compileSdkVersion
     buildToolsVersion versions.buildToolsVersion
 

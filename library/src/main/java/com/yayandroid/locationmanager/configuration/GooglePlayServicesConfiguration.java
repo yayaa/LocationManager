@@ -101,7 +101,7 @@ public class GooglePlayServicesConfiguration {
          * Set true to ask user handle when there is some resolvable error
          * on connection GooglePlayServices, if you don't want to bother user
          * to configure Google Play Services to receive location then set this as false.
-         *
+         * <p>
          * Default is False.
          */
         public Builder askForGooglePlayServices(boolean askForGooglePlayServices) {
@@ -115,7 +115,7 @@ public class GooglePlayServicesConfiguration {
          * Then if this flag is on it will ask user to turn them on, again, via GooglePlayServices
          * by displaying a system dialog if not it will directly try to receive location
          * -which probably not going to return any values.
-         *
+         * <p>
          * Default is True.
          */
         public Builder askForSettingsApi(boolean askForSettingsApi) {
@@ -128,7 +128,7 @@ public class GooglePlayServicesConfiguration {
          * to switch necessary providers on, or when there is an error displaying the dialog.
          * If the flag is on, then manager will setDialogListener listener as location failed,
          * otherwise it will try to get location anyway -which probably not gonna happen.
-         *
+         * <p>
          * Default is False. -Because after GooglePlayServices Provider it might switch
          * to default providers, if we fail here then those provider will never trigger.
          */
@@ -140,10 +140,10 @@ public class GooglePlayServicesConfiguration {
         /**
          * GooglePlayServices Api returns the best most recent location currently available. It is highly recommended to
          * use this functionality unless your requirements are really specific and precise.
-         *
+         * <p>
          * Default is False. So GooglePlayServices Api will return immediately if there is location already.
-         *
-         * https://developers.google.com/android/reference/com/google/android/gms/location/FusedLocationProviderApi.html
+         * <p>
+         * <a href="https://developers.google.com/android/reference/com/google/android/gms/location/FusedLocationProviderApi.html">...</a>
          * #getLastLocation(com.google.android.gms.common.api.GoogleApiClient)
          */
         public Builder ignoreLastKnowLocation(boolean ignore) {
@@ -153,7 +153,7 @@ public class GooglePlayServicesConfiguration {
 
         /**
          * Indicates waiting time period for GooglePlayServices before switching to next possible provider.
-         *
+         * <p>
          * Default values are {@linkplain Defaults#WAIT_PERIOD}
          */
         public Builder setWaitPeriod(long milliseconds) {

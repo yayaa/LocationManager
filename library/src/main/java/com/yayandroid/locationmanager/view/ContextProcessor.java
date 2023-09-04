@@ -11,7 +11,7 @@ import java.lang.ref.WeakReference;
 
 public class ContextProcessor {
 
-    private Context applicationContext;
+    private final Context applicationContext;
     private WeakReference<Activity> weakActivity;
     private WeakReference<Fragment> weakFragment;
 

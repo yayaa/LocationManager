@@ -156,7 +156,7 @@ public class DefaultProviderConfiguration {
          * implementation of {@linkplain DialogProvider} and manager will use that implementation to display the dialog.
          * Important, if you set your own implementation, please make sure to handle gpsMessage as well.
          * Because {@linkplain DefaultProviderConfiguration.Builder#gpsMessage} will be ignored in that case.
-         *
+         * <p>
          * If you don't specify any dialogProvider implementation {@linkplain SimpleMessageDialogProvider} will be used with
          * given {@linkplain DefaultProviderConfiguration.Builder#gpsMessage}
          */

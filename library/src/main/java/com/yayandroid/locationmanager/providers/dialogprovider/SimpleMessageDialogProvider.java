@@ -9,7 +9,7 @@ import androidx.appcompat.app.AlertDialog;
 
 public class SimpleMessageDialogProvider extends DialogProvider implements DialogInterface.OnClickListener {
 
-    private String message;
+    private final String message;
 
     public SimpleMessageDialogProvider(String message) {
         this.message = message;

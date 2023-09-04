@@ -1,6 +1,8 @@
 package com.yayandroid.locationmanager.providers.locationprovider;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
@@ -10,6 +12,8 @@ import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 
+import com.yayandroid.locationmanager.configuration.DefaultProviderConfiguration;
+import com.yayandroid.locationmanager.configuration.Defaults;
 import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.ProcessType;
 import com.yayandroid.locationmanager.constants.RequestCode;
@@ -98,7 +102,9 @@ public class DefaultLocationProvider extends LocationProvider
             askForLocation(LocationManager.GPS_PROVIDER);
         } else {
             // GPS is not enabled,
-            if (getConfiguration().defaultProviderConfiguration().askForEnableGPS() && getActivity() != null) {
+            DefaultProviderConfiguration configuration = getConfiguration().defaultProviderConfiguration();
+
+            if (configuration != null && configuration.askForEnableGPS() && getActivity() != null) {
                 LogUtils.logI("GPS is not enabled, asking user to enable it...");
                 askForEnableGPS();
             } else {
@@ -109,11 +115,18 @@ public class DefaultLocationProvider extends LocationProvider
     }
 
     void askForEnableGPS() {
-        DialogProvider gpsDialogProvider = getConfiguration().defaultProviderConfiguration().gpsDialogProvider();
-        gpsDialogProvider.setDialogListener(this);
+        DefaultProviderConfiguration configuration = getConfiguration().defaultProviderConfiguration();
 
-        gpsDialog = gpsDialogProvider.getDialog(getActivity());
-        gpsDialog.show();
+        if (configuration != null) {
+            DialogProvider gpsDialogProvider = configuration.gpsDialogProvider();
+            Activity activity = getActivity();
+            if (gpsDialogProvider != null && activity != null) {
+                gpsDialogProvider.setDialogListener(this);
+
+                gpsDialog = gpsDialogProvider.getDialog(activity);
+                gpsDialog.show();
+            }
+        }
     }
 
     void onGPSActivated() {
@@ -154,9 +167,11 @@ public class DefaultLocationProvider extends LocationProvider
     boolean checkForLastKnowLocation() {
         Location lastKnownLocation = getSourceProvider().getLastKnownLocation(provider);
 
-        if (getSourceProvider().isLocationSufficient(lastKnownLocation,
-              getConfiguration().defaultProviderConfiguration().acceptableTimePeriod(),
-              getConfiguration().defaultProviderConfiguration().acceptableAccuracy())) {
+        DefaultProviderConfiguration configuration = getConfiguration().defaultProviderConfiguration();
+
+        if (configuration != null && getSourceProvider().isLocationSufficient(lastKnownLocation,
+              configuration.acceptableTimePeriod(),
+              configuration.acceptableAccuracy())) {
             LogUtils.logI("LastKnowLocation is usable.");
             onLocationReceived(lastKnownLocation);
             return true;
@@ -180,15 +195,26 @@ public class DefaultLocationProvider extends LocationProvider
     }
 
     void requestUpdateLocation() {
-        long timeInterval = getConfiguration().defaultProviderConfiguration().requiredTimeInterval();
-        long distanceInterval = getConfiguration().defaultProviderConfiguration().requiredDistanceInterval();
+        DefaultProviderConfiguration configuration = getConfiguration().defaultProviderConfiguration();
+        long timeInterval = Defaults.TIME_PERIOD;
+        long distanceInterval = Defaults.LOCATION_DISTANCE_INTERVAL;
+        if (configuration != null) {
+            configuration.requiredTimeInterval();
+            configuration.requiredDistanceInterval();
+        }
         getSourceProvider().getUpdateRequest().run(provider, timeInterval, distanceInterval);
     }
 
     long getWaitPeriod() {
-        return LocationManager.GPS_PROVIDER.equals(provider)
-              ? getConfiguration().defaultProviderConfiguration().gpsWaitPeriod()
-              : getConfiguration().defaultProviderConfiguration().networkWaitPeriod();
+        DefaultProviderConfiguration configuration = getConfiguration().defaultProviderConfiguration();
+
+        if (configuration != null) {
+            return LocationManager.GPS_PROVIDER.equals(provider)
+                    ? configuration.gpsWaitPeriod()
+                    : configuration.networkWaitPeriod();
+        } else {
+            return Defaults.WAIT_PERIOD;
+        }
     }
 
     private boolean isNetworkProviderEnabled() {
@@ -214,7 +240,7 @@ public class DefaultLocationProvider extends LocationProvider
     }
 
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(@NonNull Location location) {
         if (getSourceProvider().updateRequestIsRemoved()) {
             return;
         }
@@ -247,14 +273,14 @@ public class DefaultLocationProvider extends LocationProvider
     }
 
     @Override
-    public void onProviderEnabled(String provider) {
+    public void onProviderEnabled(@NonNull String provider) {
         if (getListener() != null) {
             getListener().onProviderEnabled(provider);
         }
     }
 
     @Override
-    public void onProviderDisabled(String provider) {
+    public void onProviderDisabled(@NonNull String provider) {
         if (getListener() != null) {
             getListener().onProviderDisabled(provider);
         }
@@ -277,8 +303,8 @@ public class DefaultLocationProvider extends LocationProvider
 
     @Override
     public void onPositiveButtonClick() {
-        boolean activityStarted = startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),
-              RequestCode.GPS_ENABLE);
+        boolean activityStarted = startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+        );
         if (!activityStarted) {
             onLocationFailed(FailType.VIEW_NOT_REQUIRED_TYPE);
         }
@@ -296,8 +322,9 @@ public class DefaultLocationProvider extends LocationProvider
     }
 
     private DefaultLocationSource getSourceProvider() {
-        if (defaultLocationSource == null) {
-            defaultLocationSource = new DefaultLocationSource(getContext(), this, this);
+        Context context = getContext();
+        if (defaultLocationSource == null && context != null) {
+            defaultLocationSource = new DefaultLocationSource(context, this, this);
         }
         return defaultLocationSource;
     }

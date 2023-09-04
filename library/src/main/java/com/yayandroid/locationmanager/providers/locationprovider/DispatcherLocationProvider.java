@@ -7,6 +7,7 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.yayandroid.locationmanager.configuration.GooglePlayServicesConfiguration;
 import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.RequestCode;
 import com.yayandroid.locationmanager.helper.LogUtils;
@@ -141,7 +142,9 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
     }
 
     void askForGooglePlayServices(int gpServicesAvailability) {
-        if (getConfiguration().googlePlayServicesConfiguration().askForGooglePlayServices() &&
+        GooglePlayServicesConfiguration configuration = getConfiguration().googlePlayServicesConfiguration();
+
+        if (configuration != null && configuration.askForGooglePlayServices() &&
               getSourceProvider().isGoogleApiErrorUserResolvable(gpServicesAvailability)) {
 
             resolveGooglePlayServices(gpServicesAvailability);
@@ -159,7 +162,7 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
      * The {@link com.google.android.gms.common.GoogleApiAvailability#isGooglePlayServicesAvailable(android.content.Context)} returns one of following in {@link ConnectionResult}:
      * SUCCESS, SERVICE_MISSING, SERVICE_UPDATING, SERVICE_VERSION_UPDATE_REQUIRED, SERVICE_DISABLED, SERVICE_INVALID.
      * <p>
-     * See https://developers.google.com/android/reference/com/google/android/gms/common/GoogleApiAvailability#public-int-isgoogleplayservicesavailable-context-context
+     * See <a href="https://developers.google.com/android/reference/com/google/android/gms/common/GoogleApiAvailability#public-int-isgoogleplayservicesavailable-context-context">...</a>
      */
     void resolveGooglePlayServices(int gpServicesAvailability) {
         LogUtils.logI("Asking user to handle GooglePlayServices error...");
@@ -207,8 +210,12 @@ public class DispatcherLocationProvider extends LocationProvider implements Cont
     void getLocationFromGooglePlayServices() {
         LogUtils.logI("Attempting to get location from Google Play Services providers...");
         setLocationProvider(getSourceProvider().createGooglePlayServicesLocationProvider(this));
-        getSourceProvider().gpServicesSwitchTask().delayed(getConfiguration()
-              .googlePlayServicesConfiguration().googlePlayServicesWaitPeriod());
+
+        GooglePlayServicesConfiguration configuration = getConfiguration().googlePlayServicesConfiguration();
+
+        if (configuration != null) {
+            getSourceProvider().gpServicesSwitchTask().delayed(configuration.googlePlayServicesWaitPeriod());
+        }
         activeProvider.get();
     }
 
