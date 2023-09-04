@@ -15,7 +15,7 @@ class DefaultLocationSource {
 
     static final String PROVIDER_SWITCH_TASK = "providerSwitchTask";
 
-    private LocationManager locationManager;
+    private final LocationManager locationManager;
     private UpdateRequest updateRequest;
     private ContinuousTask cancelTask;
 

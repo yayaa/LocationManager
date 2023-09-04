@@ -22,15 +22,15 @@ import com.yayandroid.locationmanager.view.ContextProcessor;
 
 public class LocationManager implements PermissionListener {
 
-    private LocationListener listener;
-    private LocationConfiguration configuration;
-    private LocationProvider activeProvider;
-    private PermissionProvider permissionProvider;
+    private final LocationListener listener;
+    private final LocationConfiguration configuration;
+    private final LocationProvider activeProvider;
+    private final PermissionProvider permissionProvider;
 
     /**
      * Library tries to log as much as possible in order to make it transparent to see what is actually going on
      * under the hood. You can enable it for debug purposes, but do not forget to disable on production.
-     *
+     * <p>
      * Log is disabled as default.
      */
     public static void enableLog(boolean enable) {
@@ -60,7 +60,7 @@ public class LocationManager implements PermissionListener {
 
     public static class Builder {
 
-        private ContextProcessor contextProcessor;
+        private final ContextProcessor contextProcessor;
         private LocationListener listener;
         private LocationConfiguration configuration;
         private LocationProvider activeProvider;
@@ -159,7 +159,7 @@ public class LocationManager implements PermissionListener {
 
     /**
      * Google suggests to stop location updates when the activity is no longer in focus
-     * http://developer.android.com/training/location/receive-location-updates.html#stop-updates
+     * <a href="http://developer.android.com/training/location/receive-location-updates.html#stop-updates">...</a>
      */
     public void onPause() {
         activeProvider.onPause();
@@ -240,7 +240,7 @@ public class LocationManager implements PermissionListener {
                 LogUtils.logI("Waiting until we receive any callback from PermissionProvider...");
             } else {
                 LogUtils.logI("Couldn't get permission, Abort!");
-                failed(FailType.PERMISSION_DENIED);
+                failed();
             }
         }
     }
@@ -255,9 +255,9 @@ public class LocationManager implements PermissionListener {
         activeProvider.get();
     }
 
-    private void failed(@FailType int type) {
+    private void failed() {
         if (listener != null) {
-            listener.onLocationFailed(type);
+            listener.onLocationFailed(FailType.PERMISSION_DENIED);
         }
     }
 
@@ -268,6 +268,6 @@ public class LocationManager implements PermissionListener {
 
     @Override
     public void onPermissionsDenied() {
-        failed(FailType.PERMISSION_DENIED);
+        failed();
     }
 }

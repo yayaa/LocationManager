@@ -25,7 +25,7 @@ public abstract class DialogProvider {
 
     /**
      * Sets a {@linkplain DialogListener} to provide pre-defined actions to the component which uses this dialog
-     *
+     * <p>
      * This method will be called by {@linkplain DefaultPermissionProvider} internally, if it is in use.
      *
      * @param dialogListener will be used to notify on specific actions

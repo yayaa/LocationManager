@@ -15,6 +15,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.Task;
+import com.yayandroid.locationmanager.configuration.GooglePlayServicesConfiguration;
 import com.yayandroid.locationmanager.constants.FailType;
 import com.yayandroid.locationmanager.constants.ProcessType;
 import com.yayandroid.locationmanager.constants.RequestCode;
@@ -71,7 +72,9 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
         if (getContext() != null) {
             LogUtils.logI("Start request location updates.");
 
-            if (getConfiguration().googlePlayServicesConfiguration().ignoreLastKnowLocation()) {
+            GooglePlayServicesConfiguration configuration = getConfiguration().googlePlayServicesConfiguration();
+
+            if (configuration != null && configuration.ignoreLastKnowLocation()) {
                 LogUtils.logI("Configuration requires to ignore last know location from GooglePlayServices Api.");
 
                 // Request fresh location
@@ -198,7 +201,7 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
 
     /**
      * Task result can be null in certain conditions
-     * See: https://developers.google.com/android/reference/com/google/android/gms/location/FusedLocationProviderClient#getLastLocation()
+     * See: <a href="https://developers.google.com/android/reference/com/google/android/gms/location/FusedLocationProviderClient#getLastLocation()">...</a>
      */
     @Override
     public void onLastKnowLocationTaskReceived(@NonNull Task<Location> task) {
@@ -220,7 +223,10 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
 
     void locationRequired() {
         LogUtils.logI("Ask for location update...");
-        if (getConfiguration().googlePlayServicesConfiguration().askForSettingsApi()) {
+
+        GooglePlayServicesConfiguration configuration = getConfiguration().googlePlayServicesConfiguration();
+
+        if (configuration != null && configuration.askForSettingsApi()) {
             LogUtils.logI("Asking for SettingsApi...");
             getSourceProvider().checkLocationSettings();
         } else {
@@ -239,7 +245,10 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
     }
 
     void settingsApiFail(@FailType int failType) {
-        if (getConfiguration().googlePlayServicesConfiguration().failOnSettingsApiSuspended()) {
+
+        GooglePlayServicesConfiguration configuration = getConfiguration().googlePlayServicesConfiguration();
+
+        if (configuration != null && configuration.failOnSettingsApiSuspended()) {
             failed(failType);
         } else {
             LogUtils.logE("Even though settingsApi failed, configuration requires moving on. "
@@ -250,7 +259,9 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
     }
 
     void failed(@FailType int type) {
-        if (getConfiguration().googlePlayServicesConfiguration().fallbackToDefault() && fallbackListener.get() != null) {
+        GooglePlayServicesConfiguration configuration = getConfiguration().googlePlayServicesConfiguration();
+
+        if (configuration != null && configuration.fallbackToDefault() && fallbackListener.get() != null) {
             fallbackListener.get().onFallback();
         } else {
             if (getListener() != null) {
@@ -266,9 +277,11 @@ public class GooglePlayServicesLocationProvider extends LocationProvider impleme
     }
 
     private GooglePlayServicesLocationSource getSourceProvider() {
-        if (googlePlayServicesLocationSource == null) {
+        GooglePlayServicesConfiguration configuration = getConfiguration().googlePlayServicesConfiguration();
+
+        if (configuration != null && googlePlayServicesLocationSource == null) {
             googlePlayServicesLocationSource = new GooglePlayServicesLocationSource(getContext(),
-                  getConfiguration().googlePlayServicesConfiguration().locationRequest(), this);
+                  configuration.locationRequest(), this);
         }
         return googlePlayServicesLocationSource;
     }

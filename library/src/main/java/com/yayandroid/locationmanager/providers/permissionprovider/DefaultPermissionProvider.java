@@ -26,7 +26,7 @@ public class DefaultPermissionProvider extends PermissionProvider implements Dia
             return false;
         }
 
-        if (shouldShowRequestPermissionRationale()) {
+        if (shouldShowRequestPermissionRationale() && getDialogProvider() != null) {
             getDialogProvider().setDialogListener(this);
             getDialogProvider().getDialog(getActivity()).show();
         } else {
@@ -45,6 +45,7 @@ public class DefaultPermissionProvider extends PermissionProvider implements Dia
             for (int i = 0, size = permissions.length; i < size; i++) {
                 if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                     isDenied = true;
+                    break;
                 }
             }
 

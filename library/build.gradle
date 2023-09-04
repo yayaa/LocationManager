@@ -1,7 +1,9 @@
 apply plugin: 'com.android.library'
-apply plugin: 'jacoco-android'
+apply plugin: 'jacoco'
 
 android {
+    namespace 'com.yayandroid.locationmanager'
+
     compileSdkVersion versions.compileSdkVersion
     buildToolsVersion versions.buildToolsVersion
 

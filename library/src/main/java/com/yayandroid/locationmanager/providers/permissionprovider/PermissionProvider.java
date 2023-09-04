@@ -17,13 +17,14 @@ import com.yayandroid.locationmanager.providers.dialogprovider.DialogProvider;
 import com.yayandroid.locationmanager.view.ContextProcessor;
 
 import java.lang.ref.WeakReference;
+import java.util.Objects;
 
 public abstract class PermissionProvider {
 
     private WeakReference<ContextProcessor> weakContextProcessor;
     private WeakReference<PermissionListener> weakPermissionListener;
     private final String[] requiredPermissions;
-    private DialogProvider rationalDialogProvider;
+    private final DialogProvider rationalDialogProvider;
 
     /**
      * This class is responsible to get required permissions, and notify {@linkplain LocationManager}.
@@ -111,7 +112,7 @@ public abstract class PermissionProvider {
 
     // For test purposes
     protected int checkSelfPermission(String permission) {
-        return ContextCompat.checkSelfPermission(getContext(), permission);
+        return ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()), permission);
     }
 
 }
